@@ -18,7 +18,7 @@
 
 |N23 이상훈|N23 김영민|
 |:-:|:-:|
-|<img src="https://avatars.githubusercontent.com/u/42762236?v=4" width=200>|<img src="https://avatars.githubusercontent.com/u/75239459?v=4" width=200>|
+|<img src="https://avatars.githubusercontent.com/u/75239459?v=4" width=200>|<img src="https://avatars.githubusercontent.com/u/42762236?v=4" width=200>|
 |[@Youngminah](https://github.com/Youngminah)|[@simoniful](https://github.com/simoniful)|
 
 <br/>
