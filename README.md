@@ -24,7 +24,7 @@
 <br/>
 
 ## 개발환경
-[![swift](https://img.shields.io/badge/swift-5.5-orange)]()
+[![swift](https://img.shields.io/badge/swift-5.9-orange)]()
 [![xcode](https://img.shields.io/badge/Xcode-14.3-blue)]()
 [![iOS](https://img.shields.io/badge/iOS-15.0-yellow)]()
 
