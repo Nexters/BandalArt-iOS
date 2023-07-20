@@ -10,12 +10,13 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "HomeFeature",
+    name: "Components",
     product: .staticFramework,
     dependencies: [
-        .project(
-          target: "CommonFeature",
-          path: .relativeToRoot("Projects/Feature/Common")
-        )
-    ]
+      .project(
+        target: "Util",
+        path: .relativeToRoot("Projects/Shared/Util")
+      )
+    ],
+    resources: ["Resources/**"]
 )

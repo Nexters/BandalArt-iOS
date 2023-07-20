@@ -2,7 +2,7 @@
 //  Project.swift
 //  ProjectDescriptionHelpers
 //
-//  Created by Sang hun Lee on 2023/07/19.
+//  Created by Sang hun Lee on 2023/07/21.
 //
 
 import Foundation
@@ -10,9 +10,12 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Shared",
+    name: "OnBoardingFeature",
     product: .staticFramework,
     dependencies: [
-    ],
-    resources: ["Resources/**"]
+        .project(
+          target: "CommonFeature",
+          path: .relativeToRoot("Projects/Feature/Common")
+        )
+    ]
 )

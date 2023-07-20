@@ -10,12 +10,16 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-  name: "Network",
+  name: "RootFeature",
   product: .staticFramework,
   dependencies: [
     .project(
-      target: "Util",
-      path: .relativeToRoot("Projects/Shared/Util")
+      target: "OnBoardingFeature",
+      path: .relativeToRoot("Projects/Feature/OnBoarding")
+    ),
+    .project(
+      target: "MainFeature",
+      path: .relativeToRoot("Projects/Feature/Main")
     )
   ]
 )

@@ -13,14 +13,9 @@ let project = Project.makeModule(
     name: "BottomSheetFeature",
     product: .staticFramework,
     dependencies: [
-        .project(
-          target: "Core",
-          path: .relativeToRoot("Projects/Core")
-        ),
-        .project(
-          target: "Shared",
-          path: .relativeToRoot("Projects/Shared")
-        )
-    ],
-    resources: ["Resources/**"]
+      .project(
+        target: "CommonFeature",
+        path: .relativeToRoot("Projects/Feature/Common")
+      )
+    ]
 )

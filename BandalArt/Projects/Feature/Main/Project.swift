@@ -2,7 +2,7 @@
 //  Project.swift
 //  ProjectDescriptionHelpers
 //
-//  Created by Sang hun Lee on 2023/07/19.
+//  Created by Sang hun Lee on 2023/07/21.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-  name: "Feature",
+  name: "MainFeature",
   product: .staticFramework,
   dependencies: [
     .project(
@@ -25,6 +25,5 @@ let project = Project.makeModule(
       target: "BottomSheetFeature",
       path: .relativeToRoot("Projects/Feature/BottomSheet")
     )
-  ],
-  resources: ["Resources/**"]
+  ]
 )

@@ -1,8 +1,8 @@
 //
-//  Project.swift
-//  ProjectDescriptionHelpers
+//  Projects.swift
+//  BandalArtManifests
 //
-//  Created by Sang hun Lee on 2023/07/19.
+//  Created by Sang hun Lee on 2023/07/21.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-  name: "Core",
+  name: "Domain",
   product: .staticFramework,
   dependencies: [
     .project(
@@ -22,8 +22,8 @@ let project = Project.makeModule(
       path: .relativeToRoot("Projects/Core/UserDefaults")
     ),
     .project(
-      target: "Shared",
-      path: .relativeToRoot("Projects/Shared")
+      target: "Util",
+      path: .relativeToRoot("Projects/Shared/Util")
     )
   ]
 )

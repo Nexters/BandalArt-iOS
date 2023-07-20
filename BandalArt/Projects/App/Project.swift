@@ -15,12 +15,16 @@ let project = Project.makeModule(
    product: .app,
    dependencies: [
        .project(
-        target: "Feature",
-        path: .relativeToRoot("Projects/Feature")
+        target: "RootFeature",
+        path: .relativeToRoot("Projects/Feature/Root")
        ),
        .project(
-         target: "Shared",
-         path: .relativeToRoot("Projects/Shared")
+         target: "Data",
+         path: .relativeToRoot("Projects/Core/Data")
+       ),
+       .project(
+         target: "Util",
+         path: .relativeToRoot("Projects/Shared/Util")
        )
    ],
    resources: ["Resources/**"],
