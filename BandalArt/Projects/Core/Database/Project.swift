@@ -8,14 +8,16 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-private let projectName = "Shared"
-private let bundleID = "com.bandal.art.sample"
-private let iOSTargetVersion = "13.0"
+
+private let projectName = "Database"
+private let bundleID = "com.bandal.art.core.database"
+private let iOSTargetVersion = "15.0"
 
 let project = Project.framework(
     name: projectName,
     platform: .iOS,
     bundleID: bundleID,
     dependencies: [
+        .project(target: "Shared", path: .relativeToRoot("Projects/Shared"))
     ]
 )

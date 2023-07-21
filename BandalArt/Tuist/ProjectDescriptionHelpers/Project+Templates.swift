@@ -47,16 +47,15 @@ extension Project {
     
     public static func app(
         name: String,
-        product: Product,
-        bundleID: String,
         platform: Platform,
+        bundleID: String,
         dependencies: [TargetDependency] = []
     ) -> Project {
         return self.project(
             name: name,
-            product: product,
-            bundleID: bundleID,
+            product: .app,
             platform: platform,
+            bundleID: bundleID,
             dependencies: dependencies,
             infoPlist: [
                 "CFBundleShortVersionString": "1.0",
@@ -69,49 +68,68 @@ extension Project {
         name: String,
         platform: Platform,
         bundleID: String,
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        package: [Package] = []
     ) -> Project {
         return self.project(
             name: name,
             product: .framework,
-            bundleID: bundleID,
             platform: platform,
-            dependencies: dependencies
+            bundleID: bundleID,
+            dependencies: dependencies,
+            package: package
         )
     }
     
     public static func project(
         name: String,
         product: Product,
-        bundleID: String,
         platform: Platform,
+        bundleID: String,
         dependencies: [TargetDependency] = [],
-        infoPlist: [String: InfoPlist.Value] = [:]
+        infoPlist: [String: InfoPlist.Value] = [:],
+        targets: [Target] = [],
+        package: [Package] = []
     ) -> Project {
+        var targetList = [
+            Target(
+                name: name,
+                platform: platform,
+                product: product,
+                bundleId: bundleID,
+                infoPlist: .extendingDefault(with: infoPlist),
+                sources: ["Sources/**"],
+                resources: [],
+                dependencies: dependencies
+            ),
+            Target(
+                name: "\(name)Tests",
+                platform: platform,
+                product: .unitTests,
+                bundleId: bundleID,
+                infoPlist: .default,
+                sources: "Tests/**",
+                dependencies: [
+                    .target(name: "\(name)")
+                ]
+            )
+        ]
+        targetList.append(contentsOf: targets)
+        
         return Project(
             name: name,
-            targets: [
-                Target(
-                    name: name,
-                    platform: platform,
-                    product: product,
-                    bundleId: bundleID,
-                    infoPlist: .extendingDefault(with: infoPlist),
-                    sources: ["Sources/**"],
-                    resources: [],
-                    dependencies: dependencies
-                ),
-                Target(
-                    name: "\(name)Tests",
-                    platform: platform,
-                    product: .unitTests,
-                    bundleId: bundleID,
-                    infoPlist: .default,
-                    sources: "Tests/**",
-                    dependencies: [
-                        .target(name: "\(name)")
-                    ]
-                )
+            targets: targetList,
+            schemes: [
+              Scheme(
+                name: "\(name)-Debug",
+                shared: true,
+                buildAction: BuildAction(targets: ["\(name)"])
+              ),
+              Scheme(
+                name: "\(name)-Release",
+                shared: true,
+                buildAction: BuildAction(targets: ["\(name)"])
+              )
             ]
         )
     }
