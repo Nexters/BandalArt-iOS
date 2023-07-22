@@ -18,7 +18,9 @@ public extension Project {
       configurations: [
         .debug(name: .debug),
         .release(name: .release)
-      ], defaultSettings: .recommended)
+      ],
+      defaultSettings: .recommended
+    )
     
     let appTarget = Target(
       name: name,
@@ -29,6 +31,7 @@ public extension Project {
       infoPlist: infoPlist,
       sources: sources,
       resources: resources,
+      scripts: [.SwiftLintString],
       dependencies: dependencies
     )
     
@@ -40,10 +43,15 @@ public extension Project {
       deploymentTarget: deploymentTarget,
       infoPlist: .default,
       sources: ["Tests/**"],
+      scripts: [.SwiftLintString],
       dependencies: [.target(name: name)]
     )
     
-    let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
+    // TODO: Release 추가
+    let schemes: [Scheme] = [
+      .makeScheme(target: .debug, name: name),
+      .makeScheme(target: .release, name: name)
+    ]
     
     let targets: [Target] = [appTarget, testTarget]
     

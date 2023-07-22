@@ -7,11 +7,12 @@
 
 import Foundation
 import ProjectDescription
-import ProjectDescriptionHelpers
+import UtilPlugin
 
 let project = Project.makeModule(
   name: "CommonFeature",
   product: .staticFramework,
+  packages: [],
   dependencies: [
     .project(
       target: "Data",
@@ -20,6 +21,10 @@ let project = Project.makeModule(
     .project(
       target: "Components",
       path: .relativeToRoot("Projects/Shared/Components")
-    )
+    ),
+    .external(name: "CombineCocoa"),
+    .external(name: "Lottie"),
+    .external(name: "Kingfisher"),
+    .external(name: "SnapKit")
   ]
 )

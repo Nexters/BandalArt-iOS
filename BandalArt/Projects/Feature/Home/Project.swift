@@ -7,7 +7,7 @@
 
 import Foundation
 import ProjectDescription
-import ProjectDescriptionHelpers
+import UtilPlugin
 
 let project = Project.makeModule(
     name: "HomeFeature",
