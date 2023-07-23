@@ -15,8 +15,12 @@ let project = Project.makeModule(
   packages: [],
   dependencies: [
     .project(
-      target: "Data",
-      path: .relativeToRoot("Projects/Core/Data")
+      target: "Network",
+      path: .relativeToRoot("Projects/Core/Network")
+    ),
+    .project(
+      target: "Database",
+      path: .relativeToRoot("Projects/Core/Database")
     ),
     .project(
       target: "Components",

@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  BandalArtManifests
+//  Config
 //
-//  Created by Sang hun Lee on 2023/07/21.
+//  Created by Sang hun Lee on 2023/07/23.
 //
 
 import Foundation
@@ -10,13 +10,12 @@ import ProjectDescription
 import UtilPlugin
 
 let project = Project.makeModule(
-  name: "Data",
+  name: "Database",
   product: .staticFramework,
+  packages: [
+    
+  ],
   dependencies: [
-    .project(
-      target: "Domain",
-      path: .relativeToRoot("Projects/Core/Domain")
-    ),
     .project(
       target: "Util",
       path: .relativeToRoot("Projects/Shared/Util")

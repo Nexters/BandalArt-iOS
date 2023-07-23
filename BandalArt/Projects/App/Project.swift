@@ -19,9 +19,13 @@ let project = Project.makeModule(
         path: .relativeToRoot("Projects/Feature/Root")
        ),
        .project(
-         target: "Data",
-         path: .relativeToRoot("Projects/Core/Data")
+         target: "Database",
+         path: .relativeToRoot("Projects/Core/Database")
        ),
+       .project(
+         target: "Network",
+         path: .relativeToRoot("Projects/Core/Network")
+        ),
        .project(
          target: "Util",
          path: .relativeToRoot("Projects/Shared/Util")
