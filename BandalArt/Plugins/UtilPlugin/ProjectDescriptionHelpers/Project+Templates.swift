@@ -47,7 +47,6 @@ public extension Project {
       dependencies: [.target(name: name)]
     )
     
-    // TODO: Release 추가
     let schemes: [Scheme] = [
       .makeScheme(target: .debug, name: name),
       .makeScheme(target: .release, name: name)

@@ -15,8 +15,12 @@ let project = Project.makeModule(
    product: .app,
    dependencies: [
        .project(
-        target: "RootFeature",
-        path: .relativeToRoot("Projects/Feature/Root")
+        target: "MainFeature",
+        path: .relativeToRoot("Projects/Feature/Main")
+       ),
+       .project(
+        target: "OnBoardingFeature",
+        path: .relativeToRoot("Projects/Feature/OnBoarding")
        ),
        .project(
          target: "Database",
