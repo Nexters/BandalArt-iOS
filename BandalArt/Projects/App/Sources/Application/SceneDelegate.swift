@@ -5,8 +5,10 @@
 //  Created by Sang hun Lee on 2023/07/18.
 //
 
-import Foundation
 import UIKit
+
+import MainFeature
+import HomeFeature
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -17,7 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-      guard let scene = (scene as? UIWindowScene) else { return }
+        guard let scene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: scene)
+
+        let vc = BandalArtHomeViewController()
+        let nav = MainNavigationController(rootViewController: vc)
+        window?.rootViewController = nav
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
