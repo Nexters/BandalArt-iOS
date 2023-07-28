@@ -18,5 +18,5 @@ let project = Project.makeModule(
         path: .relativeToRoot("Projects/Shared/Util")
       )
     ],
-    resources: ["Resources/**"]
+    resources: []
 )
