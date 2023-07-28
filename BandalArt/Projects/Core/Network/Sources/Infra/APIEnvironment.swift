@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum BandalArtAPIEnvironment: String {
+enum APIEnvironment: String {
   case dev = ""
   case production = "https://"
 }
