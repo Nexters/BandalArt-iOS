@@ -18,7 +18,6 @@ enum BandalArtTarget {
   case getBandalArtDetail(bandalArtKey: String)
   // case updateBandalArt(parameters: DictionaryType, BandalArtKey: String)
   // case deleteBandalArt(bandalArtKey: String)
-  
   // MARK: - Cell
   case getMainCell(bandalArtKey: String)
   case getCell(bandalArtKey: String, cellKey: String)
@@ -33,7 +32,6 @@ extension BandalArtTarget: TargetType {
     }
     return url
   }
-  
   var path: String {
     switch self {
     case .getBandalArtList:
@@ -46,7 +44,6 @@ extension BandalArtTarget: TargetType {
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
     }
   }
-  
   var method: Moya.Method {
     switch self {
     case .getBandalArtList,
@@ -56,36 +53,27 @@ extension BandalArtTarget: TargetType {
       return .get
     }
   }
-  
   var sampleData: Data {
     return stubData(self)
   }
-  
   var task: Task {
     switch self {
-    case .getBandalArtList:
-      <#code#>
-    case .getBandalArtDetail(bandalArtKey: let bandalArtKey):
-      <#code#>
-    case .getMainCell(bandalArtKey: let bandalArtKey):
-      <#code#>
-    case .getCell(bandalArtKey: let bandalArtKey, cellKey: let cellKey):
-      <#code#>
-      
+    case .getBandalArtList,
+         .getBandalArtDetail,
+         .getMainCell,
+         .getCell:
+      return .requestPlain
 //    case :
 //      return .requestPlain
 //    case :
 //      return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
 //    case :
 //      return .requestParameters(parameters: parameters, encoding: URLEncoding(arrayEncoding: .noBrackets))
-    
     }
   }
-  
   var validationType: ValidationType {
     return .customCodes([200])
   }
-  
   var headers: [String: String]? {
     let token = UserDefaults.standard.string(
       forKey: UserDefaultKey.guestToken
@@ -96,4 +84,3 @@ extension BandalArtTarget: TargetType {
     ]
   }
 }
-

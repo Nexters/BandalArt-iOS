@@ -12,7 +12,5 @@ import UtilPlugin
 let project = Project.makeModule(
     name: "Util",
     product: .staticFramework,
-    dependencies: [
-    
-    ]
+    dependencies: []
 )

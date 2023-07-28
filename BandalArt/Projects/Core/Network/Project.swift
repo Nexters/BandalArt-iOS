@@ -12,9 +12,7 @@ import UtilPlugin
 let project = Project.makeModule(
   name: "Network",
   product: .staticFramework,
-  packages: [
-    
-  ],
+  packages: [],
   dependencies: [
     .project(
       target: "Util",
