@@ -75,9 +75,13 @@ extension BandalArtTarget: TargetType {
     return .customCodes([200])
   }
   var headers: [String: String]? {
-    let token = UserDefaults.standard.string(
+    guard let token = UserDefaults.standard.string(
       forKey: UserDefaultKey.guestToken
-    )!
+    ) else {
+      return [
+        "Content-Type": "application/json"
+      ]
+    }
     return [
       "Content-Type": "application/json",
       "idtoken": token

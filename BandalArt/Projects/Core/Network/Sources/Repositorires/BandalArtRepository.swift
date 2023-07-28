@@ -11,7 +11,7 @@ import Moya
 import Combine
 
 final class BandalArtRepository: BandalArtRepositoryInterface {
-  let provider: MoyaProvider<BandalArtTarget>
+  private let provider: MoyaProvider<BandalArtTarget>
   init() { provider = MoyaProvider<BandalArtTarget>() }
 }
 
