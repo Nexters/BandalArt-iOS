@@ -8,6 +8,6 @@
 
 import Foundation
 
-struct BandalArtAPIConstant {
+struct APIConstant {
   static let environment: BandalArtAPIEnvironment = .production
 }
