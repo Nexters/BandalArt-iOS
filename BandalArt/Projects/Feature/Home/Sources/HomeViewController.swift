@@ -10,7 +10,7 @@ import Components
 
 import SnapKit
 
-public final class BandalArtHomeViewController: UIViewController {
+public final class HomeViewController: UIViewController {
 
     // 반다라트 표 컨테이너 뷰
     private let bandalartView = UIView()
@@ -40,13 +40,14 @@ public final class BandalArtHomeViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
         centerLabel.text = "완벽한 2024년"
     }
 }
 
-extension BandalArtHomeViewController: UICollectionViewDelegate,
+extension HomeViewController: UICollectionViewDelegate,
                                        UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView,
@@ -93,10 +94,17 @@ extension BandalArtHomeViewController: UICollectionViewDelegate,
 }
 
 // MARK: - Private func.
-private extension BandalArtHomeViewController {
+private extension HomeViewController {
+    
+    @objc func addBarButtonTap() {
+        print("추가하기")
+    }
+    
+    @objc func logoBarButtonTap() {
+        print("반다라트")
+    }
 
     func setConfigure() {
-        navigationItem.title = "홈"
         view.backgroundColor = .gray50
 
         centerView.backgroundColor = .mint
@@ -130,7 +138,7 @@ private extension BandalArtHomeViewController {
             }
         }
         
-        // collecionView의 tag는 서브 목표의 Cell Index.
+        //Tag는 서브 목표 Cell Index를 나타냄. 서브 목표의 UI구성에 사용.
         leftTopCollectionView.tag = 4
         rightTopCollectionView.tag = 2
         leftBottomCollectionView.tag = 3
@@ -139,6 +147,7 @@ private extension BandalArtHomeViewController {
 
     func setConstraints() {
         view.addSubview(bandalartView)
+        view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
         
         bandalartView.addSubview(centerView)
@@ -186,6 +195,32 @@ private extension BandalArtHomeViewController {
             make.trailing.equalTo(rightTopCollectionView.snp.leading).offset(-2)
             make.bottom.equalTo(rightBottomCollectionView.snp.top).offset(-2)
         }
+    }
+    
+    func setNavigationBar() {
+        // set Right Navigation Item.
+        var config = UIButton.Configuration.plain()
+        config.title = "추가"
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 16, weight: .bold)
+            return outgoing
+        }
+        config.image = UIImage(systemName: "plus")
+        config.baseForegroundColor = .gray600
+        let addButton = UIButton(configuration: config)
+        addButton.addTarget(self, action: #selector(addBarButtonTap),
+                            for: .touchUpInside)
+        navigationItem.rightBarButtonItem = .init(customView: addButton)
+        
+        // set Left Navigation Item.
+        let logoButton = UIButton()
+        logoButton.setTitle("반다라트", for: .normal)
+        logoButton.setTitleColor(.gray900, for: .normal)
+        logoButton.titleLabel?.font = .systemFont(ofSize: 28, weight: .regular)
+        logoButton.addTarget(self, action: #selector(logoBarButtonTap),
+                             for: .touchUpInside)
+        navigationItem.leftBarButtonItem = .init(customView: logoButton)
     }
 
     enum UI {

@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
 
-        let vc = BandalArtHomeViewController()
+        let vc = HomeViewController()
         let nav = MainNavigationController(rootViewController: vc)
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
