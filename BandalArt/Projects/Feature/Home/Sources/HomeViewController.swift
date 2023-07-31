@@ -63,7 +63,7 @@ public final class HomeViewController: UIViewController {
     }
     
     @objc private func moreButtonTap() {
-        print("공유하기")
+        print("더보기")
     }
     
     @objc private func shareButtonTap() {
@@ -94,12 +94,12 @@ extension HomeViewController: UICollectionViewDelegate,
             return UICollectionViewCell()
         }
         let status: BandalArtCell.Status = .created
-        let mode: BandalArtCell.Mode = collectionView.tag == indexPath.item ? .subGoal(status) : .task(status)
+        let mode: BandalArtCell.Mode = collectionView.tag == indexPath.item ? .subGoal : .task
         var title = "네트워킹 모임 참여"
         if case .subGoal = mode {
             title = "제테크"
         }
-        cell.configure(title: title, mode: mode)
+        cell.configure(title: title, mode: mode, status: status)
         return cell
     }
 
