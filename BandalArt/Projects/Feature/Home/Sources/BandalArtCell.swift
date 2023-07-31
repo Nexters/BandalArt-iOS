@@ -27,7 +27,7 @@ final class BandalArtCell: UICollectionViewCell {
         var backGroundColor: UIColor {
             switch self {
             case .task: return .systemBackground
-            case .subGoal: return .gray900
+            case .subGoal: return .sub
             }
         }
         

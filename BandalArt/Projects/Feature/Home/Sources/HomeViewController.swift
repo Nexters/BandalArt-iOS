@@ -56,6 +56,7 @@ public final class HomeViewController: UIViewController {
         
         // 임시 세팅
         centerLabel.text = "완벽한 2024년"
+        centerLabel.textColor = .sub
         bandalartNameLabel.text = "완벽한 2024년"
         bandalartNameLabel.textColor = .gray900
         emojiView.setEmoji(with: "😎")
@@ -156,7 +157,6 @@ private extension HomeViewController {
         centerLabel.numberOfLines = 3
         centerLabel.textAlignment = .center
         centerLabel.lineBreakMode = .byWordWrapping
-        centerLabel.textColor = .gray900
         centerLabel.font = .systemFont(ofSize: 13, weight: .bold)
         
         bandalartView.backgroundColor = .clear
