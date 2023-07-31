@@ -7,10 +7,28 @@
 
 import UIKit
 import Components
+import Util
 
 import SnapKit
 
 public final class HomeViewController: UIViewController {
+    
+    public init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // 반다라트 헤더
+    private let emojiView = EmojiView()
+    private let bandalartNameLabel = UILabel()
+    private let pencilAeccessaryImageView = UIImageView(image: .init(systemName: "pencil.circle.fill"))
+    private let moreButton = UIButton()
+    
+    private let progressDescriptionLabel = UILabel()
+    private let progressView = UIProgressView()
 
     // 반다라트 표 컨테이너 뷰
     private let bandalartView = UIView()
@@ -30,20 +48,34 @@ public final class HomeViewController: UIViewController {
     
     private let shareButton = UIButton()
 
-    public init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
+        
+        // 임시 세팅
         centerLabel.text = "완벽한 2024년"
+        bandalartNameLabel.text = "완벽한 2024년"
+        bandalartNameLabel.textColor = .gray900
+        emojiView.setEmoji(with: "😎")
+        pencilAeccessaryImageView.isHidden = true
+    }
+    
+    @objc private func moreButtonTap() {
+        print("공유하기")
+    }
+    
+    @objc private func shareButtonTap() {
+        print("공유하기")
+    }
+    
+    @objc private func addBarButtonTap() {
+        print("추가하기")
+    }
+    
+    @objc private func logoBarButtonTap() {
+        print("반다라트")
     }
 }
 
@@ -95,18 +127,29 @@ extension HomeViewController: UICollectionViewDelegate,
 
 // MARK: - Private func.
 private extension HomeViewController {
-    
-    @objc func addBarButtonTap() {
-        print("추가하기")
-    }
-    
-    @objc func logoBarButtonTap() {
-        print("반다라트")
-    }
 
     func setConfigure() {
         view.backgroundColor = .gray50
-
+        
+        pencilAeccessaryImageView.tintColor = .gray900
+        pencilAeccessaryImageView.isUserInteractionEnabled = false
+        bandalartNameLabel.text = "메인 목표를 입력해주세요"
+        bandalartNameLabel.textColor = .gray300
+        bandalartNameLabel.textAlignment = .center
+        bandalartNameLabel.font = .boldSystemFont(ofSize: 20)
+        
+        moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        moreButton.tintColor = .gray500
+        moreButton.addTarget(self, action: #selector(moreButtonTap),
+                             for: .touchUpInside)
+        
+        progressDescriptionLabel.text = "달성률 (0%)"
+        progressDescriptionLabel.textColor = .gray600
+        progressDescriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        progressView.trackTintColor = .gray100
+        progressView.progressTintColor = .mint
+        progressView.progress = 0.3
+        
         centerView.backgroundColor = .mint
         centerView.layer.cornerRadius = 10
         
@@ -143,9 +186,35 @@ private extension HomeViewController {
         rightTopCollectionView.tag = 2
         leftBottomCollectionView.tag = 3
         rightBottomCollectionView.tag = 1
+        
+        var config = UIButton.Configuration.plain()
+        config.title = "공유하기"
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 12, weight: .bold)
+            return outgoing
+        }
+        config.image = UIImage(systemName: "square.and.arrow.up")
+        config.imagePadding = 4
+        config.baseForegroundColor = .gray900
+        config.baseBackgroundColor = .gray100
+        config.contentInsets = .init(top: 8, leading: 16,
+                                     bottom: 8, trailing: 16)
+        shareButton.configuration = config
+        shareButton.addTarget(self, action: #selector(shareButtonTap),
+                            for: .touchUpInside)
+        shareButton.layer.cornerRadius = 12
+        shareButton.backgroundColor = .gray100
+        shareButton.layer.masksToBounds = true
     }
 
     func setConstraints() {
+        view.addSubview(emojiView)
+        view.addSubview(pencilAeccessaryImageView)
+        view.addSubview(bandalartNameLabel)
+        view.addSubview(moreButton)
+        view.addSubview(progressDescriptionLabel)
+        view.addSubview(progressView)
         view.addSubview(bandalartView)
         view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
@@ -155,15 +224,55 @@ private extension HomeViewController {
         bandalartView.addSubview(rightTopCollectionView)
         bandalartView.addSubview(leftBottomCollectionView)
         bandalartView.addSubview(rightBottomCollectionView)
-
+        
+        shareButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-32)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(110)
+            make.height.equalTo(36)
+        }
         centerLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(6)
             make.bottom.equalToSuperview().offset(-6)
             make.leading.equalToSuperview().offset(5)
             make.trailing.equalToSuperview().offset(-5)
         }
+        emojiView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(52)
+        }
+        pencilAeccessaryImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(18)
+            make.bottom.trailing.equalTo(emojiView).offset(4)
+        }
+        bandalartNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(emojiView.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.leading.equalToSuperview().offset(20)
+            make.leading.equalToSuperview().offset(-44)
+        }
+        moreButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bandalartNameLabel)
+            make.trailing.equalToSuperview().offset(-16)
+            make.height.equalTo(bandalartNameLabel)
+            make.width.equalTo(moreButton.snp.height)
+        }
+        progressDescriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(bandalartNameLabel.snp.bottom).offset(26)
+            make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            
+        }
+        progressView.snp.makeConstraints { make in
+            make.top.equalTo(progressDescriptionLabel.snp.bottom).offset(8)
+            make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            make.height.equalTo(8)
+        }
         bandalartView.snp.makeConstraints { make in
-            make.top.leading.equalTo(view.safeAreaLayoutGuide).offset(15)
+            make.top.equalTo(progressView.snp.bottom).offset(18)
+            make.leading.equalTo(view.safeAreaLayoutGuide).offset(15)
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-15)
             make.height.equalTo(bandalartView.snp.width)
         }
