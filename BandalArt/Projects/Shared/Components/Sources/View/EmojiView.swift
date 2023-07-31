@@ -52,6 +52,10 @@ public final class EmojiView: UIView {
             return
         }
         placeHolderImageView.removeFromSuperview()
+        guard !subviews.contains(emojiLabel) else {
+            emojiLabel.text = String(with)
+            return
+        }
         addSubview(emojiLabel)
         emojiLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
