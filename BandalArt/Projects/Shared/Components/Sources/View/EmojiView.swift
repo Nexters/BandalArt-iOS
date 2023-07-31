@@ -47,7 +47,7 @@ public final class EmojiView: UIView {
     }
     
     public func setEmoji(with: Character) {
-        guard with.idEmoji else {
+        guard with.isEmoji else {
             assertionFailure("이모지만 넣을 수 있습니다")
             return
         }
@@ -62,7 +62,7 @@ public final class EmojiView: UIView {
 
 fileprivate extension Character {
     
-    var idEmoji: Bool {
+    var isEmoji: Bool {
         for scalar in unicodeScalars {
             switch scalar.value {
             case 0x3030, 0x00AE, 0x00A9,
