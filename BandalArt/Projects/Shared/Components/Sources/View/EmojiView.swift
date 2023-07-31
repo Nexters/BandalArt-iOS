@@ -18,7 +18,8 @@ public final class EmojiView: UIView {
                 cornerRadius: CGFloat = 16,
                 showShadow: Bool = true) {
         super.init(frame: .zero)
-        setDefaultUI()
+        setConfigure()
+        setConstraints()
         
         layer.cornerRadius = cornerRadius
         emojiLabel.font = .systemFont(ofSize: fontSize)
@@ -29,10 +30,13 @@ public final class EmojiView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setDefaultUI() {
+    private func setConfigure() {
         placeHolderImageView.tintColor = .gray300
         emojiLabel.textAlignment = .center
         backgroundColor = .gray100
+    }
+    
+    private func setConstraints() {
         addSubview(placeHolderImageView)
         placeHolderImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
