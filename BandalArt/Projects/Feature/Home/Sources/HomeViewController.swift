@@ -13,7 +13,7 @@ import Util
 import SnapKit
 
 public final class HomeViewController: UIViewController {
-    
+
     public init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -21,13 +21,13 @@ public final class HomeViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // 반다라트 헤더
     private let emojiView = EmojiView()
     private let bandalartNameLabel = UILabel()
     private let pencilAeccessaryImageView = UIImageView(image: .init(systemName: "pencil.circle.fill"))
     private let moreButton = UIButton()
-    
+
     private let progressDescriptionLabel = UILabel()
     private let progressView = UIProgressView()
 
@@ -37,7 +37,7 @@ public final class HomeViewController: UIViewController {
     // 반다라트 표를 구성하는 뷰들
     private let centerView = UIView()
     private let centerLabel = UILabel()
-    
+
     private let leftTopCollectionView = UICollectionView(frame: .zero,
                                                          collectionViewLayout: UICollectionViewFlowLayout.init())
     private let rightTopCollectionView = UICollectionView(frame: .zero,
@@ -46,7 +46,7 @@ public final class HomeViewController: UIViewController {
                                                             collectionViewLayout: UICollectionViewFlowLayout.init())
     private let rightBottomCollectionView = UICollectionView(frame: .zero,
                                                              collectionViewLayout: UICollectionViewFlowLayout.init())
-    
+
     private let shareButton = UIButton()
 
     public override func viewDidLoad() {
@@ -54,7 +54,7 @@ public final class HomeViewController: UIViewController {
         self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
-        
+
         // 임시 세팅
         centerLabel.text = "완벽한 2024년"
         centerLabel.textColor = .sub
@@ -63,19 +63,19 @@ public final class HomeViewController: UIViewController {
         emojiView.setEmoji(with: "😎")
         pencilAeccessaryImageView.isHidden = true
     }
-    
+
     @objc private func moreButtonTap() {
         print("더보기")
     }
-    
+
     @objc private func shareButtonTap() {
         print("공유하기")
     }
-    
+
     @objc private func addBarButtonTap() {
         print("추가하기")
     }
-    
+
     @objc private func logoBarButtonTap() {
         print("반다라트")
     }
@@ -109,13 +109,13 @@ extension HomeViewController: UICollectionViewDelegate,
                                layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
         let isLandScape = collectionView.bounds.width > collectionView.bounds.height
-        
+
         let widthItemCount = isLandScape ? 3.0 : 2.0
         let heightItemCount = !isLandScape ? 3.0 : 2.0
-        
+
         let widthItemSpacing: CGFloat = isLandScape ? 10 : 8
         let heightItemSpacing: CGFloat = !isLandScape ? 10 : 8
-        
+
         let width = (collectionView.bounds.width - widthItemSpacing) / widthItemCount
         let height = (collectionView.bounds.height - heightItemSpacing) / heightItemCount
         return .init(width: width, height: height)
@@ -135,36 +135,36 @@ private extension HomeViewController {
 
     func setConfigure() {
         view.backgroundColor = .gray50
-        
+
         pencilAeccessaryImageView.tintColor = .gray900
         pencilAeccessaryImageView.isUserInteractionEnabled = false
         bandalartNameLabel.text = "메인 목표를 입력해주세요"
         bandalartNameLabel.textColor = .gray300
         bandalartNameLabel.textAlignment = .center
         bandalartNameLabel.font = .boldSystemFont(ofSize: 20)
-        
+
         moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         moreButton.tintColor = .gray500
         moreButton.addTarget(self, action: #selector(moreButtonTap),
                              for: .touchUpInside)
-        
+
         progressDescriptionLabel.text = "달성률 (0%)"
         progressDescriptionLabel.textColor = .gray600
         progressDescriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
         progressView.trackTintColor = .gray100
         progressView.progressTintColor = .mint
         progressView.progress = 0.3
-        
+
         centerView.backgroundColor = .mint
         centerView.layer.cornerRadius = 10
-        
+
         centerLabel.numberOfLines = 3
         centerLabel.textAlignment = .center
         centerLabel.lineBreakMode = .byWordWrapping
         centerLabel.font = .systemFont(ofSize: 13, weight: .bold)
-        
+
         bandalartView.backgroundColor = .clear
-        
+
         [leftTopCollectionView, leftBottomCollectionView, rightTopCollectionView, rightBottomCollectionView].forEach {
             $0.backgroundColor = .gray100
             $0.layer.cornerRadius = 12
@@ -177,20 +177,20 @@ private extension HomeViewController {
                         forCellWithReuseIdentifier: BandalArtCell.identifier)
             $0.delegate = self
             $0.dataSource = self
-            
+
             if let layout = $0.collectionViewLayout as? UICollectionViewFlowLayout {
                 layout.scrollDirection = .vertical
                 layout.minimumLineSpacing = 2
                 layout.minimumInteritemSpacing = 2
             }
         }
-        
+
         //Tag는 서브 목표 Cell Index를 나타냄. 서브 목표의 UI구성에 사용.
         leftTopCollectionView.tag = 4
         rightTopCollectionView.tag = 2
         leftBottomCollectionView.tag = 3
         rightBottomCollectionView.tag = 1
-        
+
         var config = UIButton.Configuration.plain()
         config.title = "공유하기"
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -222,13 +222,13 @@ private extension HomeViewController {
         view.addSubview(bandalartView)
         view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
-        
+
         bandalartView.addSubview(centerView)
         bandalartView.addSubview(leftTopCollectionView)
         bandalartView.addSubview(rightTopCollectionView)
         bandalartView.addSubview(leftBottomCollectionView)
         bandalartView.addSubview(rightBottomCollectionView)
-        
+
         shareButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-32)
             make.centerX.equalToSuperview()
@@ -266,7 +266,7 @@ private extension HomeViewController {
             make.top.equalTo(bandalartNameLabel.snp.bottom).offset(26)
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
-            
+
         }
         progressView.snp.makeConstraints { make in
             make.top.equalTo(progressDescriptionLabel.snp.bottom).offset(8)
@@ -309,7 +309,7 @@ private extension HomeViewController {
             make.bottom.equalTo(rightBottomCollectionView.snp.top).offset(-2)
         }
     }
-    
+
     func setNavigationBar() {
         // set Right Navigation Item.
         var config = UIButton.Configuration.plain()
@@ -325,7 +325,7 @@ private extension HomeViewController {
         addButton.addTarget(self, action: #selector(addBarButtonTap),
                             for: .touchUpInside)
         navigationItem.rightBarButtonItem = .init(customView: addButton)
-        
+
         // set Left Navigation Item.
         let logoButton = UIButton()
         logoButton.setTitle("반다라트", for: .normal)
