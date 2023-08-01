@@ -9,13 +9,14 @@
 import UIKit
 import Util
 
-enum SectionLayoutManagerType {
-  case home
-  case campsiteDetail
-  case touristInfoDetail
+public enum SectionLayoutManagerType {
+  case mainGoal
+  case subGoalAndTask
+//  case emoji
+//  case madalArtList
 }
 
-enum ItemType {
+public enum ItemType {
   case whole(ratio: CGFloat)
   case specific(size :NSCollectionLayoutSize)
   
@@ -36,12 +37,12 @@ enum ItemType {
   }
 }
 
-enum GroupFlow {
+public enum GroupFlow {
   case vertical
   case horizontal
 }
 
-enum GroupType {
+public enum GroupType {
   case whole(ratio: CGFloat)
   case specific(size :NSCollectionLayoutSize)
   
@@ -58,7 +59,7 @@ enum GroupType {
   }
 }
 
-protocol SectionLayoutManager {
+public protocol SectionLayoutManager {
   func createLayout() -> UICollectionViewCompositionalLayout
   func makeSection(
     itemType: ItemType,
@@ -70,19 +71,23 @@ protocol SectionLayoutManager {
   ) -> NSCollectionLayoutSection
 }
 
-protocol SectionLayoutManagerCreator {
+public protocol SectionLayoutManagerCreator {
   func createManager(type: SectionLayoutManagerType) -> SectionLayoutManager
 }
 
-class SectionLayoutManagerFactory: SectionLayoutManagerCreator {
-  func createManager(type: SectionLayoutManagerType) -> SectionLayoutManager {
+public final class SectionLayoutManagerFactory: SectionLayoutManagerCreator {
+  public static let shared = SectionLayoutManagerFactory()
+  
+  public func createManager(type: SectionLayoutManagerType) -> SectionLayoutManager {
     switch type {
-    case .home:
-      return HomeViewSectionLayoutManager()
-    case .campsiteDetail:
-      return DetailViewCampsiteSectionLayoutManager()
-    case .touristInfoDetail:
-      return DetailViewTouristInfoSectionLayoutManager()
+    case .mainGoal:
+      return MainGoalViewSectionLayoutManager()
+    case .subGoalAndTask:
+      return SubGoalAndTaskViewSectionLayoutManager()
+//    case .emoji:
+//      <#code#>
+//    case .madalArtList:
+//      <#code#>
     }
   }
 }

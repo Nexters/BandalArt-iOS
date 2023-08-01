@@ -6,4 +6,14 @@
 //  Copyright © 2023 Otani. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+public struct Size {
+  public static var screenW: CGFloat {
+    return UIScreen.main.bounds.width
+  }
+  
+  public static var screenH: CGFloat {
+    return UIScreen.main.bounds.height
+  }
+}

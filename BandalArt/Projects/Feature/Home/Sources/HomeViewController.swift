@@ -126,7 +126,7 @@ extension HomeViewController: UICollectionViewDelegate,
                                didSelectItemAt indexPath: IndexPath) {
         print(indexPath.item)
       let viewController = MainGoalViewController()
-      viewController.preferredSheetSizing = .medium
+      viewController.preferredSheetSizing = .fill
       self.present(viewController, animated: true)
     }
 }

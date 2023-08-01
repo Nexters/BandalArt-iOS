@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import Components
 
 final class MainGoalViewController: BottomSheetController {
   let mainGoalView = MainGoalView()
+  let sectionLayoutFactory = SectionLayoutManagerFactory.shared
   
   override func loadView() {
     super.loadView()
@@ -21,23 +23,37 @@ final class MainGoalViewController: BottomSheetController {
     mainGoalView.collectionView.delegate = self
     mainGoalView.collectionView.dataSource = self
     view.backgroundColor = .systemBackground
-    title = "메인목표 입력"
+    mainGoalView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
+      type: .mainGoal
+    ).createLayout()
   }
-  
-  
 }
 
 extension MainGoalViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+  func numberOfSections(in collectionView: UICollectionView) -> Int {
+    return 4
+  }
+  
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return 1
+    switch section {
+    case 1:
+      return 0
+    default:
+      return 1
+    }
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainGoalEmojiTitleCell.identifier, for: indexPath) as? MainGoalEmojiTitleCell else {
+    switch indexPath.section {
+    case 1:
       return UICollectionViewCell()
+    default:
+      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainGoalEmojiTitleCell.identifier, for: indexPath) as? MainGoalEmojiTitleCell else {
+        return UICollectionViewCell()
+      }
+      
+      return cell
     }
-    
-    return cell
   }
   
   
