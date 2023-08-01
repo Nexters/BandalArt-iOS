@@ -12,7 +12,7 @@ public struct Size {
   public static var screenW: CGFloat {
     return UIScreen.main.bounds.width
   }
-  
+
   public static var screenH: CGFloat {
     return UIScreen.main.bounds.height
   }
