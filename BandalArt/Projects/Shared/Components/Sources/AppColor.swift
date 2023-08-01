@@ -11,6 +11,7 @@ import Foundation
 enum AppColor: String {
 
     case mint
+    case sub
 
     case gray50
     case gray100

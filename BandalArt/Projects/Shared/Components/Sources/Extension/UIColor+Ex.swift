@@ -13,6 +13,9 @@ public extension UIColor {
     static var mint: UIColor {
         return UIColor(named: AppColor.mint.rawValue)!
     }
+    static var sub: UIColor {
+        return UIColor(named: AppColor.sub.rawValue)!
+    }
     static var gray50: UIColor {
         return UIColor(named: AppColor.gray50.rawValue)!
     }
