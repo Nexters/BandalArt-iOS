@@ -84,6 +84,7 @@ final class BandalArtCell: UICollectionViewCell {
         }
     }
 
+
     func configure(title: String?, mode: Mode, status: Status) {
         contentView.backgroundColor = mode.backGroundColor
         self.mode = mode
