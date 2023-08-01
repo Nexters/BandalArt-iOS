@@ -15,6 +15,6 @@ let project = Project.makeModule(
     dependencies: [
         .Project.Feature.SettingFeature,
         .Project.Feature.BottomSheetFeature,
-        .Project.Feature.CommonFeature,
+        .Project.Feature.CommonFeature
     ]
 )
