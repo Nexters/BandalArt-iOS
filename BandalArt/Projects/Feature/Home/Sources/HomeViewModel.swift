@@ -7,3 +7,38 @@
 //
 
 import Foundation
+import Combine
+
+protocol ViewModelType {
+    associatedtype Input
+    associatedtype Output
+
+    func transform(input: Input) -> Output
+}
+
+public final class HomeViewModel: ViewModelType {
+    
+    public init() { }
+    
+    struct Input {
+        let didViewLoad: AnyPublisher<Void, Never>
+        let didMoreButtonTap: AnyPublisher<Void, Never>
+        let didShareButtonTap: AnyPublisher<Void, Never>
+        let didAddBarButtonTap: AnyPublisher<Void, Never>
+        let didCategoryBarButtonTap: AnyPublisher<Void, Never>
+    }
+    
+    struct Output {
+        let presentBandalArtAddViewController: AnyPublisher<Void, Never>
+        let presentActivityViewController: AnyPublisher<Void, Never>
+    }
+    
+    func transform(input: Input) -> Output {
+
+        return Output(
+            presentBandalArtAddViewController: input.didViewLoad,
+            presentActivityViewController: input.didShareButtonTap
+            
+        )
+    }
+}

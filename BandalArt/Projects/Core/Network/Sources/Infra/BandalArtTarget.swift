@@ -26,12 +26,14 @@ enum BandalArtTarget {
 }
 
 extension BandalArtTarget: TargetType {
+    
   var baseURL: URL {
     guard let url = URL(string: APIConstant.environment.rawValue) else {
       fatalError("fatal error - invalid api url")
     }
     return url
   }
+    
   var path: String {
     switch self {
     case .getBandalArtList:
@@ -44,6 +46,7 @@ extension BandalArtTarget: TargetType {
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
     }
   }
+    
   var method: Moya.Method {
     switch self {
     case .getBandalArtList,
@@ -53,9 +56,11 @@ extension BandalArtTarget: TargetType {
       return .get
     }
   }
+    
   var sampleData: Data {
     return stubData(self)
   }
+    
   var task: Task {
     switch self {
     case .getBandalArtList,
@@ -75,13 +80,10 @@ extension BandalArtTarget: TargetType {
     return .customCodes([200])
   }
   var headers: [String: String]? {
-    guard let token = UserDefaults.standard.string(
-      forKey: UserDefaultKey.guestToken
-    ) else {
-      return [
-        "Content-Type": "application/json"
-      ]
-    }
+//    guard let token = UserDefaults.standard.string(forKey: UserDefaultKey.guestToken) else {
+//      return ["Content-Type": "application/json"]
+//    }
+    let token = "3sF4I" //게스트 등록 API 나오기까지 임시.
     return [
       "Content-Type": "application/json",
       "idtoken": token

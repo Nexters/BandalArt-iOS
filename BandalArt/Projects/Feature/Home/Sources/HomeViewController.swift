@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import CombineCocoa
+import Combine
+
 import BottomSheetFeature
 import Components
 import Util
@@ -13,15 +16,21 @@ import Util
 import SnapKit
 
 public final class HomeViewController: UIViewController {
-
-    public init() {
+    
+    private let viewModel: HomeViewModel
+    
+    public init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    private let addBarButton = UIBarButtonItem()
     // 반다라트 헤더
     private let emojiView = EmojiView()
     private let bandalartNameLabel = UILabel()
@@ -54,7 +63,8 @@ public final class HomeViewController: UIViewController {
         self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
-
+        self.bind()
+        
         // 임시 세팅
         centerLabel.text = "완벽한 2024년"
         centerLabel.textColor = .sub
@@ -63,21 +73,34 @@ public final class HomeViewController: UIViewController {
         emojiView.setEmoji(with: "😎")
         pencilAeccessaryImageView.isHidden = true
     }
-
-    @objc private func moreButtonTap() {
-        print("더보기")
-    }
-
-    @objc private func shareButtonTap() {
-        print("공유하기")
-    }
-
-    @objc private func addBarButtonTap() {
-        print("추가하기")
-    }
-
-    @objc private func logoBarButtonTap() {
-        print("반다라트")
+    
+    private func bind() {
+        let didLoadPublisher = PassthroughSubject<Void, Never>()
+        let input = HomeViewModel.Input(
+            didViewLoad: didLoadPublisher.eraseToAnyPublisher(),
+            didMoreButtonTap: moreButton.tapPublisher,
+            didShareButtonTap: shareButton.tapPublisher,
+            didAddBarButtonTap: addBarButton.tapPublisher,
+            didCategoryBarButtonTap: addBarButton.tapPublisher
+        )
+        let output = viewModel.transform(input: input)
+        output
+            .presentBandalArtAddViewController
+            .sink(receiveValue: { _ in
+                print("추카추카")
+            })
+            .store(in: &cancellables)
+        
+        output
+            .presentActivityViewController
+            .sink(receiveValue: { [weak self] _ in
+                let vc = UIActivityViewController(activityItems: [UIImage(systemName: "star")],
+                                                  applicationActivities: nil)
+                self?.present(vc, animated: true)
+            })
+            .store(in: &cancellables)
+        
+        didLoadPublisher.send(())
     }
 }
 
@@ -145,9 +168,7 @@ private extension HomeViewController {
 
         moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         moreButton.tintColor = .gray500
-        moreButton.addTarget(self, action: #selector(moreButtonTap),
-                             for: .touchUpInside)
-
+        
         progressDescriptionLabel.text = "달성률 (0%)"
         progressDescriptionLabel.textColor = .gray600
         progressDescriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
@@ -205,8 +226,6 @@ private extension HomeViewController {
         config.contentInsets = .init(top: 8, leading: 16,
                                      bottom: 8, trailing: 16)
         shareButton.configuration = config
-        shareButton.addTarget(self, action: #selector(shareButtonTap),
-                            for: .touchUpInside)
         shareButton.layer.cornerRadius = 12
         shareButton.backgroundColor = .gray100
         shareButton.layer.masksToBounds = true
@@ -322,17 +341,14 @@ private extension HomeViewController {
         config.image = UIImage(systemName: "plus")
         config.baseForegroundColor = .gray600
         let addButton = UIButton(configuration: config)
-        addButton.addTarget(self, action: #selector(addBarButtonTap),
-                            for: .touchUpInside)
-        navigationItem.rightBarButtonItem = .init(customView: addButton)
-
+        addBarButton.customView = addButton
+        navigationItem.rightBarButtonItem = addBarButton
+        
         // set Left Navigation Item.
         let logoButton = UIButton()
         logoButton.setTitle("반다라트", for: .normal)
         logoButton.setTitleColor(.gray900, for: .normal)
         logoButton.titleLabel?.font = .systemFont(ofSize: 28, weight: .regular)
-        logoButton.addTarget(self, action: #selector(logoBarButtonTap),
-                             for: .touchUpInside)
         navigationItem.leftBarButtonItem = .init(customView: logoButton)
     }
 
