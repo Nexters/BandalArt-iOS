@@ -8,8 +8,20 @@
 
 import UIKit
 import SnapKit
+import Components
+
+// TODO: update / create enum 구분
 
 final class MainGoalView: UIView {
+  lazy var titleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "메인목표 입력"
+    label.textAlignment = .center
+    label.font = .systemFont(ofSize: 16.0, weight: .bold)
+    label.textColor = .label
+    return label
+  }()
+  
   lazy var collectionView: UICollectionView = {
     let collection = UICollectionView(
       frame: .zero,
@@ -18,6 +30,23 @@ final class MainGoalView: UIView {
     collection.register(
       MainGoalEmojiTitleCell.self,
       forCellWithReuseIdentifier: MainGoalEmojiTitleCell.identifier
+    )
+    collection.register(
+      MainGoalThemeColorCell.self,
+      forCellWithReuseIdentifier: MainGoalThemeColorCell.identifier
+    )
+    collection.register(
+      MainGoalDueDateCell.self,
+      forCellWithReuseIdentifier: MainGoalDueDateCell.identifier
+    )
+    collection.register(
+      MainGoalMemoCell.self,
+      forCellWithReuseIdentifier: MainGoalMemoCell.identifier
+    )
+    collection.register(
+      BottomSheetSectionHeader.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: BottomSheetSectionHeader.identifier
     )
     return collection
   }()
@@ -55,22 +84,38 @@ final class MainGoalView: UIView {
   }
   
   private func setupView() {
-    [containerView].forEach {
+    [titleLabel, collectionView, completionButton].forEach {
       addSubview($0)
     }
     
   }
   
   private func setupConstraints() {
-    containerView.snp.makeConstraints {
-      $0.top.bottom.equalTo(self.safeAreaLayoutGuide)
-      $0.leading.equalToSuperview().offset(16.0)
-      $0.trailing.equalToSuperview().offset(-16.0)
+    titleLabel.snp.makeConstraints {
+      $0.top.equalTo(safeAreaLayoutGuide)
+      $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
+      $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
+      $0.bottom.equalTo(collectionView.snp.top).offset(-16.0)
+    }
+    
+//    containerView.snp.makeConstraints {
+//      $0.top.bottom.equalTo(self.safeAreaLayoutGuide)
+//      $0.leading.equalToSuperview().offset(16.0)
+//      $0.trailing.equalToSuperview().offset(-16.0)
+//    }
+//
+    collectionView.snp.makeConstraints {
+      $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
+      $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
+      $0.bottom.equalTo(completionButton.snp.top).offset(-16.0)
+      $0.height.greaterThanOrEqualTo(364.0)
     }
     
     completionButton.snp.makeConstraints {
       $0.height.equalTo(56.0)
-      $0.width.equalToSuperview()
+      $0.leading.equalTo(safeAreaInsets).offset(16.0)
+      $0.trailing.equalTo(safeAreaInsets).offset(-16.0)
+      $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16.0)
     }
   }
 }

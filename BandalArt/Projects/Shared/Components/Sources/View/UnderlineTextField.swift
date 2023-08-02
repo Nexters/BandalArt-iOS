@@ -12,6 +12,7 @@ import SnapKit
 public final class UnderlineTextField: UITextField {
   public lazy var placeholderColor: UIColor = self.tintColor
   public lazy var placeholderString: String = ""
+  public lazy var padding = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
   
   private lazy var underlineView: UIView = {
     let lineView = UIView()
@@ -46,6 +47,18 @@ public final class UnderlineTextField: UITextField {
     setPlaceholder()
   }
   
+  public override func textRect(forBounds bounds: CGRect) -> CGRect {
+    return bounds.inset(by: padding)
+  }
+  
+  public override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+    return bounds.inset(by: padding)
+  }
+  
+  public override func editingRect(forBounds bounds: CGRect) -> CGRect {
+    return bounds.inset(by: padding)
+  }
+  
   func setPlaceholder() {
     self.attributedPlaceholder = NSAttributedString(
       string: placeholderString,
@@ -70,10 +83,16 @@ extension UnderlineTextField {
   @objc func editingDidBegin() {
     setPlaceholder()
     underlineView.backgroundColor = self.tintColor
+    underlineView.snp.updateConstraints {
+      $0.height.equalTo(2.0)
+    }
   }
   
   @objc func editingDidEnd() {
     underlineView.backgroundColor = placeholderColor
+    underlineView.snp.updateConstraints {
+      $0.height.equalTo(1.0)
+    }
   }
 }
 
