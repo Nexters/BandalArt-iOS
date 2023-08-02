@@ -253,8 +253,8 @@ private extension HomeViewController {
         bandalartNameLabel.snp.makeConstraints { make in
             make.top.equalTo(emojiView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().offset(20)
-            make.leading.equalToSuperview().offset(-44)
+            make.leading.equalToSuperview().offset(44)
+            make.trailing.equalToSuperview().offset(-44)
         }
         moreButton.snp.makeConstraints { make in
             make.centerY.equalTo(bandalartNameLabel)
