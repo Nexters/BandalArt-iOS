@@ -18,13 +18,13 @@ struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
           itemType: .specific(
             size: .init(
               widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 6)
+              heightDimension: .estimated(Size.screenH / 8)
             )
           ),
           groupType: .specific(
             size: .init(
               widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 6)
+              heightDimension: .estimated(Size.screenH / 8)
             )
           ),
           sectionInset: .init(

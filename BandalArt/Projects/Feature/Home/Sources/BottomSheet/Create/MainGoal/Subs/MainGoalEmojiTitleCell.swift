@@ -27,11 +27,7 @@ final class MainGoalEmojiTitleCell: UICollectionViewCell {
     return stackView
   }()
   
-  lazy var emojiView = EmojiView(
-    fontSize: 30.0,
-    cornerRadius: 16.0,
-    showShadow: true
-  )
+  lazy var emojiView = EmojiView()
   
   lazy var textFieldContainer: UIView = {
     let view = UIView()
@@ -82,7 +78,8 @@ final class MainGoalEmojiTitleCell: UICollectionViewCell {
     }
   }
   
-  private func setupData() {
-    
+  public func setupData(item: MainGoalEmojiTitleItem) {
+    emojiView.setEmoji(with: item.emoji)
+    underlineTextField.text = item.title
   }
 }

@@ -23,14 +23,14 @@ struct MainGoalViewSectionLayoutManager: SectionLayoutManager {
           ),
           groupType: .specific(
             size: .init(
-              widthDimension: .fractionalWidth(0.2),
+              widthDimension: .estimated(52.0),
               heightDimension: .estimated(52.0)
             )
           ),
           sectionInset: .init(
-            top: 12.0, leading: 4.0, bottom: 12.0, trailing: 4.0
+            top: 4.0, leading: 0.0, bottom: 4.0, trailing: 0.0
           ),
-          interGroupSpacing: 13.0,
+          interGroupSpacing: 4.0,
           orthogonal: .continuous
         )
       default:
@@ -48,7 +48,7 @@ struct MainGoalViewSectionLayoutManager: SectionLayoutManager {
             )
           ),
           sectionInset: .init(
-            top: 12.0, leading: 4.0, bottom: 12.0, trailing: 4.0
+            top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0
           )
         )
       }

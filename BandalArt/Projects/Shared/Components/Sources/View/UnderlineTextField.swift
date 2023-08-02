@@ -13,7 +13,6 @@ public final class UnderlineTextField: UITextField {
   public lazy var placeholderColor: UIColor = self.tintColor
   public lazy var placeholderString: String = ""
   public lazy var padding = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-
   private lazy var underlineView: UIView = {
     let lineView = UIView()
     lineView.backgroundColor = .gray300
