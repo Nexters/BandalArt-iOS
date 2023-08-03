@@ -8,6 +8,7 @@
 
 import UIKit
 import Util
+import Components
 
 struct MainGoalViewSectionLayoutManager: SectionLayoutManager {
   func createLayout() -> UICollectionViewCompositionalLayout {

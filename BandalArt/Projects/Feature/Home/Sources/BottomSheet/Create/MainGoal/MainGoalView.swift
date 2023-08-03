@@ -43,11 +43,11 @@ final class MainGoalView: UIView {
       MainGoalMemoCell.self,
       forCellWithReuseIdentifier: MainGoalMemoCell.identifier
     )
-    collection.register(
-      BottomSheetSectionHeader.self,
-      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: BottomSheetSectionHeader.identifier
-    )
+//    collection.register(
+//      BottomSheetSectionHeader.self,
+//      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+//      withReuseIdentifier: BottomSheetSectionHeader.identifier
+//    )
     return collection
   }()
   
