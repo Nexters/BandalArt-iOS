@@ -66,10 +66,7 @@ final class MainGoalEmojiTitleCell: UICollectionViewCell {
   
   private func setupConstraints() {
     containerView.snp.makeConstraints {
-      $0.top.equalTo(contentView).offset(4.0)
-      $0.leading.equalTo(contentView).offset(4.0)
-      $0.trailing.equalTo(contentView).offset(-4.0)
-      $0.bottom.equalTo(contentView).offset(-4.0)
+      $0.edges.equalTo(contentView).inset(4.0)
       $0.height.greaterThanOrEqualTo(52.0)
     }
 

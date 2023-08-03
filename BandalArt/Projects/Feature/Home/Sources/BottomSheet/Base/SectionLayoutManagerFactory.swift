@@ -46,7 +46,7 @@ public enum GroupType {
   case whole(ratio: CGFloat)
   case specific(size :NSCollectionLayoutSize)
   
-  var groupSize: NSCollectionLayoutSize {
+  public var groupSize: NSCollectionLayoutSize {
     switch self {
     case .whole(let ratio):
       return NSCollectionLayoutSize(

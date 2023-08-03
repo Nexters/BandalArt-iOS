@@ -14,46 +14,31 @@ import SnapKit
 
 open class BaseViewController: UIViewController {
   private let activityIndicator = UIActivityIndicatorView(style: .medium)
-  
-  public let bounds = UIScreen.main.bounds
   open var cancellables: Set<AnyCancellable> = []
   
-  open override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
+  open override func viewDidLoad() {
+    super.viewDidLoad()
     bind()
+    setupAttribute()
+    setupView()
+    setupConstraints()
   }
   
   public init() {
     super.init(nibName: nil, bundle: nil)
-    setupAttribute()
-    setupView()
-    setupConstraints()
-    configureVC()
-    configureNavigation()
-    configureIndicator()
   }
   
   deinit{
     print("\(type(of: self)): \(#function)")
   }
   
-  @available(*, unavailable)
   required public init?(coder: NSCoder) {
-    super.init(coder: coder)
-    setupAttribute()
-    setupView()
-    setupConstraints()
-    configureVC()
-    configureNavigation()
-    configureIndicator()
+    fatalError("init(coder:) has not been implemented")
   }
   
   open func setupAttribute() {}
   open func setupView() {}
-  open func setupConstraints() {}
-  open func configureVC() {}
-  open func configureNavigation() {}
-  private func configureIndicator() {
+  open func setupConstraints() {
     view.addSubview(activityIndicator)
     activityIndicator.snp.makeConstraints {
       $0.center.equalToSuperview()
@@ -62,6 +47,7 @@ open class BaseViewController: UIViewController {
   }
   
   open func bind() {}
+  
   open func startIndicator() {
     activityIndicator.startAnimating()
   }
