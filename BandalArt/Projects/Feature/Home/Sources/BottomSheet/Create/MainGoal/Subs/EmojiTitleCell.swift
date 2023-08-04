@@ -9,8 +9,8 @@
 import UIKit
 import Components
 
-final class MainGoalEmojiTitleCell: UICollectionViewCell {
-  static let identifier = "MainGoalEmojiTitleCell"
+final class EmojiTitleCell: UICollectionViewCell {
+  static let identifier = "EmojiTitleCell"
   
   lazy var containerView: UIStackView = {
     let stackView = UIStackView()

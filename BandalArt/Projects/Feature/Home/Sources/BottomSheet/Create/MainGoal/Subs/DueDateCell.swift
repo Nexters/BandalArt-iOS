@@ -10,8 +10,8 @@ import UIKit
 import SnapKit
 import Components
 
-final class MainGoalDueDateCell: UICollectionViewCell {
-  static let identifier = "MainGoalDueDateCell"
+final class DueDateCell: UICollectionViewCell {
+  static let identifier = "DueDateCell"
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
@@ -23,7 +23,7 @@ final class MainGoalDueDateCell: UICollectionViewCell {
   
   lazy var datePickerButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "chevron"), for: .normal)
+    button.setImage(UIImage(named: "chevron.right"), for: .normal)
     return button
   }()
   
