@@ -39,7 +39,7 @@ public final class CircleView: UIView {
       clockwise: true
     )
     
-    context.setLineWidth(1.5)
+    context.setLineWidth(2.0)
     strokeColor.setStroke()
     circlePath.stroke()
   }
@@ -66,7 +66,7 @@ public final class FilledCircleView: UIView {
     
     let centerX = rect.size.width / 2
     let centerY = rect.size.height / 2
-    let radius: CGFloat = 18
+    let radius: CGFloat = 17
     
     let circlePath = UIBezierPath(
       arcCenter: CGPoint(x: centerX, y: centerY),

@@ -10,8 +10,8 @@ import UIKit
 import SnapKit
 import Components
 
-final class MainGoalMemoCell: UICollectionViewCell {
-  static let identifier = "MainGoalMemoCell"
+final class MemoCell: UICollectionViewCell {
+  static let identifier = "MemoCell"
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()

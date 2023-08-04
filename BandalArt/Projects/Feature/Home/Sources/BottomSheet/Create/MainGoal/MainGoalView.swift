@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 import Components
 
-// TODO: update / create enum 구분
-
 final class MainGoalView: UIView {
+  let mode: Mode
+  
   lazy var titleLabel: UILabel = {
     let label = UILabel()
     label.text = "메인목표 입력"
@@ -21,39 +21,35 @@ final class MainGoalView: UIView {
     label.textColor = .label
     return label
   }()
-  
+
   lazy var collectionView: UICollectionView = {
     let collection = UICollectionView(
       frame: .zero,
       collectionViewLayout: UICollectionViewFlowLayout()
     )
     collection.register(
-      MainGoalEmojiTitleCell.self,
-      forCellWithReuseIdentifier: MainGoalEmojiTitleCell.identifier
+      EmojiTitleCell.self,
+      forCellWithReuseIdentifier: EmojiTitleCell.identifier
     )
     collection.register(
-      MainGoalThemeColorCell.self,
-      forCellWithReuseIdentifier: MainGoalThemeColorCell.identifier
+      ThemeColorCell.self,
+      forCellWithReuseIdentifier: ThemeColorCell.identifier
     )
     collection.register(
-      MainGoalDueDateCell.self,
-      forCellWithReuseIdentifier: MainGoalDueDateCell.identifier
+      DueDateCell.self,
+      forCellWithReuseIdentifier: DueDateCell.identifier
     )
     collection.register(
-      MainGoalMemoCell.self,
-      forCellWithReuseIdentifier: MainGoalMemoCell.identifier
+      MemoCell.self,
+      forCellWithReuseIdentifier: MemoCell.identifier
     )
-//    collection.register(
-//      BottomSheetSectionHeader.self,
-//      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-//      withReuseIdentifier: BottomSheetSectionHeader.identifier
-//    )
+
     return collection
   }()
-  
-  lazy var completionButton: UIButton = {
+
+  lazy var deleteButton: UIButton = {
     let button = UIButton()
-    button.setTitle("완료", for: .normal)
+    button.setTitle("삭제", for: .normal)
     button.setTitleColor(.gray400, for: .normal)
     button.backgroundColor = .gray200
     button.layer.cornerRadius = 28
@@ -61,35 +57,58 @@ final class MainGoalView: UIView {
     return button
   }()
   
-  lazy var containerView: UIStackView = {
+  lazy var completionButton: UIButton = {
+    let button = UIButton()
+    button.setTitle("완료", for: .normal)
+    button.setTitleColor(.gray400, for: .disabled)
+    button.setBackgroundImage(UIImage(color: .gray200), for: .disabled)
+    button.setTitleColor(.white, for: .normal)
+    button.setBackgroundImage(UIImage(color: .gray900), for: .normal)
+    button.layer.cornerRadius = 28
+    button.clipsToBounds = true
+    button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+    button.isEnabled = false
+    return button
+  }()
+  
+  lazy var ButtonContainerView: UIStackView = {
     let stackView = UIStackView()
-    stackView.axis = .vertical
-    stackView.addArrangedSubview(collectionView)
+    stackView.axis = .horizontal
+    stackView.addArrangedSubview(deleteButton)
     stackView.addArrangedSubview(completionButton)
-    stackView.alignment = .fill
-    stackView.distribution = .fill
+    stackView.alignment = .center
+    stackView.distribution = .fillEqually
     stackView.spacing = 8.0
     stackView.contentMode = .scaleToFill
     return stackView
   }()
-  
-  override init(frame: CGRect) {
+
+  init(mode: Mode, frame: CGRect) {
+    self.mode = mode
     super.init(frame: frame)
     setupView()
     setupConstraints()
   }
-  
+
   required init?(coder: NSCoder) {
     fatalError("MainView fatal error")
   }
-  
+
   private func setupView() {
-    [titleLabel, collectionView, completionButton].forEach {
+    [titleLabel, collectionView, ButtonContainerView].forEach {
       addSubview($0)
+      
+      switch mode {
+      case .create:
+        titleLabel.text = "메인목표 입력"
+        deleteButton.isHidden = true
+      case .update:
+        titleLabel.text = "메인목표 수정"
+        deleteButton.isHidden = false
+      }
     }
-    
   }
-  
+
   private func setupConstraints() {
     titleLabel.snp.makeConstraints {
       $0.top.equalTo(safeAreaLayoutGuide)
@@ -97,25 +116,27 @@ final class MainGoalView: UIView {
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
       $0.bottom.equalTo(collectionView.snp.top).offset(-16.0)
     }
-    
-//    containerView.snp.makeConstraints {
-//      $0.top.bottom.equalTo(self.safeAreaLayoutGuide)
-//      $0.leading.equalToSuperview().offset(16.0)
-//      $0.trailing.equalToSuperview().offset(-16.0)
-//    }
-//
+
     collectionView.snp.makeConstraints {
       $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
       $0.bottom.equalTo(completionButton.snp.top).offset(-16.0)
       $0.height.greaterThanOrEqualTo(364.0)
     }
-    
-    completionButton.snp.makeConstraints {
+
+    ButtonContainerView.snp.makeConstraints {
       $0.height.equalTo(56.0)
       $0.leading.equalTo(safeAreaInsets).offset(16.0)
       $0.trailing.equalTo(safeAreaInsets).offset(-16.0)
       $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16.0)
+    }
+    
+    deleteButton.snp.makeConstraints {
+      $0.height.equalTo(56.0)
+    }
+    
+    completionButton.snp.makeConstraints {
+      $0.height.equalTo(56.0)
     }
   }
 }
