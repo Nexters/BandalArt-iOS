@@ -69,7 +69,7 @@ final class SubGoalAndTaskView: UIView {
     return button
   }()
   
-  lazy var ButtonContainerView: UIStackView = {
+  lazy var buttonContainerView: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .horizontal
     stackView.addArrangedSubview(deleteButton)
@@ -94,7 +94,7 @@ final class SubGoalAndTaskView: UIView {
   }
   
   private func setupView() {
-    [titleLabel, collectionView, ButtonContainerView].forEach {
+    [titleLabel, collectionView, buttonContainerView].forEach {
       addSubview($0)
       
       switch mode {
@@ -123,7 +123,7 @@ final class SubGoalAndTaskView: UIView {
       $0.height.greaterThanOrEqualTo(364.0)
     }
 
-    ButtonContainerView.snp.makeConstraints {
+    buttonContainerView.snp.makeConstraints {
       $0.height.equalTo(56.0)
       $0.leading.equalTo(safeAreaInsets).offset(16.0)
       $0.trailing.equalTo(safeAreaInsets).offset(-16.0)

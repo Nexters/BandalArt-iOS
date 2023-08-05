@@ -50,7 +50,7 @@ enum MainGoalSection: Int, CaseIterable {
   }
 }
 
-final class MainGoalViewController: BottomSheetController {
+public final class MainGoalViewController: BottomSheetController {
   static let sectionHeaderElementKind = "section-header-element-kind"
 
   let mainGoalView: MainGoalView
@@ -58,7 +58,7 @@ final class MainGoalViewController: BottomSheetController {
   
   var dataSource: UICollectionViewDiffableDataSource<MainGoalSection, UUID>!
   
-  init(mode: Mode) {
+  public init(mode: Mode) {
     self.mainGoalView = MainGoalView(mode: mode, frame: .zero)
     super.init(nibName: nil, bundle: nil)
   }
@@ -67,18 +67,18 @@ final class MainGoalViewController: BottomSheetController {
     fatalError("init(coder:) has not been implemented")
   }
   
-  override func loadView() {
+  public override func loadView() {
     super.loadView()
     view = mainGoalView
   }
 
-  override func viewDidLoad() {
+  public override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
     setupCollectionView()
   }
 
-  override func viewDidLayoutSubviews() {
+  public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     adjustCollectionViewHeight()
   }
@@ -194,7 +194,7 @@ final class MainGoalViewController: BottomSheetController {
 }
 
 extension MainGoalViewController: UICollectionViewDelegate {
-  func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+  public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
     switch indexPath.section {
     case 1:
       return true
