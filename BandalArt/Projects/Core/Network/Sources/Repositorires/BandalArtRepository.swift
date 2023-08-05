@@ -15,4 +15,9 @@ final class BandalArtRepository: BandalArtRepositoryInterface {
   init() { provider = MoyaProvider<BandalArtTarget>() }
 }
 
-extension BandalArtRepository {}
+extension BandalArtRepository {
+
+    func getBandalArtDetail() {
+        //self.provider.
+    }
+}
