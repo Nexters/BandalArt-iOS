@@ -9,24 +9,24 @@
 import UIKit
 import Components
 
-struct MainGoalEmojiTitleItem: Hashable {
+struct EmojiTitleItem: Hashable {
   var identifier: UUID
   var emoji: Character
   var title: String
 }
 
-struct MainGoalThemeColorItem: Hashable {
+struct ThemeColorItem: Hashable {
   var identifier: UUID
   var color: UIColor
   var selected: Bool
 }
 
-struct MainGoalDueDateItem: Hashable {
+struct DueDateItem: Hashable {
   var identifier: UUID
   var date: Date
 }
 
-struct MainGoalMemoItem: Hashable {
+struct MemoItem: Hashable {
   var identifier: UUID
   var memo: String
 }
@@ -112,7 +112,7 @@ final class MainGoalViewController: BottomSheetController {
             ) as? EmojiTitleCell else {
               return UICollectionViewCell()
             }
-            guard let item = item as? MainGoalEmojiTitleItem else {
+            guard let item = item as? EmojiTitleItem else {
               return UICollectionViewCell()
             }
             cell.setupData(item: item)
@@ -124,7 +124,7 @@ final class MainGoalViewController: BottomSheetController {
             ) as? ThemeColorCell else {
               return UICollectionViewCell()
             }
-            guard let item = item as? MainGoalThemeColorItem else {
+            guard let item = item as? ThemeColorItem else {
               return UICollectionViewCell()
             }
             cell.setupData(item: item)
@@ -153,17 +153,17 @@ final class MainGoalViewController: BottomSheetController {
 
     var snapshot = NSDiffableDataSourceSnapshot<MainGoalSection, AnyHashable>()
 
-    let emojiTitleItem = MainGoalEmojiTitleItem(identifier: UUID(), emoji: "😎", title: "")
+    let emojiTitleItem = EmojiTitleItem(identifier: UUID(), emoji: "😎", title: "")
     snapshot.appendSections([.emojiTitle])
     snapshot.appendItems([emojiTitleItem], toSection: .emojiTitle)
 
     var themeColorItems = [
-      MainGoalThemeColorItem(identifier: UUID(), color: .mint, selected: false),
-      MainGoalThemeColorItem(identifier: UUID(), color: .purpleblue, selected: false),
-      MainGoalThemeColorItem(identifier: UUID(), color: .sky, selected: false),
-      MainGoalThemeColorItem(identifier: UUID(), color: .grass, selected: false),
-      MainGoalThemeColorItem(identifier: UUID(), color: .lemon, selected: false),
-      MainGoalThemeColorItem(identifier: UUID(), color: .yellowred, selected: false)
+      ThemeColorItem(identifier: UUID(), color: .mint, selected: false),
+      ThemeColorItem(identifier: UUID(), color: .purpleblue, selected: false),
+      ThemeColorItem(identifier: UUID(), color: .sky, selected: false),
+      ThemeColorItem(identifier: UUID(), color: .grass, selected: false),
+      ThemeColorItem(identifier: UUID(), color: .lemon, selected: false),
+      ThemeColorItem(identifier: UUID(), color: .yellowred, selected: false)
     ]
   
     if let selectedIndex = themeColorItems.firstIndex(where: { $0.color == .mint }) {
@@ -174,11 +174,11 @@ final class MainGoalViewController: BottomSheetController {
     snapshot.appendSections([.themeColor])
     snapshot.appendItems(themeColorItems, toSection: .themeColor)
 
-    let dueDateItem = MainGoalDueDateItem(identifier: UUID(), date: Date())
+    let dueDateItem = DueDateItem(identifier: UUID(), date: Date())
     snapshot.appendSections([.dueDate])
     snapshot.appendItems([dueDateItem], toSection: .dueDate)
     
-    let memoItem = MainGoalMemoItem(identifier: UUID(), memo: "")
+    let memoItem = MemoItem(identifier: UUID(), memo: "")
     snapshot.appendSections([.memo])
     snapshot.appendItems([memoItem], toSection: .memo)
 
@@ -211,14 +211,14 @@ extension MainGoalViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     switch indexPath.section {
     case 1:
-      guard let selectedItem = dataSource.itemIdentifier(for: indexPath) as? MainGoalThemeColorItem else {
+      guard let selectedItem = dataSource.itemIdentifier(for: indexPath) as? ThemeColorItem else {
         return
       }
       let snapshot = dataSource.snapshot()
       let currentThemeColorItems = snapshot.itemIdentifiers(inSection: .themeColor)
       
       for themeColorItem in currentThemeColorItems {
-        guard var item = themeColorItem as? MainGoalThemeColorItem else {
+        guard var item = themeColorItem as? ThemeColorItem else {
           continue
         }
         item.selected = (item.identifier == selectedItem.identifier)

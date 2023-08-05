@@ -1,5 +1,5 @@
 //
-//  SwitchControl.swift
+//  DefaultSwitch.swift
 //  Components
 //
 //  Created by Sang hun Lee on 2023/08/05.
@@ -8,6 +8,6 @@
 
 import UIKit
 
-final class SwitchControl: UIControl {
+final class DefaultSwitch: UISwitch {
   
 }

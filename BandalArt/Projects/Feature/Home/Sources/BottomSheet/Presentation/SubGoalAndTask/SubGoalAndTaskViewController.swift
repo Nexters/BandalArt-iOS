@@ -6,4 +6,8 @@
 //  Copyright © 2023 Otani. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+final class SubGoalAndTaskViewController: UIViewController {
+  
+}
