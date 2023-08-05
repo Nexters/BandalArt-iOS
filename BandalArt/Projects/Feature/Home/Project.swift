@@ -13,7 +13,6 @@ let project = Project.makeModule(
     name: "HomeFeature",
     product: .staticFramework,
     dependencies: [
-        .Project.Feature.SettingFeature,
         .Project.Feature.BottomSheetFeature,
         .Project.Feature.CommonFeature
     ]

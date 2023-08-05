@@ -21,7 +21,6 @@ public extension TargetDependency.Project.Feature {
     static let CommonFeature = TargetDependency.feature(target: "CommonFeature", path: "Common")
     static let HomeFeature = TargetDependency.feature(target: "HomeFeature", path: "Home")
     static let BottomSheetFeature = TargetDependency.feature(target: "BottomSheetFeature", path: "BottomSheet")
-    static let SettingFeature = TargetDependency.feature(target: "SettingFeature", path: "Setting")
     static let OnBoardingFeature = TargetDependency.feature(target: "OnBoardingFeature", path: "OnBoarding")
 }
 
