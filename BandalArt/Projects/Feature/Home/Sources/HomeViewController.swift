@@ -94,7 +94,7 @@ public final class HomeViewController: UIViewController {
         output
             .presentActivityViewController
             .sink(receiveValue: { [weak self] _ in
-                let vc = UIActivityViewController(activityItems: [UIImage(systemName: "star")],
+                let vc = UIActivityViewController(activityItems: ["링크주데오"],
                                                   applicationActivities: nil)
                 self?.present(vc, animated: true)
             })
