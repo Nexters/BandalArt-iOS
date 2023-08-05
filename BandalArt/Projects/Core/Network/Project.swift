@@ -17,6 +17,7 @@ let project = Project.makeModule(
         .Project.Domain.Interface,
         .Project.Domain.Entity,
         .Project.Shared.Util,
-        .external(name: "Moya")
+        .external(name: "Moya"),
+        .external(name: "CombineMoya")
     ]
 )

@@ -14,6 +14,7 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .Project.Shared.Util,
-        .external(name: "Moya")
+        .external(name: "Moya"),
+        .external(name: "CombineMoya")
     ]
 )
