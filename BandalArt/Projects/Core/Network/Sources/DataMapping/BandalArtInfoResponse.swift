@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct BandalArtInfoResponse: Decodable {
+struct BandalArtDetailResponse: Decodable {
     let key: String
     let mainColor: String
     let subColor: String
