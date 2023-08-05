@@ -7,7 +7,6 @@
 
 import UIKit
 
-import MainFeature
 import HomeFeature
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -23,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
 
         let vc = HomeViewController()
-        let nav = MainNavigationController(rootViewController: vc)
+        let nav = UINavigationController(rootViewController: vc)
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
     }

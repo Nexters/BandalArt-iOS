@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  ProjectDescriptionHelpers
+//  Config
 //
-//  Created by Sang hun Lee on 2023/07/19.
+//  Created by Youngmin Kim on 2023/08/01.
 //
 
 import Foundation
@@ -10,10 +10,10 @@ import ProjectDescription
 import UtilPlugin
 
 let project = Project.makeModule(
-    name: "Components",
+    name: "Interface",
     product: .staticFramework,
     dependencies: [
-        .Project.Shared.Util
-    ],
-    resources: []
+        .Project.Shared.Util,
+        .external(name: "Moya")
+    ]
 )

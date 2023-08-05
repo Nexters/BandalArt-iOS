@@ -13,9 +13,7 @@ let project = Project.makeModule(
     name: "HomeFeature",
     product: .staticFramework,
     dependencies: [
-        .project(
-          target: "CommonFeature",
-          path: .relativeToRoot("Projects/Feature/Common")
-        )
+        .Project.Feature.BottomSheetFeature,
+        .Project.Feature.CommonFeature
     ]
 )

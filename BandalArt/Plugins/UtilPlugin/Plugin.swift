@@ -1,4 +1,4 @@
 
 import ProjectDescription
 
-let utilPlugin = Plugin(name: "UtilPlugin")
+public let utilPlugin = Plugin(name: "UtilPlugin")

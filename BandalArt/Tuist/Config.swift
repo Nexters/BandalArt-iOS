@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let config = Config(
-  plugins: [
-    .local(path: .relativeToRoot("Plugins/UtilPlugin"))
-  ]
+    plugins: [
+        .local(path: .relativeToRoot("Plugins/UtilPlugin"))
+    ]
 )
