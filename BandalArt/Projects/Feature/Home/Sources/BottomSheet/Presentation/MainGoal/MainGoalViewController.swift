@@ -9,25 +9,24 @@
 import UIKit
 import Components
 
-struct EmojiTitleItem: Hashable {
-  var identifier: UUID
+struct EmojiTitleItem: Identifiable {
+  var id: UUID
   var emoji: Character
   var title: String
 }
 
-struct ThemeColorItem: Hashable {
-  var identifier: UUID
+struct ThemeColorItem: Identifiable {
+  var id: UUID
   var color: UIColor
-  var selected: Bool
 }
 
-struct DueDateItem: Hashable {
-  var identifier: UUID
+struct DueDateItem: Identifiable {
+  var id: UUID
   var date: Date
 }
 
-struct MemoItem: Hashable {
-  var identifier: UUID
+struct MemoItem: Identifiable {
+  var id: UUID
   var memo: String
 }
 
@@ -56,8 +55,8 @@ final class MainGoalViewController: BottomSheetController {
 
   let mainGoalView: MainGoalView
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
-  var dataSource: UICollectionViewDiffableDataSource<MainGoalSection, AnyHashable>!
-  var selectedColor: UIColor = .mint
+  
+  var dataSource: UICollectionViewDiffableDataSource<MainGoalSection, UUID>!
   
   init(mode: Mode) {
     self.mainGoalView = MainGoalView(mode: mode, frame: .zero)
@@ -85,6 +84,8 @@ final class MainGoalViewController: BottomSheetController {
   }
 
   func adjustCollectionViewHeight() {
+    // TODO: 방어로직 구성, 사이징 변경 시 재구성 필요 
+    guard mainGoalView.collectionView.contentSize.height != 0 else { return }
     let contentHeight = mainGoalView.collectionView.contentSize.height
     mainGoalView.collectionView.snp.updateConstraints {
       $0.height.greaterThanOrEqualTo(contentHeight)
@@ -101,86 +102,73 @@ final class MainGoalViewController: BottomSheetController {
   }
 
   func setupDataSource() {
-    dataSource = UICollectionViewDiffableDataSource<MainGoalSection, AnyHashable>(
+    let emojiTitleCellRegistration = UICollectionView.CellRegistration<EmojiTitleCell, EmojiTitleItem> { cell, indexPath, item in
+      cell.setupData(item: item)
+    }
+    let themeColorCellRegistration = UICollectionView.CellRegistration<ThemeColorCell, ThemeColorItem> { cell, indexPath, item in
+      cell.setupData(item: item)
+    }
+    let dueDateCellRegistration = UICollectionView.CellRegistration<DueDateCell, DueDateItem> { cell, indexPath, item in
+      cell.setupData(item: item)
+    }
+    let memoCellRegistration = UICollectionView.CellRegistration<MemoCell, MemoItem> { cell, indexPath, item in
+      cell.setupData(item: item)
+    }
+    
+    let emojiTitleItem = [EmojiTitleItem(id: UUID(), emoji: "😎", title: "")]
+    let themeColorItem = [
+      ThemeColorItem(id: UUID(), color: .mint),
+      ThemeColorItem(id: UUID(), color: .purpleblue),
+      ThemeColorItem(id: UUID(), color: .sky),
+      ThemeColorItem(id: UUID(), color: .grass),
+      ThemeColorItem(id: UUID(), color: .lemon),
+      ThemeColorItem(id: UUID(), color: .yellowred)
+    ]
+    let dueDateItem = [DueDateItem(id: UUID(), date: Date())]
+    let memoItem = [MemoItem(id: UUID(), memo: "")]
+    
+    dataSource = UICollectionViewDiffableDataSource<MainGoalSection, UUID>(
           collectionView: mainGoalView.collectionView
-        ) { (collectionView, indexPath, item) -> UICollectionViewCell? in
+        ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
           switch indexPath.section {
           case 0:
-            guard let cell = collectionView.dequeueReusableCell(
-              withReuseIdentifier: EmojiTitleCell.identifier,
-              for: indexPath
-            ) as? EmojiTitleCell else {
-              return UICollectionViewCell()
-            }
-            guard let item = item as? EmojiTitleItem else {
-              return UICollectionViewCell()
-            }
-            cell.setupData(item: item)
-            return cell
+            let item = emojiTitleItem.first(where: { $0.id == identifier })
+            return collectionView.dequeueConfiguredReusableCell(
+              using: emojiTitleCellRegistration,
+              for: indexPath, item: item)
           case 1:
-            guard let cell = collectionView.dequeueReusableCell(
-              withReuseIdentifier: ThemeColorCell.identifier,
-              for: indexPath
-            ) as? ThemeColorCell else {
-              return UICollectionViewCell()
-            }
-            guard let item = item as? ThemeColorItem else {
-              return UICollectionViewCell()
-            }
-            cell.setupData(item: item)
-            cell.updateSelectedState(isSelected: item.selected)
-            return cell
+            let item = themeColorItem.first(where: { $0.id == identifier })
+            return collectionView.dequeueConfiguredReusableCell(
+              using: themeColorCellRegistration,
+              for: indexPath, item: item)
           case 2:
-            guard let cell = collectionView.dequeueReusableCell(
-              withReuseIdentifier: DueDateCell.identifier,
-              for: indexPath
-            ) as? DueDateCell else {
-              return UICollectionViewCell()
-            }
-            return cell
+            let item = dueDateItem.first(where: { $0.id == identifier })
+            return collectionView.dequeueConfiguredReusableCell(
+              using: dueDateCellRegistration,
+              for: indexPath, item: item)
           case 3:
-            guard let cell = collectionView.dequeueReusableCell(
-              withReuseIdentifier: MemoCell.identifier,
-              for: indexPath
-            ) as? MemoCell else {
-              return UICollectionViewCell()
-            }
-            return cell
+            let item = memoItem.first(where: { $0.id == identifier })
+            return collectionView.dequeueConfiguredReusableCell(
+              using: memoCellRegistration,
+              for: indexPath, item: item)
           default:
             return UICollectionViewCell()
           }
         }
 
-    var snapshot = NSDiffableDataSourceSnapshot<MainGoalSection, AnyHashable>()
-
-    let emojiTitleItem = EmojiTitleItem(identifier: UUID(), emoji: "😎", title: "")
+    var snapshot = NSDiffableDataSourceSnapshot<MainGoalSection, UUID>()
+    
     snapshot.appendSections([.emojiTitle])
-    snapshot.appendItems([emojiTitleItem], toSection: .emojiTitle)
+    snapshot.appendItems(emojiTitleItem.map{ $0.id }, toSection: .emojiTitle)
 
-    var themeColorItems = [
-      ThemeColorItem(identifier: UUID(), color: .mint, selected: false),
-      ThemeColorItem(identifier: UUID(), color: .purpleblue, selected: false),
-      ThemeColorItem(identifier: UUID(), color: .sky, selected: false),
-      ThemeColorItem(identifier: UUID(), color: .grass, selected: false),
-      ThemeColorItem(identifier: UUID(), color: .lemon, selected: false),
-      ThemeColorItem(identifier: UUID(), color: .yellowred, selected: false)
-    ]
-  
-    if let selectedIndex = themeColorItems.firstIndex(where: { $0.color == .mint }) {
-      themeColorItems[selectedIndex].selected = true
-      selectedColor = .mint
-    }
-    
     snapshot.appendSections([.themeColor])
-    snapshot.appendItems(themeColorItems, toSection: .themeColor)
+    snapshot.appendItems(themeColorItem.map{ $0.id }, toSection: .themeColor)
 
-    let dueDateItem = DueDateItem(identifier: UUID(), date: Date())
     snapshot.appendSections([.dueDate])
-    snapshot.appendItems([dueDateItem], toSection: .dueDate)
+    snapshot.appendItems(dueDateItem.map{ $0.id }, toSection: .dueDate)
     
-    let memoItem = MemoItem(identifier: UUID(), memo: "")
     snapshot.appendSections([.memo])
-    snapshot.appendItems([memoItem], toSection: .memo)
+    snapshot.appendItems(memoItem.map{ $0.id }, toSection: .memo)
 
     let headerRegistration = UICollectionView.SupplementaryRegistration
     <BottomSheetSectionHeader>(elementKind: UICollectionView.elementKindSectionHeader) {
@@ -197,42 +185,15 @@ final class MainGoalViewController: BottomSheetController {
     dataSource.apply(snapshot, animatingDifferences: false)
 
     mainGoalView.collectionView.dataSource = dataSource
-    if let selectedIndex = themeColorItems.firstIndex(where: { $0.color == .mint }) {
-      mainGoalView.collectionView.selectItem(
-        at: IndexPath(item: selectedIndex, section: 1),
-        animated: true,
-        scrollPosition: .top
-      )
-    }
+    mainGoalView.collectionView.selectItem(
+      at: IndexPath(item: 0, section: 1),
+      animated: true,
+      scrollPosition: .top
+    )
   }
 }
 
 extension MainGoalViewController: UICollectionViewDelegate {
-  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    switch indexPath.section {
-    case 1:
-      guard let selectedItem = dataSource.itemIdentifier(for: indexPath) as? ThemeColorItem else {
-        return
-      }
-      let snapshot = dataSource.snapshot()
-      let currentThemeColorItems = snapshot.itemIdentifiers(inSection: .themeColor)
-      
-      for themeColorItem in currentThemeColorItems {
-        guard var item = themeColorItem as? ThemeColorItem else {
-          continue
-        }
-        item.selected = (item.identifier == selectedItem.identifier)
-        if item.selected {
-          selectedColor = item.color
-        }
-      }
-      
-      dataSource.apply(snapshot, animatingDifferences: true)
-    default:
-      break
-    }
-  }
-  
   func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
     switch indexPath.section {
     case 1:

@@ -7,7 +7,6 @@
 
 import UIKit
 import BottomSheetFeature
-import SettingFeature
 import Components
 import Util
 

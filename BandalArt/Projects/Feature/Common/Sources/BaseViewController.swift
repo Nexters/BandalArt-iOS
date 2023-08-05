@@ -18,10 +18,10 @@ open class BaseViewController: UIViewController {
   
   open override func viewDidLoad() {
     super.viewDidLoad()
-    bind()
     setupAttribute()
     setupView()
     setupConstraints()
+    bind()
   }
   
   public init() {

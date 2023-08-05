@@ -11,10 +11,14 @@ import SnapKit
 import Components
 
 final class SubGoalAndTaskView: UIView {
+  enum BandalArtCellType {
+    case subGoal
+    case task
+  }
+  
   let mode: Mode
-  
-  let type:
-  
+  let bandalArtCellType: BandalArtCellType
+   
   lazy var titleLabel: UILabel = {
     let label = UILabel()
     label.text = "메인목표 입력"
@@ -77,8 +81,9 @@ final class SubGoalAndTaskView: UIView {
     return stackView
   }()
   
-  init(mode: Mode, frame: CGRect) {
+  init(mode: Mode, bandalArtCellType: BandalArtCellType, frame: CGRect) {
     self.mode = mode
+    self.bandalArtCellType = bandalArtCellType
     super.init(frame: frame)
     setupView()
     setupConstraints()

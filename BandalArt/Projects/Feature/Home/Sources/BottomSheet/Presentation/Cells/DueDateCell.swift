@@ -58,6 +58,6 @@ final class DueDateCell: UICollectionViewCell {
   }
   
   func setupData(item: DueDateItem) {
-    
+    // TODO: 임시로 String 기반이지만 Date 다루는 로직으로 구성 필요
   }
 }

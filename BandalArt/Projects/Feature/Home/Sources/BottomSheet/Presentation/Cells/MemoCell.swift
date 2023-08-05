@@ -46,6 +46,6 @@ final class MemoCell: UICollectionViewCell {
   }
   
   func setupData(item: MemoItem) {
-    
+    underlineTextField.text = item.memo
   }
 }
