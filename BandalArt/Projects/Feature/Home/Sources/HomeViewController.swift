@@ -146,7 +146,6 @@ extension HomeViewController: UICollectionViewDelegate,
 
     public func collectionView(_ collectionView: UICollectionView,
                                didSelectItemAt indexPath: IndexPath) {
-      print(indexPath.item)
       let viewController = MainGoalViewController(mode: .create)
       viewController.preferredSheetSizing = .fit
       self.present(viewController, animated: true)

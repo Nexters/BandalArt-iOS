@@ -26,7 +26,7 @@ extension BandalArtNetworkError {
 
     var errorDescription: String {
         switch self {
-        case .inValidTokenError: return "401:INVALID_FCM_TOKEN_ERROR"
+        case .inValidTokenError: return "401:INVALID_TOKEN_ERROR"
         case .inValidURLORKey: return "404:INVALID_URL_OR_KEY_ERROR"
         case .internalServerError: return "500:INTERNAL_SERVER_ERROR"
         case .internalClientError: return "501:INTERNAL_CLIENT_ERROR"

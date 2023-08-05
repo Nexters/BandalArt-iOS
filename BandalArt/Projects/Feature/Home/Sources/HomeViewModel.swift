@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import UseCase
+import Network
+
 import Combine
 
 protocol ViewModelType {
@@ -18,7 +21,15 @@ protocol ViewModelType {
 
 public final class HomeViewModel: ViewModelType {
     
-    public init() { }
+    private let useCase: BandalArtUseCase
+    
+    public init(
+        useCase: BandalArtUseCase = BandalArtUseCaseImpl(
+            repository: BandalArtRepositoryImpl()
+        )
+    ) {
+        self.useCase = useCase
+    }
     
     struct Input {
         let didViewLoad: AnyPublisher<Void, Never>

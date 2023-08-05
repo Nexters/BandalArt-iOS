@@ -14,13 +14,13 @@ import Combine
 import CombineMoya
 import Moya
 
-final class BandalArtRepositoryImpl: BandalArtRepository {
+public final class BandalArtRepositoryImpl: BandalArtRepository {
     
   private let provider: MoyaProvider<BandalArtTarget>
-  init() { provider = MoyaProvider<BandalArtTarget>() }
+  public init() { provider = MoyaProvider<BandalArtTarget>() }
 }
 
-extension BandalArtRepositoryImpl {
+public extension BandalArtRepositoryImpl {
 
     // 반다라트 상세 조회 API
     func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError> {
