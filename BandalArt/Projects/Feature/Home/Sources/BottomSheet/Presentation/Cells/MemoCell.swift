@@ -45,7 +45,7 @@ final class MemoCell: UICollectionViewCell {
     }
   }
   
-  func setupData(item: MainGoalMemoItem) {
+  func setupData(item: MemoItem) {
     
   }
 }

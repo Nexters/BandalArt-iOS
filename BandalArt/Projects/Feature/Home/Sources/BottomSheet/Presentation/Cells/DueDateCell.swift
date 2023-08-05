@@ -57,7 +57,7 @@ final class DueDateCell: UICollectionViewCell {
     }
   }
   
-  func setupData(item: MainGoalDueDateItem) {
+  func setupData(item: DueDateItem) {
     
   }
 }

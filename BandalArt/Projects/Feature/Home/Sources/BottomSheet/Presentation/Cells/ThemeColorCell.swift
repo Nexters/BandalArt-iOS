@@ -68,7 +68,7 @@ final class ThemeColorCell: UICollectionViewCell {
     }
   }
 
-  func setupData(item: MainGoalThemeColorItem) {
+  func setupData(item: ThemeColorItem) {
     circleStrokeView.setStrokeColor(color: item.color)
     circleView.setFillColor(color: item.color)
   }

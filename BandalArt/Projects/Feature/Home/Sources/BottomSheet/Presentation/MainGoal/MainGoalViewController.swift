@@ -76,12 +76,7 @@ final class MainGoalViewController: BottomSheetController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
-    mainGoalView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
-      type: .mainGoal
-    ).createLayout()
-    setupDataSource()
-    mainGoalView.collectionView.delegate = self
-    mainGoalView.collectionView.allowsMultipleSelection = false
+    setupCollectionView()
   }
 
   override func viewDidLayoutSubviews() {
@@ -94,6 +89,15 @@ final class MainGoalViewController: BottomSheetController {
     mainGoalView.collectionView.snp.updateConstraints {
       $0.height.greaterThanOrEqualTo(contentHeight)
     }
+  }
+  
+  func setupCollectionView() {
+    mainGoalView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
+      type: .mainGoal
+    ).createLayout()
+    setupDataSource()
+    mainGoalView.collectionView.delegate = self
+    mainGoalView.collectionView.allowsMultipleSelection = false
   }
 
   func setupDataSource() {
