@@ -2,8 +2,8 @@
 🌛 반다라트 iOS 레포 (이름아직미정)
 
 
-<img height="250" src="https://github.com/Nexters/BandalArt-iOS/assets/42762236/2b186f53-4de2-4485-85f7-29f8db331f58"></img>
-> 로고 미정
+<img height="250" src="https://github.com/Nexters/BandalArt-iOS/assets/42762236/d327793a-c41f-43b4-a959-5486ce4ed9fb"></img>
+> 로고 
 
 <br/>
 
