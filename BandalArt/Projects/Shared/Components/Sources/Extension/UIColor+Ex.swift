@@ -13,8 +13,26 @@ public extension UIColor {
     static var mint: UIColor {
         return UIColor(named: AppColor.mint.rawValue)!
     }
+    static var grass: UIColor {
+      return UIColor(named: AppColor.grass.rawValue)!
+    }
+    static var lemon: UIColor {
+      return UIColor(named: AppColor.lemon.rawValue)!
+    }
+    static var yellowred: UIColor {
+      return UIColor(named: AppColor.yellowred.rawValue)!
+    }
+    static var purpleblue: UIColor {
+      return UIColor(named: AppColor.purpleblue.rawValue)!
+    }
+    static var sky: UIColor {
+      return UIColor(named: AppColor.sky.rawValue)!
+    }
     static var sub: UIColor {
         return UIColor(named: AppColor.sub.rawValue)!
+    }
+    static var purpleblue_sub: UIColor {
+      return UIColor(named: AppColor.purpleblue_sub.rawValue)!
     }
     static var gray50: UIColor {
         return UIColor(named: AppColor.gray50.rawValue)!
