@@ -13,11 +13,11 @@ import UIKit
 /// The `BottomSheetController` installs its own `UIViewControllerTransitioningDelegate`
 /// and forces `UIModalPresentationStyle` to `UIModalPresentationStyle.custom`.
 /// Present it as you would present any other `UIViewController`, using `UIViewController.present(_:)`.
-class BottomSheetController: UIViewController {
+public class BottomSheetController: UIViewController {
   /// Enum that specify how the sheet should size it self based on its content.
   /// The sheet sizing act as a loose anchor on how big the sheet should be, and the sheet will always respect its content's constraints.
   /// However, the sheet will never extend beyond the top safe area (plus any stretch offset).
-  enum PreferredSheetSizing: CGFloat {
+  public enum PreferredSheetSizing: CGFloat {
     /// The sheet will try to size it self so that it only just fits its content.
     case fit = 0
     /// The sheet will try to size it self so that it fills 1/4 of available space.
@@ -37,7 +37,7 @@ class BottomSheetController: UIViewController {
     preferredSheetBackdropColor: preferredSheetBackdropColor
   )
   
-  override var additionalSafeAreaInsets: UIEdgeInsets {
+  public override var additionalSafeAreaInsets: UIEdgeInsets {
     get {
       .init(
         top: super.additionalSafeAreaInsets.top + preferredSheetCornerRadius,
@@ -51,14 +51,14 @@ class BottomSheetController: UIViewController {
     }
   }
   
-  override var modalPresentationStyle: UIModalPresentationStyle {
+  public override var modalPresentationStyle: UIModalPresentationStyle {
     get {
       .custom
     }
     set { }
   }
   
-  override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+  public override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
     get {
       bottomSheetTransitioningDelegate
     }
@@ -83,7 +83,7 @@ class BottomSheetController: UIViewController {
   
   /// Preferred sheet sizing. See `PreferredSheetSizing` for all available options.
   /// Defaults to `PreferredSheetSizing.medium`.
-  var preferredSheetSizing: PreferredSheetSizing = .medium {
+  public var preferredSheetSizing: PreferredSheetSizing = .medium {
     didSet {
       bottomSheetTransitioningDelegate.preferredSheetSizingFactor = preferredSheetSizing.rawValue
     }
