@@ -7,32 +7,50 @@
 //
 
 import Foundation
+import Interface
+import Entity
+
 import Combine
 import CombineMoya
 import Moya
 
-final class BandalArtRepositoryImpl: BandalArtRepositoryInterface {
+final class BandalArtRepositoryImpl: BandalArtRepository {
+    
   private let provider: MoyaProvider<BandalArtTarget>
   init() { provider = MoyaProvider<BandalArtTarget>() }
 }
 
 extension BandalArtRepositoryImpl {
 
-    /// 반다라트 상세 조회 API
-    /// - Parameters:
-    ///   - key: 반다라트의 Unique Key.
-    /// - Returns: `AnyPublisher<BandalArtDetailResponse, MoyaError>`
-    func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtDetailResponseDTO, MoyaError> {
+    // 반다라트 상세 조회 API
+    func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError> {
         return self.provider.requestPublisher(.getBandalArtDetail(bandalArtKey: key))
-            .map(BandalArtDetailResponseDTO.self)
+            .mapToDomain(BandalArtDetailResponseDTO.self)
+            .map { $0.toDomain }
+            .eraseToAnyPublisher()
     }
     
-    /// 메인셀, 하위셀 모두 조회 API
-    /// - Parameters:
-    ///   - key: 반다라트의 Unique Key.
-    /// - Returns: `AnyPublisher<BandalArtCellInfoResponse, MoyaError>`
-    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfoResponseDTO, MoyaError> {
+    // 메인셀, 하위셀 모두 조회 API
+    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCell, BandalArtNetworkError> {
         return self.provider.requestPublisher(.getMainCell(bandalArtKey: key))
-            .map(BandalArtCellInfoResponseDTO.self)
+            .mapToDomain(BandalArtCellInfoResponseDTO.self)
+            .map { $0.toDomain }
+            .eraseToAnyPublisher()
+    }
+}
+
+// MoyaError를 사용하지 않고 BandarArt API 서비스 자체의
+// Domain Error를 사용하려고 만든 Extension.
+fileprivate extension AnyPublisher<Response, MoyaError> {
+    
+    func mapToDomain<D: Decodable>(_ type: D.Type, atKeyPath keyPath: String? = nil,
+                           using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, BandalArtNetworkError> {
+        return self.tryMap { response in
+            return try response.map(type, atKeyPath: keyPath, using: decoder, failsOnEmptyData: failsOnEmptyData)
+        }.mapError { error in
+            guard let mError = error as? MoyaError else { return BandalArtNetworkError.unknown }
+            return BandalArtNetworkError(rawValue: mError.response?.statusCode ?? -1) ?? .unknown
+        }
+        .eraseToAnyPublisher()
     }
 }

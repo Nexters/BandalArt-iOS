@@ -9,6 +9,7 @@
 import Foundation
 
 public struct BandalArtInfo {
+    
     let title: String
     let key: String
     let mainCellKey: String
