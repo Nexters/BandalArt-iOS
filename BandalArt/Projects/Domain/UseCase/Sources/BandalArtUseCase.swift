@@ -17,6 +17,9 @@ public protocol BandalArtUseCase {
     var bandalArtAllCellSubject: PassthroughSubject<BandalArtCellInfo, Never> { get }
     var errorSubject: PassthroughSubject<Void, Never> { get }
     
+    /// 반다라트 조회 API : 상세 조회 API + 메인 셀 조회 API (순서 상관 없음)
+    /// - Parameters:
+    ///   - key: 반다라트의 Unique Key.
     func fetchBandalArt(key: String)
 }
 
