@@ -24,14 +24,14 @@ struct BandalArtCellInfoResponseDTO: Decodable {
 
 extension BandalArtCellInfoResponseDTO {
     
-    var toDomain: BandalArtCell {
+    var toDomain: BandalArtCellInfo {
         return .init(key: key,
                      parentKey: parentKey,
                      title: title,
                      description: description,
                      dueDate: Date(),
                      isCompleted: isCompleted,
-                     completionRatio: 0.3,
+                     completionRatio: Float(completionRatio) / 100,
                      children: children.map { $0.toDomain }
         )
     }

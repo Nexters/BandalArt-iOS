@@ -1,5 +1,5 @@
 //
-//  BandarArtCell.swift
+//  BandalArtCellInfo.swift
 //  Entity
 //
 //  Created by Youngmin Kim on 2023/08/06.
@@ -8,20 +8,20 @@
 
 import Foundation
 
-public struct BandalArtCell {
+public struct BandalArtCellInfo {
     
-    let key: String
-    let parentKey: String?
-    let title: String?
-    let description: String?
-    let dueDate: Date?
-    let isCompleted: Bool
-    let completionRatio: Double
-    let children: [BandalArtCell]
+    public let key: String
+    public let parentKey: String?
+    public let title: String?
+    public let description: String?
+    public let dueDate: Date?
+    public let isCompleted: Bool
+    public let completionRatio: Float
+    public let children: [BandalArtCellInfo]
     
     public init(key: String, parentKey: String?, title: String?,
                 description: String?, dueDate: Date?, isCompleted: Bool,
-                completionRatio: Double, children: [BandalArtCell]) {
+                completionRatio: Float, children: [BandalArtCellInfo]) {
         self.key = key
         self.parentKey = parentKey
         self.title = title

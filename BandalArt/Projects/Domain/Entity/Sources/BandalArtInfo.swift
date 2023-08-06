@@ -10,15 +10,15 @@ import Foundation
 
 public struct BandalArtInfo {
     
-    let title: String
-    let key: String
-    let mainCellKey: String
-    let mainColorHexString: String
-    let subColorHexString: String
-    let profileEmojiText: String
-    let dueDate: Date?
-    let isCompleted: Bool
-    let shareKey: URL?
+    public let title: String
+    public let key: String
+    public let mainCellKey: String
+    public let mainColorHexString: String
+    public let subColorHexString: String
+    public let profileEmojiText: String
+    public let dueDate: Date?
+    public let isCompleted: Bool
+    public let shareKey: URL?
     
     public init(title: String, key: String, mainCellKey: String,
                 mainColorHexString: String, subColorHexString: String,

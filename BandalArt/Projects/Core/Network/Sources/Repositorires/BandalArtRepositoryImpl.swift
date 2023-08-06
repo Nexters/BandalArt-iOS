@@ -31,7 +31,7 @@ public extension BandalArtRepositoryImpl {
     }
     
     // 메인셀, 하위셀 모두 조회 API
-    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCell, BandalArtNetworkError> {
+    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError> {
         return self.provider.requestPublisher(.getMainCell(bandalArtKey: key))
             .mapToDomain(BandalArtCellInfoResponseDTO.self)
             .map { $0.toDomain }

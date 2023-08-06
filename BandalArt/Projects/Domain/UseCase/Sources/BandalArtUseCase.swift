@@ -8,45 +8,47 @@
 
 import Foundation
 import Interface
+import Entity
 
 import Combine
 
 public protocol BandalArtUseCase {
+    var bandalArtInfoSubject: PassthroughSubject<BandalArtInfo, Never> { get }
+    var bandalArtAllCellSubject: PassthroughSubject<BandalArtCellInfo, Never> { get }
+    var errorSubject: PassthroughSubject<Void, Never> { get }
     
+    func fetchBandalArt(key: String)
 }
 
 public class BandalArtUseCaseImpl: BandalArtUseCase {
     
+    // Private
     private let repository: BandalArtRepository
-    
     private var cancellables = Set<AnyCancellable>()
+    
+    // Public (뷰모델에서 바인딩에 사용)
+    public let bandalArtInfoSubject = PassthroughSubject<BandalArtInfo, Never>()
+    public let bandalArtAllCellSubject = PassthroughSubject<BandalArtCellInfo, Never>()
+    public let errorSubject = PassthroughSubject<Void, Never>()
     
     public init(repository: BandalArtRepository) {
         self.repository = repository
     }
     
-    func fetchBandalArtInfo(key: String) {
+    public func fetchBandalArt(key: String) {
         self.repository.getBandalArtDetail(key: key)
-            .sink(receiveCompletion: { completion in
+            .zip(self.repository.getBandalArtCellList(key: key))
+            .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
-                case let .failure(error): break
-                case .finished: break
+                case let .failure(error): // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
+                    self?.errorSubject.send(())
+                    print(error)
+                    
+                case .finished: return
                 }
-            }, receiveValue: { response in
-                
-            })
-            .store(in: &cancellables)
-    }
-    
-    func fetchBandalArtCellList(key: String) {
-        self.repository.getBandalArtCellList(key: key)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case let .failure(error): break
-                case .finished: break
-                }
-            }, receiveValue: { response in
-                
+            }, receiveValue: { [weak self] info, cell in
+                self?.bandalArtInfoSubject.send(info)
+                self?.bandalArtAllCellSubject.send(cell)
             })
             .store(in: &cancellables)
     }

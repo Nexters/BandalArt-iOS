@@ -8,6 +8,7 @@
 
 import Foundation
 import Entity
+
 import Combine
 
 // MARK: - BandalArt API Error.
@@ -47,6 +48,6 @@ public protocol BandalArtRepository {
     /// 메인셀, 하위셀 모두 조회 API
     /// - Parameters:
     ///   - key: 반다라트의 Unique Key.
-    /// - Returns: `AnyPublisher<BandalArtCell, BandalArtNetworkError>`
-    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCell, BandalArtNetworkError>
+    /// - Returns: `AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>`
+    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>
 }

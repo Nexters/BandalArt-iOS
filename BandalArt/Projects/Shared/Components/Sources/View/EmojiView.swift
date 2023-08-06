@@ -50,21 +50,29 @@ public final class EmojiView: UIView {
         layer.shadowOffset = CGSize(width: 0, height: 1)
     }
     
-    public func setEmoji(with: Character) {
-        guard with.isEmoji else {
+    public func setEmoji(with: Character?) {
+        guard let char = with else {
+            emojiLabel.removeFromSuperview()
+            addSubview(placeHolderImageView)
+            placeHolderImageView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            return
+        }
+        guard char.isEmoji else {
             assertionFailure("이모지만 넣을 수 있습니다")
             return
         }
         placeHolderImageView.removeFromSuperview()
         guard !subviews.contains(emojiLabel) else {
-            emojiLabel.text = String(with)
+            emojiLabel.text = String(char)
             return
         }
         addSubview(emojiLabel)
         emojiLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        emojiLabel.text = String(with)
+        emojiLabel.text = String(char)
     }
 }
 

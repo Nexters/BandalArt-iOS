@@ -118,11 +118,11 @@ public final class MainGoalViewController: BottomSheetController {
     let emojiTitleItem = [EmojiTitleItem(id: UUID(), emoji: "😎", title: "")]
     let themeColorItem = [
       ThemeColorItem(id: UUID(), color: .mint),
-      ThemeColorItem(id: UUID(), color: .purpleblue),
+      ThemeColorItem(id: UUID(), color: .grape),
       ThemeColorItem(id: UUID(), color: .sky),
       ThemeColorItem(id: UUID(), color: .grass),
       ThemeColorItem(id: UUID(), color: .lemon),
-      ThemeColorItem(id: UUID(), color: .yellowred)
+      ThemeColorItem(id: UUID(), color: .mandarin)
     ]
     let dueDateItem = [DueDateItem(id: UUID(), date: Date())]
     let memoItem = [MemoItem(id: UUID(), memo: "")]
