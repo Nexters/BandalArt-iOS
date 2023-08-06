@@ -8,16 +8,21 @@
 
 import Foundation
 
-enum AppColor: String {
+enum AppColorCase: String, CaseIterable {
 
+    // Theme
     case mint
     case grass
     case lemon
-    case yellowred
-    case purpleblue
-    case purpleblue_sub
+    case mandarin
+    case grape
     case sky
-    case sub
+    
+    // Sub
+    case lightGrape
+    case darkNavy 
+    
+    // Gray
     case gray50
     case gray100
     case gray200

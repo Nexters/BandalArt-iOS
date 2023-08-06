@@ -27,7 +27,7 @@ final class BandalArtCell: UICollectionViewCell {
         var backGroundColor: UIColor {
             switch self {
             case .task: return .systemBackground
-            case .subGoal: return .sub
+            case .subGoal: return .subThemeColor
             }
         }
         
@@ -41,7 +41,7 @@ final class BandalArtCell: UICollectionViewCell {
         var textColor: UIColor {
             switch self {
             case .task: return .gray900
-            case .subGoal: return .mint
+            case .subGoal: return .themeColor
             }
         }
     }
@@ -120,6 +120,7 @@ final class BandalArtCell: UICollectionViewCell {
         completionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        completionView.setCheckImageHidden(mode == .subGoal)
     }
 }
 
@@ -148,6 +149,10 @@ final class BandalartCompletionView: UIView {
             make.bottom.trailing.equalToSuperview().offset(-4)
             make.width.height.equalTo(20)
         }
+    }
+    
+    func setCheckImageHidden(_ isHidden: Bool) {
+        checkImageView.isHidden = isHidden
     }
 }
 

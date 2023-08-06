@@ -50,21 +50,35 @@ public final class EmojiView: UIView {
         layer.shadowOffset = CGSize(width: 0, height: 1)
     }
     
-    public func setEmoji(with: Character) {
-        guard with.isEmoji else {
+    
+    /// 이모지 세팅 메소드.
+    /// - Parameters:
+    ///   - with: 이모지 하나 Character값. nil이면 기본 PlaceHolder 노출. 이모지만 가능..!
+    public func setEmoji(with: Character?) {
+        // nil이 들어올 경우 PlaceHolder 세팅 및 리턴
+        guard let char = with else {
+            emojiLabel.removeFromSuperview()
+            addSubview(placeHolderImageView)
+            placeHolderImageView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            return
+        }
+        // 이모지가 아닐 경우. 디버그 에러 및 리턴.
+        guard char.isEmoji else {
             assertionFailure("이모지만 넣을 수 있습니다")
             return
         }
         placeHolderImageView.removeFromSuperview()
         guard !subviews.contains(emojiLabel) else {
-            emojiLabel.text = String(with)
+            emojiLabel.text = String(char)
             return
         }
         addSubview(emojiLabel)
         emojiLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        emojiLabel.text = String(with)
+        emojiLabel.text = String(char)
     }
 }
 
