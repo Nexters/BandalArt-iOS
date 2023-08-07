@@ -19,17 +19,17 @@ struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
           itemType: .specific(
             size: .init(
               widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 8)
+              heightDimension: .estimated(52.0)
             )
           ),
           groupType: .specific(
             size: .init(
               widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 8)
+              heightDimension: .estimated(52.0)
             )
           ),
           sectionInset: .init(
-            top: 12.0, leading: 4.0, bottom: 12.0, trailing: 4.0
+            top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0
           )
         )
       }

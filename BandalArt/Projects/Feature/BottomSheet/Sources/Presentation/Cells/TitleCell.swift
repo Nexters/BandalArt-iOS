@@ -1,8 +1,8 @@
 //
-//  MainGoalMemoCell.swift
-//  HomeFeature
+//  TitleCell.swift
+//  BottomSheetFeature
 //
-//  Created by Sang hun Lee on 2023/08/02.
+//  Created by Sang hun Lee on 2023/08/06.
 //  Copyright © 2023 Otani. All rights reserved.
 //
 
@@ -10,14 +10,14 @@ import UIKit
 import SnapKit
 import Components
 
-final class MemoCell: UICollectionViewCell {
-  static let identifier = "MemoCell"
+final class TitleCell: UICollectionViewCell {
+  static let identifier = "TitleCell"
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
     underlineTextField.tintColor = .gray400
-    underlineTextField.placeholder = "메모를 입력해주세요"
-    underlineTextField.placeholderString = "메모를 입력해주세요"
+    underlineTextField.placeholder = "15자 이내로 입력해주세요"
+    underlineTextField.placeholderString = "15자 이내로 입력해주세요"
     return underlineTextField
   }()
   
@@ -46,7 +46,7 @@ final class MemoCell: UICollectionViewCell {
     }
   }
   
-  func setupData(item: MemoItem) {
-    underlineTextField.text = item.memo
+  func setupData(item: TitleItem) {
+    underlineTextField.text = item.title
   }
 }

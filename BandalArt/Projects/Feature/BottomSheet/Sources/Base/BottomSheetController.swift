@@ -107,7 +107,7 @@ public class BottomSheetController: UIViewController {
   
   /// Boolean to specify if it should be possible to dismiss the sheet by dragging it down.
   /// Defaults to true.
-  var panToDismissEnabled: Bool = true {
+  public var panToDismissEnabled: Bool = true {
     didSet {
       bottomSheetTransitioningDelegate.panToDismissEnabled = panToDismissEnabled
     }

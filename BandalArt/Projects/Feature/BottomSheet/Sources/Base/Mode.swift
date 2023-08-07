@@ -12,3 +12,9 @@ public enum Mode: Equatable {
   case create
   case update
 }
+
+public enum BandalArtCellType: Equatable {
+  case main
+  case subGoal
+  case task
+}
