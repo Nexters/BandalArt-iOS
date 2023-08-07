@@ -81,9 +81,9 @@ public final class SectionLayoutManagerFactory: SectionLayoutManagerCreator {
   public func createManager(type: SectionLayoutManagerType) -> SectionLayoutManager {
     switch type {
     case .mainGoal:
-      return MainGoalViewSectionLayoutManager()
+      return MainGoalSectionLayoutManager()
     case .subGoalAndTask:
-      return SubGoalAndTaskViewSectionLayoutManager()
+      return SubGoalAndTaskSectionLayoutManager()
 //    case .emoji:
 //      <#code#>
 //    case .madalArtList:

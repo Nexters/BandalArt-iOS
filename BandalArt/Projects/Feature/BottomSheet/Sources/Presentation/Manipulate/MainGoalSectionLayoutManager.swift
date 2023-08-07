@@ -1,5 +1,5 @@
 //
-//  SubGoalAndTaskViewSectionLayoutManager.swift
+//  MainGoalViewSectionLayoutManager.swift
 //  Components
 //
 //  Created by Sang hun Lee on 2023/08/01.
@@ -10,10 +10,30 @@ import UIKit
 import Util
 import Components
 
-struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
+struct MainGoalSectionLayoutManager: SectionLayoutManager {
   func createLayout() -> UICollectionViewCompositionalLayout {
     return UICollectionViewCompositionalLayout{ (sectionNumber, env) -> NSCollectionLayoutSection? in
       switch sectionNumber {
+      case 1:
+        return makeSection(
+          itemType: .specific(
+            size: .init(
+              widthDimension: .fractionalWidth(1.0),
+              heightDimension: .fractionalHeight(1.0)
+            )
+          ),
+          groupType: .specific(
+            size: .init(
+              widthDimension: .estimated(52.0),
+              heightDimension: .estimated(52.0)
+            )
+          ),
+          sectionInset: .init(
+            top: 4.0, leading: 0.0, bottom: 4.0, trailing: 0.0
+          ),
+          interGroupSpacing: 4.0,
+          orthogonal: .continuous
+        )
       default:
         return makeSection(
           itemType: .specific(
@@ -71,4 +91,5 @@ struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
     }
     return section
   }
+
 }

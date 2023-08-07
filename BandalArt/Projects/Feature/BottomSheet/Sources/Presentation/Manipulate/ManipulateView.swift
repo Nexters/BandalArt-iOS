@@ -1,5 +1,5 @@
 //
-//  MainGoalView.swift
+//  ManipulateView.swift
 //  HomeFeature
 //
 //  Created by Sang hun Lee on 2023/07/31.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Components
 
-final class MainGoalView: UIView {
+final class ManipulateView: UIView {
   let mode: Mode
   let bandalArtCellType: BandalArtCellType
   

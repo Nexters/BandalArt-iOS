@@ -17,10 +17,12 @@ protocol EmojiSelectorDelegate: AnyObject {
   func emojiViewTapped(in cell: EmojiTitleCell)
 }
 
-public final class MainGoalViewController: BottomSheetController {
+public final class ManipulateViewController: BottomSheetController {
   let mode: Mode
   let bandalArtCellType: BandalArtCellType
-  let mainGoalView: MainGoalView
+  
+  let mainGoalView: ManipulateView
+  let viewModel: ManipulateViewModel
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
   
   var mainDataSource: UICollectionViewDiffableDataSource<MainGoalSection, UUID>!
@@ -28,14 +30,19 @@ public final class MainGoalViewController: BottomSheetController {
   var taskUpdateDataSource: UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>!
 
   
-  public init(mode: Mode, bandalArtCellType: BandalArtCellType) {
-    self.mainGoalView = MainGoalView(
+  public init(
+    mode: Mode,
+    bandalArtCellType: BandalArtCellType,
+    viewModel: ManipulateViewModel
+  ) {
+    self.mainGoalView = ManipulateView(
       mode: mode,
       bandalArtCellType: bandalArtCellType,
       frame: .zero
     )
     self.mode = mode
     self.bandalArtCellType = bandalArtCellType
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -61,7 +68,7 @@ public final class MainGoalViewController: BottomSheetController {
 
   func adjustCollectionViewHeight() {
     // TODO: 방어로직 구성, 사이징 변경 시 재구성 필요 
-    // guard mainGoalView.collectionView.contentSize.height != 0 else { return }
+    guard mainGoalView.collectionView.contentSize.height != 0 else { return }
     let contentHeight = mainGoalView.collectionView.contentSize.height
     mainGoalView.collectionView.snp.updateConstraints {
       $0.height.greaterThanOrEqualTo(contentHeight)
@@ -359,7 +366,7 @@ public final class MainGoalViewController: BottomSheetController {
   }
 }
 
-extension MainGoalViewController: UICollectionViewDelegate, DatePickerCallDelegate, EmojiSelectorDelegate {
+extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDelegate, EmojiSelectorDelegate {
   func datePickerButtonTapped(in cell: DueDateCell, isOpen: Bool) {
     switch bandalArtCellType {
     case .main:

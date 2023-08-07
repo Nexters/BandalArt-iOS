@@ -8,14 +8,14 @@
 
 import UIKit
 
-final class PopupViewController: UIViewController {
+final class EmojiPopupViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
   }
 }
 
-extension PopupViewController: UIPopoverPresentationControllerDelegate {
+extension EmojiPopupViewController: UIPopoverPresentationControllerDelegate {
   // 1
   func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
     return .none
@@ -34,7 +34,7 @@ extension PopupViewController: UIPopoverPresentationControllerDelegate {
 extension UIViewController {
   func presentPopUp(_ button: UIView, sourceRect: CGRect) {
     // 1
-    let view = PopupViewController()
+    let view = EmojiPopupViewController()
     // 2
     view.preferredContentSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 150)
     // 3

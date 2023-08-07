@@ -241,9 +241,10 @@ extension HomeViewController: UICollectionViewDelegate,
 
     public func collectionView(_ collectionView: UICollectionView,
                                didSelectItemAt indexPath: IndexPath) {
-      let viewController = MainGoalViewController(
+      let viewController = ManipulateViewController(
         mode: .create,
-        bandalArtCellType: .main
+        bandalArtCellType: .main(cellKey: ""),
+        viewModel: ManipulateViewModel()
       )
       viewController.preferredSheetSizing = .fit
       self.present(viewController, animated: true)
