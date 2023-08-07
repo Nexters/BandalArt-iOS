@@ -28,7 +28,7 @@ public extension BandalArtRepositoryImpl {
             .map { $0.toDomain }
             .eraseToAnyPublisher()
     }
-    
+
     // 메인셀, 하위셀 모두 조회 API
     func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError> {
         return self.provider.requestPublisher(.getMainCell(bandalArtKey: key))
@@ -36,7 +36,7 @@ public extension BandalArtRepositoryImpl {
             .map { $0.toDomain }
             .eraseToAnyPublisher()
     }
-  
+
     // Task 케이스
     func postTaskUpdateData(
       key: String,
@@ -52,7 +52,7 @@ public extension BandalArtRepositoryImpl {
         "dueDate": dueDate ?? NSNull(),
         "isCompleted": isCompleted
       ]
-      
+
       return self.provider.requestPublisher(
         .updateCell(
           parameters: parameters,
@@ -73,7 +73,7 @@ public extension BandalArtRepositoryImpl {
       }
       .eraseToAnyPublisher()
     }
-    
+
     // SubGoal 케이스
     func postTaskUpdateData(
       key: String,
@@ -87,7 +87,7 @@ public extension BandalArtRepositoryImpl {
         "description": description ?? NSNull(),
         "dueDate": dueDate ?? NSNull()
       ]
-      
+
       return self.provider.requestPublisher(
         .updateCell(
           parameters: parameters,
@@ -108,7 +108,7 @@ public extension BandalArtRepositoryImpl {
       }
       .eraseToAnyPublisher()
     }
-    
+
     // mainGoal 케이스
     func postTaskUpdateData(
       key: String,
@@ -128,7 +128,7 @@ public extension BandalArtRepositoryImpl {
         "subColor": subColor,
         "profileEmoji": profileEmoji ?? NSNull()
       ]
-      
+
       return self.provider.requestPublisher(
         .updateCell(
           parameters: parameters,
@@ -140,7 +140,7 @@ public extension BandalArtRepositoryImpl {
         if response.response?.statusCode == 200 {
           return true
         } else {
-          return false 
+          return false
         }
       }
       .mapError { error in
