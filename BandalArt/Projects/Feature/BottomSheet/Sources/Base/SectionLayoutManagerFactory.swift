@@ -12,13 +12,13 @@ import Util
 public enum SectionLayoutManagerType {
   case mainGoal
   case subGoalAndTask
-//  case emoji
+  case emoji
 //  case madalArtList
 }
 
 public enum ItemType {
   case whole(ratio: CGFloat)
-  case specific(size :NSCollectionLayoutSize)
+  case specific(size :NSCollectionLayoutSize, inset: NSDirectionalEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0))
   
   var item: NSCollectionLayoutItem {
     switch self {
@@ -30,8 +30,9 @@ public enum ItemType {
         )
       )
       return item
-    case .specific(let size):
+    case .specific(let size, let itemInset):
       let item = NSCollectionLayoutItem(layoutSize: size)
+      item.contentInsets = itemInset
       return item
     }
   }
@@ -84,8 +85,8 @@ public final class SectionLayoutManagerFactory: SectionLayoutManagerCreator {
       return MainGoalSectionLayoutManager()
     case .subGoalAndTask:
       return SubGoalAndTaskSectionLayoutManager()
-//    case .emoji:
-//      <#code#>
+    case .emoji:
+      return EmojiLayoutManager()
 //    case .madalArtList:
 //      <#code#>
     }

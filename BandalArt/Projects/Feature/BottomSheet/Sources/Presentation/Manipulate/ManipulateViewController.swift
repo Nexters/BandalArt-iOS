@@ -21,7 +21,7 @@ public final class ManipulateViewController: BottomSheetController {
   let mode: Mode
   let bandalArtCellType: BandalArtCellType
   
-  let mainGoalView: ManipulateView
+  let manipulateView: ManipulateView
   let viewModel: ManipulateViewModel
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
   
@@ -35,7 +35,7 @@ public final class ManipulateViewController: BottomSheetController {
     bandalArtCellType: BandalArtCellType,
     viewModel: ManipulateViewModel
   ) {
-    self.mainGoalView = ManipulateView(
+    self.manipulateView = ManipulateView(
       mode: mode,
       bandalArtCellType: bandalArtCellType,
       frame: .zero
@@ -52,7 +52,7 @@ public final class ManipulateViewController: BottomSheetController {
   
   public override func loadView() {
     super.loadView()
-    view = mainGoalView
+    view = manipulateView
   }
 
   public override func viewDidLoad() {
@@ -68,9 +68,9 @@ public final class ManipulateViewController: BottomSheetController {
 
   func adjustCollectionViewHeight() {
     // TODO: 방어로직 구성, 사이징 변경 시 재구성 필요 
-    guard mainGoalView.collectionView.contentSize.height != 0 else { return }
-    let contentHeight = mainGoalView.collectionView.contentSize.height
-    mainGoalView.collectionView.snp.updateConstraints {
+    guard manipulateView.collectionView.contentSize.height != 0 else { return }
+    let contentHeight = manipulateView.collectionView.contentSize.height
+    manipulateView.collectionView.snp.updateConstraints {
       $0.height.greaterThanOrEqualTo(contentHeight)
     }
   }
@@ -78,17 +78,17 @@ public final class ManipulateViewController: BottomSheetController {
   func setupCollectionView() {
     switch bandalArtCellType {
     case .main:
-      mainGoalView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
+      manipulateView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
         type: .mainGoal
       ).createLayout()
     default:
-      mainGoalView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
+      manipulateView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
         type: .subGoalAndTask
       ).createLayout()
     }
     setupDataSource()
-    mainGoalView.collectionView.delegate = self
-    mainGoalView.collectionView.allowsMultipleSelection = false
+    manipulateView.collectionView.delegate = self
+    manipulateView.collectionView.allowsMultipleSelection = false
   }
 
   func setupDataSource() {
@@ -130,7 +130,7 @@ public final class ManipulateViewController: BottomSheetController {
     switch bandalArtCellType {
     case .main:
       mainDataSource = UICollectionViewDiffableDataSource<MainGoalSection, UUID>(
-            collectionView: mainGoalView.collectionView
+            collectionView: manipulateView.collectionView
           ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
             switch indexPath.section {
             case 0:
@@ -180,14 +180,14 @@ public final class ManipulateViewController: BottomSheetController {
       }
 
       mainDataSource.supplementaryViewProvider = { (view, kind, index) in
-        return self.mainGoalView.collectionView.dequeueConfiguredReusableSupplementary(
+        return self.manipulateView.collectionView.dequeueConfiguredReusableSupplementary(
           using: headerRegistration, for: index)
       }
       
       mainDataSource.apply(snapshot, animatingDifferences: false)
     case .subGoal:
       subGoalAndTaskCreateDataSource = UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>(
-            collectionView: mainGoalView.collectionView
+            collectionView: manipulateView.collectionView
           ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
             switch indexPath.section {
             case 0:
@@ -229,7 +229,7 @@ public final class ManipulateViewController: BottomSheetController {
       }
 
       subGoalAndTaskCreateDataSource.supplementaryViewProvider = { (view, kind, index) in
-        return self.mainGoalView.collectionView.dequeueConfiguredReusableSupplementary(
+        return self.manipulateView.collectionView.dequeueConfiguredReusableSupplementary(
           using: headerRegistration, for: index)
       }
       
@@ -238,7 +238,7 @@ public final class ManipulateViewController: BottomSheetController {
       switch mode {
       case .create:
         subGoalAndTaskCreateDataSource = UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>(
-              collectionView: mainGoalView.collectionView
+              collectionView: manipulateView.collectionView
             ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
               switch indexPath.section {
               case 0:
@@ -280,14 +280,14 @@ public final class ManipulateViewController: BottomSheetController {
         }
 
         subGoalAndTaskCreateDataSource.supplementaryViewProvider = { (view, kind, index) in
-          return self.mainGoalView.collectionView.dequeueConfiguredReusableSupplementary(
+          return self.manipulateView.collectionView.dequeueConfiguredReusableSupplementary(
             using: headerRegistration, for: index)
         }
         
         subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: false)
       case .update:
         taskUpdateDataSource = UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>(
-              collectionView: mainGoalView.collectionView
+              collectionView: manipulateView.collectionView
             ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
               switch indexPath.section {
               case 0:
@@ -337,7 +337,7 @@ public final class ManipulateViewController: BottomSheetController {
         }
 
         taskUpdateDataSource.supplementaryViewProvider = { (view, kind, index) in
-          return self.mainGoalView.collectionView.dequeueConfiguredReusableSupplementary(
+          return self.manipulateView.collectionView.dequeueConfiguredReusableSupplementary(
             using: headerRegistration, for: index)
         }
         
@@ -347,20 +347,20 @@ public final class ManipulateViewController: BottomSheetController {
 
     switch bandalArtCellType {
     case .main:
-      mainGoalView.collectionView.dataSource = mainDataSource
-      mainGoalView.collectionView.selectItem(
+      manipulateView.collectionView.dataSource = mainDataSource
+      manipulateView.collectionView.selectItem(
         at: IndexPath(item: 0, section: 1),
         animated: true,
         scrollPosition: .top
       )
     case .subGoal:
-      mainGoalView.collectionView.dataSource = subGoalAndTaskCreateDataSource
+      manipulateView.collectionView.dataSource = subGoalAndTaskCreateDataSource
     case .task:
       switch mode {
       case .create:
-        mainGoalView.collectionView.dataSource = subGoalAndTaskCreateDataSource
+        manipulateView.collectionView.dataSource = subGoalAndTaskCreateDataSource
       case .update:
-        mainGoalView.collectionView.dataSource = taskUpdateDataSource
+        manipulateView.collectionView.dataSource = taskUpdateDataSource
       }
     }
   }
@@ -370,44 +370,44 @@ extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDele
   func datePickerButtonTapped(in cell: DueDateCell, isOpen: Bool) {
     switch bandalArtCellType {
     case .main:
-      UIView.transition(with: mainGoalView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
+      UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
         var snapshot = self.mainDataSource.snapshot()
         if isOpen { snapshot.reloadSections([.dueDate]) }
         self.mainDataSource.apply(snapshot, animatingDifferences: true)
-        let contentHeight = self.mainGoalView.collectionView.contentSize.height
-        self.mainGoalView.collectionView.snp.updateConstraints {
+        let contentHeight = self.manipulateView.collectionView.contentSize.height
+        self.manipulateView.collectionView.snp.updateConstraints {
           $0.height.greaterThanOrEqualTo(contentHeight)
         }
       }, completion: nil)
     case .subGoal:
-      UIView.transition(with: mainGoalView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
+      UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
         var snapshot = self.subGoalAndTaskCreateDataSource.snapshot()
         if isOpen { snapshot.reloadSections([.dueDate]) }
         self.subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: true)
-        let contentHeight = self.mainGoalView.collectionView.contentSize.height
-        self.mainGoalView.collectionView.snp.updateConstraints {
+        let contentHeight = self.manipulateView.collectionView.contentSize.height
+        self.manipulateView.collectionView.snp.updateConstraints {
           $0.height.greaterThanOrEqualTo(contentHeight)
         }
       }, completion: nil)
     case .task:
       switch mode {
       case .create:
-        UIView.transition(with: mainGoalView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
+        UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
           var snapshot = self.subGoalAndTaskCreateDataSource.snapshot()
           if isOpen { snapshot.reloadSections([.dueDate]) }
           self.subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: true)
-          let contentHeight = self.mainGoalView.collectionView.contentSize.height
-          self.mainGoalView.collectionView.snp.updateConstraints {
+          let contentHeight = self.manipulateView.collectionView.contentSize.height
+          self.manipulateView.collectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(contentHeight)
           }
         }, completion: nil)
       case .update:
-        UIView.transition(with: mainGoalView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
+        UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
           var snapshot = self.taskUpdateDataSource.snapshot()
           if isOpen { snapshot.reloadSections([.dueDate]) }
           self.taskUpdateDataSource.apply(snapshot, animatingDifferences: true)
-          let contentHeight = self.mainGoalView.collectionView.contentSize.height
-          self.mainGoalView.collectionView.snp.updateConstraints {
+          let contentHeight = self.manipulateView.collectionView.contentSize.height
+          self.manipulateView.collectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(contentHeight)
           }
         }, completion: nil)

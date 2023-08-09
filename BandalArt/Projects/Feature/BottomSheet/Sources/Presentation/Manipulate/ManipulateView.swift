@@ -82,7 +82,7 @@ final class ManipulateView: UIView {
   }
 
   required init?(coder: NSCoder) {
-    fatalError("MainView fatal error")
+    fatalError("ManipulateView fatal error")
   }
 
   private func setupView() {
