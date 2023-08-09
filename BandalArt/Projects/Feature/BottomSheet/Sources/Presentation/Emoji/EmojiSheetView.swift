@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Components
 
-final class EmojiSelectionView: UIView {
+final class EmojiSheetView: UIView {
   
   lazy var completionButton: UIButton = {
     let button = UIButton()

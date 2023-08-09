@@ -9,10 +9,90 @@
 import UIKit
 
 final class EmojiPopupViewController: UIViewController {
+  let emojiPopupView = EmojiPopupView()
+  let sectionLayoutFactory = SectionLayoutManagerFactory.shared
+  var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!
+  
+  public init() {
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  public override func loadView() {
+    super.loadView()
+    view = emojiPopupView
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .white
+    view.backgroundColor = .systemBackground
+    setupCollectionView()
   }
+  
+  func setupCollectionView() {
+    emojiPopupView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(type: .emoji).createLayout()
+    setupDataSource()
+    emojiPopupView.collectionView.allowsMultipleSelection = false
+  }
+  
+  func setupDataSource() {
+    let emojiItem = [
+      EmojiItem(id: UUID(), emoji: "🔥"),
+      EmojiItem(id: UUID(), emoji: "😀"),
+      EmojiItem(id: UUID(), emoji: "😃"),
+      EmojiItem(id: UUID(), emoji: "😄"),
+      EmojiItem(id: UUID(), emoji: "😆"),
+      EmojiItem(id: UUID(), emoji: "🥹"),
+      
+      EmojiItem(id: UUID(), emoji: "🥰"),
+      EmojiItem(id: UUID(), emoji: "😍"),
+      EmojiItem(id: UUID(), emoji: "😂"),
+      EmojiItem(id: UUID(), emoji: "🥲"),
+      EmojiItem(id: UUID(), emoji: "☺️"),
+      EmojiItem(id: UUID(), emoji: "😎"),
+      
+      EmojiItem(id: UUID(), emoji: "🥳"),
+      EmojiItem(id: UUID(), emoji: "🤩"),
+      EmojiItem(id: UUID(), emoji: "⭐️"),
+      EmojiItem(id: UUID(), emoji: "🌟"),
+      EmojiItem(id: UUID(), emoji: "✨"),
+      EmojiItem(id: UUID(), emoji: "💥"),
+      
+      EmojiItem(id: UUID(), emoji: "❤️"),
+      EmojiItem(id: UUID(), emoji: "🧡"),
+      EmojiItem(id: UUID(), emoji: "💛"),
+      EmojiItem(id: UUID(), emoji: "💚"),
+      EmojiItem(id: UUID(), emoji: "💙"),
+      EmojiItem(id: UUID(), emoji: "❤️‍🔥")
+    ]
+    
+    let emojiCellRegistration = UICollectionView.CellRegistration<EmojiCell, EmojiItem> { cell, indexPath, item in
+      cell.setupData(item: item)
+    }
+    
+    dataSource = UICollectionViewDiffableDataSource<EmojiSection, UUID>(
+      collectionView: emojiPopupView.collectionView
+    ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
+      let item = emojiItem.first(where: { $0.id == identifier })
+      return collectionView.dequeueConfiguredReusableCell(
+        using: emojiCellRegistration,
+        for: indexPath, item: item
+      )
+    }
+    
+    var snapshot = NSDiffableDataSourceSnapshot<EmojiSection, UUID>()
+    snapshot.appendSections([.main])
+    snapshot.appendItems(emojiItem.map{ $0.id }, toSection: .main)
+  
+    dataSource.supplementaryViewProvider = nil
+    
+    dataSource.apply(snapshot, animatingDifferences: false)
+    emojiPopupView.collectionView.dataSource = dataSource
+  }
+  
 }
 
 extension EmojiPopupViewController: UIPopoverPresentationControllerDelegate {
@@ -36,7 +116,7 @@ extension UIViewController {
     // 1
     let view = EmojiPopupViewController()
     // 2
-    view.preferredContentSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 150)
+    view.preferredContentSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 250)
     // 3
     view.modalPresentationStyle = .popover
     // 4

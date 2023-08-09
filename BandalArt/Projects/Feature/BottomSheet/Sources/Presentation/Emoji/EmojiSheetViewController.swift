@@ -14,7 +14,7 @@ enum EmojiSection {
 }
 
 public final class EmojiSheetViewController: BottomSheetController {
-  let emojiSelectionView = EmojiSelectionView()
+  let emojiSelectionView = EmojiSheetView()
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
   
   var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!

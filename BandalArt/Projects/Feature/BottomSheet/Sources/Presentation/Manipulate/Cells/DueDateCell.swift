@@ -59,6 +59,19 @@ final class DueDateCell: UICollectionViewCell {
     return stackView
   }()
   
+  lazy var resetButton: UIButton = {
+    let button = UIButton()
+    button.setImage(
+      UIImage(systemName: "clock.arrow.2.circlepath"),
+      for: .normal
+    )
+    button.tintColor = .gray400
+    button.isUserInteractionEnabled = true
+    button.isHidden = true
+    button.addTarget(self, action: #selector(handleResetButton(_:)), for: .touchUpInside)
+    return button
+  }()
+  
   override init(frame: CGRect) {
     super.init(frame: frame)
     setupView()
@@ -70,7 +83,7 @@ final class DueDateCell: UICollectionViewCell {
   }
   
   func setupView() {
-    [containerView, datePickerButton].forEach {
+    [containerView, datePickerButton, resetButton].forEach {
       contentView.addSubview($0)
     }
   }
@@ -96,6 +109,12 @@ final class DueDateCell: UICollectionViewCell {
       $0.trailing.equalToSuperview()
     }
     
+    resetButton.snp.makeConstraints {
+      $0.width.height.equalTo(44.0)
+      $0.top.equalTo(datePicker.snp.top)
+      $0.trailing.equalTo(datePicker.snp.trailing)
+    }
+    
 //    datePicker.snp.makeConstraints {
 //      $0.top.equalTo(underlineTextField.snp.bottom).offset(16.0)
 //      $0.leading.equalToSuperview().offset(4.0)
@@ -111,6 +130,7 @@ final class DueDateCell: UICollectionViewCell {
   
   @objc func datePickerButtonTapped() {
     datePicker.isHidden.toggle()
+    resetButton.isHidden.toggle()
     if datePicker.isHidden {
       datePickerButton.setImage(
         UIImage(named: "chevron.right")?.resize(withWidthScale: 1.5),
@@ -127,6 +147,10 @@ final class DueDateCell: UICollectionViewCell {
   
   @objc func handleDatePicker(_ sender: UIDatePicker) {
     print(sender.date)
+  }
+  
+  @objc func handleResetButton(_ sender: UIButton) {
+    print("Tapped Reset")
   }
 }
 
