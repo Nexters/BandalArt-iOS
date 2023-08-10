@@ -11,6 +11,7 @@ import Components
 
 final class EmojiTitleCell: UICollectionViewCell {
   static let identifier = "EmojiTitleCell"
+  weak var delegate: EmojiSelectorDelegate?
   
   lazy var containerView: UIStackView = {
     let stackView = UIStackView()
@@ -27,7 +28,17 @@ final class EmojiTitleCell: UICollectionViewCell {
     return stackView
   }()
   
-  lazy var emojiView = EmojiView()
+  lazy var emojiView: EmojiView = {
+    let emojiView = EmojiView()
+    let gesture = UITapGestureRecognizer(
+      target: self,
+      action: #selector(emojiViewTapped)
+    )
+    gesture.numberOfTapsRequired = 1
+    emojiView.isUserInteractionEnabled = true
+    emojiView.addGestureRecognizer(gesture)
+    return emojiView
+  }()
   
   lazy var textFieldContainer: UIView = {
     let view = UIView()
@@ -76,7 +87,11 @@ final class EmojiTitleCell: UICollectionViewCell {
   }
   
   public func setupData(item: EmojiTitleItem) {
-    emojiView.setEmoji(with: item.emoji)
+    emojiView.setEmoji(with: item.emoji ?? Character(""))
     underlineTextField.text = item.title
+  }
+  
+  @objc func emojiViewTapped(_ sender: UIView) {
+    delegate?.emojiViewTapped(in: self)
   }
 }

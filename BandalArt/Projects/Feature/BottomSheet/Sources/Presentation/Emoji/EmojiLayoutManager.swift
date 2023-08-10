@@ -1,8 +1,8 @@
 //
-//  SubGoalAndTaskViewSectionLayoutManager.swift
-//  Components
+//  EmojiLayoutManager.swift
+//  BottomSheetFeature
 //
-//  Created by Sang hun Lee on 2023/08/01.
+//  Created by Sang hun Lee on 2023/08/09.
 //  Copyright © 2023 Otani. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import UIKit
 import Util
 import Components
 
-struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
+struct EmojiLayoutManager: SectionLayoutManager {
   func createLayout() -> UICollectionViewCompositionalLayout {
     return UICollectionViewCompositionalLayout{ (sectionNumber, env) -> NSCollectionLayoutSection? in
       switch sectionNumber {
@@ -18,19 +18,20 @@ struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
         return makeSection(
           itemType: .specific(
             size: .init(
-              widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 8)
+              widthDimension: .fractionalWidth(1.0 / 6.0),
+              heightDimension: .fractionalHeight(1.0)
+            ),
+            inset: NSDirectionalEdgeInsets(
+              top: 8.0, leading: 8.0, bottom: 8.0, trailing: 8.0
             )
           ),
           groupType: .specific(
             size: .init(
-              widthDimension: .fractionalWidth(1),
-              heightDimension: .estimated(Size.screenH / 8)
+              widthDimension: .fractionalWidth(1.0),
+              heightDimension: .fractionalWidth(1.0 / 6.0)
             )
           ),
-          sectionInset: .init(
-            top: 12.0, leading: 4.0, bottom: 12.0, trailing: 4.0
-          )
+          containHeader: false
         )
       }
     }
@@ -49,7 +50,7 @@ struct SubGoalAndTaskViewSectionLayoutManager: SectionLayoutManager {
     let item = itemType.item
     let groupSize = groupType.groupSize
     
-    let group = NSCollectionLayoutGroup.vertical(
+    let group = NSCollectionLayoutGroup.horizontal(
       layoutSize: groupSize,
       subitems: [item]
     )

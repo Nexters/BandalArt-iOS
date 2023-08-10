@@ -16,9 +16,9 @@ import Combine
 import SnapKit
 
 public final class HomeViewController: UIViewController {
-    
+
     private let viewModel: HomeViewModel
-    
+
     public init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -27,9 +27,9 @@ public final class HomeViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     private let addBarButton = UIBarButtonItem()
     // 반다라트 헤더
     private let emojiView = EmojiView()
@@ -57,7 +57,7 @@ public final class HomeViewController: UIViewController {
                                                              collectionViewLayout: UICollectionViewFlowLayout.init())
 
     private let shareButton = UIButton()
-    
+
     // Combine에 따로 bind가 없어서 데이터 set을 해주기위해 VC 로컬에 들고있는 상황..!
     private var leftTopInfos: [BandalArtCellInfo] = .defaultList
     private var rightTopInfos: [BandalArtCellInfo] = .defaultList
@@ -70,10 +70,10 @@ public final class HomeViewController: UIViewController {
         self.setConfigure()
         self.setConstraints()
         self.bind()
-        
+
         // 임시 세팅
     }
-    
+
     private func bind() {
         let didLoadPublisher = PassthroughSubject<Void, Never>()
         let input = HomeViewModel.Input(
@@ -84,7 +84,7 @@ public final class HomeViewController: UIViewController {
             didCategoryBarButtonTap: addBarButton.tapPublisher
         )
         let output = viewModel.transform(input: input)
-        
+
         output.bandalArtTitle
             .sink(receiveValue: { [weak self] text in
                 self?.bandalartNameLabel.text = text
@@ -92,7 +92,7 @@ public final class HomeViewController: UIViewController {
                 self?.centerLabel.text = text
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtEmoji
             .sink(receiveValue: { [weak self] text in
                 let char = text == "" ? nil: Character(text)
@@ -100,13 +100,13 @@ public final class HomeViewController: UIViewController {
                 self?.pencilAeccessaryImageView.isHidden = true
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtThemeColorHexString
             .sink(receiveValue: { [weak self] main, sub in
                 self?.updateTheme(main: main, sub: sub)
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtCompletedRatio
             .sink(receiveValue: { [weak self] ratio in
                 let percent = Int(ratio * 100)
@@ -114,42 +114,42 @@ public final class HomeViewController: UIViewController {
                 self?.progressView.progress = ratio
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtLeftTopInfo
             .sink(receiveValue: { [weak self] infos in
                 self?.leftTopInfos = infos
                 self?.leftTopCollectionView.reloadData()
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtRightTopInfo
             .sink(receiveValue: { [weak self] infos in
                 self?.rightTopInfos = infos
                 self?.rightTopCollectionView.reloadData()
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtLeftBottomInfo
             .sink(receiveValue: { [weak self] infos in
                 self?.leftBottomInfos = infos
                 self?.leftBottomCollectionView.reloadData()
             })
             .store(in: &cancellables)
-        
+
         output.bandalArtRightBottomInfo
             .sink(receiveValue: { [weak self] infos in
                 self?.rightBottomInfos = infos
                 self?.rightBottomCollectionView.reloadData()
             })
             .store(in: &cancellables)
-        
+
         output
             .presentBandalArtAddViewController
             .sink(receiveValue: { _ in
-                
+
             })
             .store(in: &cancellables)
-        
+
         output
             .presentActivityViewController
             .sink(receiveValue: { [weak self] _ in
@@ -158,10 +158,10 @@ public final class HomeViewController: UIViewController {
                 self?.present(vc, animated: true)
             })
             .store(in: &cancellables)
-        
+
         didLoadPublisher.send(())
     }
-    
+
     private func updateTheme(main hex1: String, sub hex2: String) {
         // 방어로직: 이전과 테마가 같으면 업데이트 안침.
         guard UIColor.themeColor != .theme(hex: hex1),
@@ -173,11 +173,11 @@ public final class HomeViewController: UIViewController {
         progressView.progressTintColor = .themeColor
         centerView.backgroundColor = .themeColor
         centerLabel.textColor = .subThemeColor
-        
+
         [leftTopCollectionView, leftBottomCollectionView,
          rightTopCollectionView, rightBottomCollectionView].forEach { $0.reloadData() }
     }
-    
+
     private func cellInfoList(collectionView: UICollectionView) -> [BandalArtCellInfo] {
         if collectionView == leftTopCollectionView {
             return leftTopInfos
@@ -209,9 +209,9 @@ extension HomeViewController: UICollectionViewDelegate,
                                                             for: indexPath) as? BandalArtCell else {
             return UICollectionViewCell()
         }
-        
+
         let mode: BandalArtCell.Mode = collectionView.tag == indexPath.item ? .subGoal : .task
-        
+
         guard let info = self.cellInfoList(collectionView: collectionView)[safe: indexPath.row] else {
             cell.configure(title: nil, mode: mode, status: .empty)
             return cell
@@ -241,9 +241,13 @@ extension HomeViewController: UICollectionViewDelegate,
 
     public func collectionView(_ collectionView: UICollectionView,
                                didSelectItemAt indexPath: IndexPath) {
-        let viewController = MainGoalViewController(mode: .create)
-        viewController.preferredSheetSizing = .fit
-        self.present(viewController, animated: true)
+      let viewController = ManipulateViewController(
+        mode: .create,
+        bandalArtCellType: .main(cellKey: ""),
+        viewModel: ManipulateViewModel()
+      )
+      viewController.preferredSheetSizing = .fit
+      self.present(viewController, animated: true)
     }
 }
 
@@ -262,7 +266,7 @@ private extension HomeViewController {
 
         moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         moreButton.tintColor = .gray500
-        
+
         progressDescriptionLabel.text = "달성률 (0%)"
         progressDescriptionLabel.textColor = .gray600
         progressDescriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
@@ -437,7 +441,7 @@ private extension HomeViewController {
         let addButton = UIButton(configuration: config)
         addBarButton.customView = addButton
         navigationItem.rightBarButtonItem = addBarButton
-        
+
         // set Left Navigation Item.
         let logoButton = UIButton()
         logoButton.setTitle("반다라트", for: .normal)
@@ -453,7 +457,7 @@ private extension HomeViewController {
 }
 
 fileprivate extension BandalArtCellInfo {
-    
+
     static let defaultInfo: BandalArtCellInfo = .init(key: "", parentKey: nil, title: "",
                                                       description: nil, dueDate: nil,
                                                       isCompleted: false,
@@ -462,7 +466,7 @@ fileprivate extension BandalArtCellInfo {
 }
 
 fileprivate extension [BandalArtCellInfo] {
-    
+
     static let defaultList: [BandalArtCellInfo] = [
         .defaultInfo, .defaultInfo, .defaultInfo,
         .defaultInfo, .defaultInfo, .defaultInfo

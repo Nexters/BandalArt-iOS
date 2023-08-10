@@ -10,7 +10,7 @@ import UIKit
 import Util
 import Components
 
-struct MainGoalViewSectionLayoutManager: SectionLayoutManager {
+struct MainGoalSectionLayoutManager: SectionLayoutManager {
   func createLayout() -> UICollectionViewCompositionalLayout {
     return UICollectionViewCompositionalLayout{ (sectionNumber, env) -> NSCollectionLayoutSection? in
       switch sectionNumber {

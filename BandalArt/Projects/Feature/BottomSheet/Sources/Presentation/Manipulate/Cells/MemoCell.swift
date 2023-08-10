@@ -1,5 +1,5 @@
 //
-//  MainGoalDueDateCell.swift
+//  MainGoalMemoCell.swift
 //  HomeFeature
 //
 //  Created by Sang hun Lee on 2023/08/02.
@@ -10,21 +10,15 @@ import UIKit
 import SnapKit
 import Components
 
-final class DueDateCell: UICollectionViewCell {
-  static let identifier = "DueDateCell"
+final class MemoCell: UICollectionViewCell {
+  static let identifier = "MemoCell"
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
     underlineTextField.tintColor = .gray400
-    underlineTextField.placeholder = "마감일을 선택해주세요"
-    underlineTextField.placeholderString = "마감일을 선택해주세요"
+    underlineTextField.placeholder = "메모를 입력해주세요"
+    underlineTextField.placeholderString = "메모를 입력해주세요"
     return underlineTextField
-  }()
-  
-  lazy var datePickerButton: UIButton = {
-    let button = UIButton()
-    button.setImage(UIImage(named: "chevron.right"), for: .normal)
-    return button
   }()
   
   override init(frame: CGRect) {
@@ -38,7 +32,7 @@ final class DueDateCell: UICollectionViewCell {
   }
   
   func setupView() {
-    [underlineTextField, datePickerButton].forEach {
+    [underlineTextField].forEach {
       contentView.addSubview($0)
     }
   }
@@ -48,16 +42,11 @@ final class DueDateCell: UICollectionViewCell {
       $0.centerY.equalToSuperview()
       $0.leading.equalToSuperview().offset(4.0)
       $0.trailing.equalToSuperview().offset(-4.0)
-    }
-    
-    datePickerButton.snp.makeConstraints {
-      $0.width.height.equalTo(24.0)
-      $0.centerY.equalToSuperview()
-      $0.trailing.equalToSuperview()
+      $0.height.equalTo(44.0)
     }
   }
   
-  func setupData(item: DueDateItem) {
-    // TODO: 임시로 String 기반이지만 Date 다루는 로직으로 구성 필요
+  func setupData(item: MemoItem) {
+    underlineTextField.text = item.memo
   }
 }

@@ -1,5 +1,5 @@
 //
-//  MainGoalView.swift
+//  ManipulateView.swift
 //  HomeFeature
 //
 //  Created by Sang hun Lee on 2023/07/31.
@@ -10,8 +10,9 @@ import UIKit
 import SnapKit
 import Components
 
-final class MainGoalView: UIView {
+final class ManipulateView: UIView {
   let mode: Mode
+  let bandalArtCellType: BandalArtCellType
   
   lazy var titleLabel: UILabel = {
     let label = UILabel()
@@ -22,28 +23,17 @@ final class MainGoalView: UIView {
     return label
   }()
 
+  lazy var closeButton: UIButton = {
+    let button = UIButton()
+    button.setImage(UIImage(named: "xmark")?.resize(withWidthScale: 10.0), for: .normal)
+    return button
+  }()
+  
   lazy var collectionView: UICollectionView = {
     let collection = UICollectionView(
       frame: .zero,
       collectionViewLayout: UICollectionViewFlowLayout()
     )
-    collection.register(
-      EmojiTitleCell.self,
-      forCellWithReuseIdentifier: EmojiTitleCell.identifier
-    )
-    collection.register(
-      ThemeColorCell.self,
-      forCellWithReuseIdentifier: ThemeColorCell.identifier
-    )
-    collection.register(
-      DueDateCell.self,
-      forCellWithReuseIdentifier: DueDateCell.identifier
-    )
-    collection.register(
-      MemoCell.self,
-      forCellWithReuseIdentifier: MemoCell.identifier
-    )
-
     return collection
   }()
 
@@ -83,28 +73,49 @@ final class MainGoalView: UIView {
     return stackView
   }()
 
-  init(mode: Mode, frame: CGRect) {
+  init(mode: Mode, bandalArtCellType: BandalArtCellType, frame: CGRect) {
     self.mode = mode
+    self.bandalArtCellType = bandalArtCellType
     super.init(frame: frame)
     setupView()
     setupConstraints()
   }
 
   required init?(coder: NSCoder) {
-    fatalError("MainView fatal error")
+    fatalError("ManipulateView fatal error")
   }
 
   private func setupView() {
-    [titleLabel, collectionView, buttonContainerView].forEach {
+    [titleLabel, closeButton, collectionView, buttonContainerView].forEach {
       addSubview($0)
-      
-      switch mode {
-      case .create:
-        titleLabel.text = "메인목표 입력"
-        deleteButton.isHidden = true
-      case .update:
-        titleLabel.text = "메인목표 수정"
-        deleteButton.isHidden = false
+      switch bandalArtCellType {
+      case .main:
+        switch mode {
+        case .create:
+          titleLabel.text = "메인목표 입력"
+          deleteButton.isHidden = true
+        case .update:
+          titleLabel.text = "메인목표 수정"
+          deleteButton.isHidden = false
+        }
+      case .subGoal:
+        switch mode {
+        case .create:
+          titleLabel.text = "서브목표 입력"
+          deleteButton.isHidden = true
+        case .update:
+          titleLabel.text = "서브목표 수정"
+          deleteButton.isHidden = false
+        }
+      case .task:
+        switch mode {
+        case .create:
+          titleLabel.text = "태스크 입력"
+          deleteButton.isHidden = true
+        case .update:
+          titleLabel.text = "태스크 수정"
+          deleteButton.isHidden = false
+        }
       }
     }
   }
@@ -115,6 +126,12 @@ final class MainGoalView: UIView {
       $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
       $0.bottom.equalTo(collectionView.snp.top).offset(-16.0)
+    }
+    
+    closeButton.snp.makeConstraints {
+      $0.centerY.equalTo(titleLabel)
+      $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
+      $0.width.height.equalTo(24.0)
     }
 
     collectionView.snp.makeConstraints {
