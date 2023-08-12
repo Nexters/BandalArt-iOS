@@ -56,17 +56,17 @@ private extension BandalArtCompletedViewController {
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textColor = .gray900
         descriptionLabel.textAlignment = .center
-        descriptionLabel.font = .boldSystemFont(ofSize: 22)
+        descriptionLabel.font = .pretendardBold(size: 22)
         
         contentLabel.text = "달성 완료 반다라트"
         contentLabel.textAlignment = .center
         contentLabel.textColor = .gray400
-        contentLabel.font = .systemFont(ofSize: 14)
+        contentLabel.font = .pretendardBold(size: 14)
         
         bandalartNameLabel.text = bandarArtTitle
         bandalartNameLabel.textColor = .gray900
         bandalartNameLabel.textAlignment = .center
-        bandalartNameLabel.font = .boldSystemFont(ofSize: 16)
+        bandalartNameLabel.font = .pretendardBold(size: 16)
         
         contentView.layer.borderWidth = 1
         contentView.layer.cornerRadius = 12
@@ -77,10 +77,11 @@ private extension BandalArtCompletedViewController {
         
         shareButton.setTitle("공유하기", for: .normal)
         shareButton.setTitleColor(.systemBackground, for: .normal)
+        shareButton.titleLabel?.font = .pretendardBold(size: 16)
         shareButton.layer.cornerRadius = 20
         shareButton.backgroundColor = .gray900
         shareButton.layer.masksToBounds = true
-        
+
         emojiView.setEmoji(with: Character(emojiText ?? ""))
     }
 
@@ -118,7 +119,7 @@ private extension BandalArtCompletedViewController {
         bandalartNameLabel.snp.makeConstraints { make in
             make.top.equalTo(emojiView.snp.bottom).offset(2)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().offset(22)
+            make.bottom.equalToSuperview().offset(-22)
         }
         shareButton.snp.makeConstraints { make in
             make.height.equalTo(55)

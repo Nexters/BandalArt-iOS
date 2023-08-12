@@ -22,7 +22,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
 
         let vc = HomeViewController(viewModel: HomeViewModel())
+
+        let appearance = UINavigationBarAppearance()
+        // set back image
+        appearance.setBackIndicatorImage(UIImage(named: "chevron.left"), transitionMaskImage: UIImage(named: "chevron.left"))
+        appearance.backgroundColor = .systemBackground
+
+        // set appearance to one NavigationController
         let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.standardAppearance = appearance
+        nav.navigationBar.scrollEdgeAppearance = appearance
+        nav.navigationBar.tintColor = .gray900
+        nav.navigationItem.backButtonTitle = ""
+
+        // or you can config for all navigation bar
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
     }
