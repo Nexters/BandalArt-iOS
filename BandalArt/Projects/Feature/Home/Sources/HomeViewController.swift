@@ -450,6 +450,7 @@ private extension HomeViewController {
         logoButton.setTitleColor(.gray900, for: .normal)
         logoButton.titleLabel?.font = .neurimboGothicRelgular(size: 28)
         navigationItem.leftBarButtonItem = .init(customView: logoButton)
+        navigationItem.backButtonTitle = ""
     }
 
     enum UI {

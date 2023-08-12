@@ -27,6 +27,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // set back image
         appearance.setBackIndicatorImage(UIImage(named: "chevron.left"), transitionMaskImage: UIImage(named: "chevron.left"))
         appearance.backgroundColor = .systemBackground
+        appearance.shadowColor = .clear
+        appearance.shadowImage = UIImage(named: "shadow")
 
         // set appearance to one NavigationController
         let nav = UINavigationController(rootViewController: vc)
@@ -34,6 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         nav.navigationBar.scrollEdgeAppearance = appearance
         nav.navigationBar.tintColor = .gray900
         nav.navigationItem.backButtonTitle = ""
+        nav.navigationItem.backBarButtonItem?.title = ""
 
         // or you can config for all navigation bar
         UINavigationBar.appearance().standardAppearance = appearance

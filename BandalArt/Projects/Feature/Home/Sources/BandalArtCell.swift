@@ -173,7 +173,8 @@ final class BandalartPlaceHolderView: UIView {
         backgroundColor = .clear
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.distribution = .fill
+        stackView.distribution = .equalSpacing
+        stackView.spacing = 0
         
         plusImageView.tintColor = .gray500
         plusImageView.contentMode = .center
