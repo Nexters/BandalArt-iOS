@@ -53,6 +53,7 @@ private extension BandalArtCompletedViewController {
         view.backgroundColor = .gray50
 
         descriptionLabel.text = "반다라트의 모든 목표를 달성했어요.\n정말 대단해요!"
+        descriptionLabel.numberOfLines = 2
         descriptionLabel.textColor = .gray900
         descriptionLabel.textAlignment = .center
         descriptionLabel.font = .boldSystemFont(ofSize: 22)
@@ -94,7 +95,7 @@ private extension BandalArtCompletedViewController {
         
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(33)
         }
         thumbnailImageLabel.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(30)
@@ -102,11 +103,11 @@ private extension BandalArtCompletedViewController {
         }
         contentLabel.snp.makeConstraints { make in
             make.top.equalTo(thumbnailImageLabel.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(33)
         }
         contentView.snp.makeConstraints { make in
             make.top.equalTo(contentLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(33)
             make.height.equalTo(140).priority(.low)
         }
         emojiView.snp.makeConstraints { make in
@@ -121,7 +122,7 @@ private extension BandalArtCompletedViewController {
         }
         shareButton.snp.makeConstraints { make in
             make.height.equalTo(55)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(23)
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
         }
     }
