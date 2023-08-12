@@ -29,8 +29,8 @@ public final class HomeViewController: UIViewController {
     }
 
     private var cancellables = Set<AnyCancellable>()
-
-    private let addBarButton = UIBarButtonItem()
+    
+    private let addButton = UIButton()
     // 반다라트 헤더
     private let emojiView = EmojiView()
     private let bandalartNameLabel = UILabel()
@@ -80,8 +80,8 @@ public final class HomeViewController: UIViewController {
             didViewLoad: didLoadPublisher.eraseToAnyPublisher(),
             didMoreButtonTap: moreButton.tapPublisher,
             didShareButtonTap: shareButton.tapPublisher,
-            didAddBarButtonTap: addBarButton.tapPublisher,
-            didCategoryBarButtonTap: addBarButton.tapPublisher
+            didAddBarButtonTap: addButton.tapPublisher,
+            didCategoryBarButtonTap: addButton.tapPublisher
         )
         let output = viewModel.transform(input: input)
 
@@ -144,8 +144,11 @@ public final class HomeViewController: UIViewController {
 
         output
             .presentBandalArtAddViewController
-            .sink(receiveValue: { _ in
-
+            .sink(receiveValue: { [weak self] _ in
+                guard let self else { return }
+                let vc = BandalArtCompletedViewController(title: self.bandalartNameLabel.text ?? "",
+                                                          emojiText: self.emojiView.text)
+                self.navigationController?.pushViewController(vc, animated: true)
             })
             .store(in: &cancellables)
 
@@ -258,6 +261,7 @@ private extension HomeViewController {
 
         pencilAeccessaryImageView.tintColor = .gray900
         pencilAeccessaryImageView.isUserInteractionEnabled = false
+        
         bandalartNameLabel.text = "메인 목표를 입력해주세요"
         bandalartNameLabel.textColor = .gray300
         bandalartNameLabel.textAlignment = .center
@@ -437,16 +441,16 @@ private extension HomeViewController {
         }
         config.image = UIImage(named: "plus")
         config.baseForegroundColor = .gray600
-        let addButton = UIButton(configuration: config)
-        addBarButton.customView = addButton
-        navigationItem.rightBarButtonItem = addBarButton
-
+        addButton.configuration = config
+        navigationItem.rightBarButtonItem = .init(customView: addButton)
+        
         // set Left Navigation Item.
         let logoButton = UIButton()
         logoButton.setTitle("반다라트", for: .normal)
         logoButton.setTitleColor(.gray900, for: .normal)
         logoButton.titleLabel?.font = .neurimboGothicRelgular(size: 28)
         navigationItem.leftBarButtonItem = .init(customView: logoButton)
+        navigationItem.backButtonTitle = ""
     }
 
     enum UI {
