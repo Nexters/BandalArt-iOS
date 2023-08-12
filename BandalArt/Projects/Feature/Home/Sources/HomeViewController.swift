@@ -34,7 +34,7 @@ public final class HomeViewController: UIViewController {
     // 반다라트 헤더
     private let emojiView = EmojiView()
     private let bandalartNameLabel = UILabel()
-    private let pencilAeccessaryImageView = UIImageView(image: .init(systemName: "pencil.circle.fill"))
+    private let pencilAeccessaryImageView = UIImageView(image: .init(named: "pencil.circle.filled"))
     private let moreButton = UIButton()
 
     private let progressDescriptionLabel = UILabel()
@@ -262,14 +262,14 @@ private extension HomeViewController {
         bandalartNameLabel.text = "메인 목표를 입력해주세요"
         bandalartNameLabel.textColor = .gray300
         bandalartNameLabel.textAlignment = .center
-        bandalartNameLabel.font = .boldSystemFont(ofSize: 20)
+        bandalartNameLabel.font = .pretendardBold(size: 20)
 
-        moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        moreButton.setImage(UIImage(named: "circle.triple.vertical"), for: .normal)
         moreButton.tintColor = .gray500
 
         progressDescriptionLabel.text = "달성률 (0%)"
         progressDescriptionLabel.textColor = .gray600
-        progressDescriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        progressDescriptionLabel.font = .pretendardMedium(size: 12)
         progressView.trackTintColor = .gray100
         progressView.progressTintColor = .themeColor
         progressView.progress = 0.0
@@ -280,7 +280,7 @@ private extension HomeViewController {
         centerLabel.numberOfLines = 3
         centerLabel.textAlignment = .center
         centerLabel.lineBreakMode = .byWordWrapping
-        centerLabel.font = .systemFont(ofSize: 13, weight: .bold)
+        centerLabel.font = .pretendardBold(size: 13)
 
         bandalartView.backgroundColor = .clear
 
@@ -314,10 +314,10 @@ private extension HomeViewController {
         config.title = "공유하기"
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = .systemFont(ofSize: 12, weight: .bold)
+            outgoing.font = .pretendardBold(size: 13)
             return outgoing
         }
-        config.image = UIImage(systemName: "square.and.arrow.up")
+        config.image = UIImage(named: "square.and.arrow.up")
         config.imagePadding = 4
         config.baseForegroundColor = .gray900
         config.baseBackgroundColor = .gray100
@@ -433,10 +433,10 @@ private extension HomeViewController {
         config.title = "추가"
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = .systemFont(ofSize: 16, weight: .bold)
+            outgoing.font = .pretendardBold(size: 16)
             return outgoing
         }
-        config.image = UIImage(systemName: "plus")
+        config.image = UIImage(named: "plus")
         config.baseForegroundColor = .gray600
         let addButton = UIButton(configuration: config)
         addBarButton.customView = addButton
@@ -446,7 +446,7 @@ private extension HomeViewController {
         let logoButton = UIButton()
         logoButton.setTitle("반다라트", for: .normal)
         logoButton.setTitleColor(.gray900, for: .normal)
-        logoButton.titleLabel?.font = .systemFont(ofSize: 28, weight: .regular)
+        logoButton.titleLabel?.font = .neurimboGothicRelgular(size: 28)
         navigationItem.leftBarButtonItem = .init(customView: logoButton)
     }
 

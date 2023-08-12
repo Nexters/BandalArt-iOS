@@ -33,8 +33,8 @@ final class BandalArtCell: UICollectionViewCell {
         
         var font: UIFont {
             switch self {
-            case .task: return .systemFont(ofSize: 12, weight: .medium)
-            case .subGoal: return .systemFont(ofSize: 13, weight: .bold)
+            case .task: return .pretendardMedium(size: 12)
+            case .subGoal: return .pretendardBold(size: 13)
             }
         }
         
@@ -76,7 +76,7 @@ final class BandalArtCell: UICollectionViewCell {
         descriptionLabel.textAlignment = .center
         descriptionLabel.lineBreakMode = .byWordWrapping
         descriptionLabel.textColor = .gray900
-        descriptionLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        descriptionLabel.font = .pretendardMedium(size: 12)
         
         contentView.addSubview(placeHolderView)
         placeHolderView.snp.makeConstraints { make in
@@ -126,7 +126,7 @@ final class BandalArtCell: UICollectionViewCell {
 
 final class BandalartCompletionView: UIView {
     
-    private let checkImageView = UIImageView(image: .init(systemName: "checkmark.circle"))
+    private let checkImageView = UIImageView(image: .init(named: "check.circle.filled"))
     
     public init() {
         super.init(frame: .zero)
@@ -141,13 +141,12 @@ final class BandalartCompletionView: UIView {
         checkImageView.tintColor = .gray500
         layer.cornerRadius = 10
         backgroundColor = .systemBackground.withAlphaComponent(0.6)
-        checkImageView.layer.cornerRadius = 10
-        checkImageView.backgroundColor = .systemBackground
+        checkImageView.backgroundColor = .clear
         
         addSubview(checkImageView)
         checkImageView.snp.makeConstraints { make in
-            make.bottom.trailing.equalToSuperview().offset(-4)
-            make.width.height.equalTo(20)
+            make.bottom.trailing.equalToSuperview().offset(-2)
+            make.width.height.equalTo(22)
         }
     }
     
@@ -159,7 +158,7 @@ final class BandalartCompletionView: UIView {
 final class BandalartPlaceHolderView: UIView {
     
     private let stackView = UIStackView()
-    private let plusImageView = UIImageView(image: .init(systemName: "plus"))
+    private let plusImageView = UIImageView(image: .init(named: "plus"))
     
     public init() {
         super.init(frame: .zero)
@@ -193,7 +192,7 @@ final class BandalartPlaceHolderView: UIView {
         guard mode == .subGoal else { return }
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .bold)
+        label.font = .pretendardBold(size: 12)
         label.text = "서브목표"
         label.textColor = mode.textColor
         stackView.insertArrangedSubview(label, at: 0)
