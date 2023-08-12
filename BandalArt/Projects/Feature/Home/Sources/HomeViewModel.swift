@@ -95,7 +95,7 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightTopInfo: bandalArtRightTopInfoSubject.eraseToAnyPublisher(),
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
-            presentBandalArtAddViewController: input.didViewLoad,
+            presentBandalArtAddViewController: input.didAddBarButtonTap,
             presentActivityViewController: input.didShareButtonTap
         )
     }

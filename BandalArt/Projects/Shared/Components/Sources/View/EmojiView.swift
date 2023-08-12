@@ -14,6 +14,10 @@ public final class EmojiView: UIView {
     private let placeHolderImageView = UIImageView(image: .init(systemName: "person.circle"))
     private let emojiLabel = UILabel()
     
+    public var text: String? {
+        return emojiLabel.text
+    }
+    
     public init(fontSize: CGFloat = 28,
                 cornerRadius: CGFloat = 16,
                 showShadow: Bool = true) {

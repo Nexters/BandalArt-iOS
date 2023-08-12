@@ -1,0 +1,137 @@
+//
+//  BandalArtCompletedViewController.swift
+//  HomeFeature
+//
+//  Created by Youngmin Kim on 2023/08/12.
+//  Copyright © 2023 Otani. All rights reserved.
+//
+
+import UIKit
+import Entity
+import Components
+
+import SnapKit
+
+final class BandalArtCompletedViewController: UIViewController {
+    
+    private let bandarArtTitle: String
+    private let emojiText: String?
+    
+    private let descriptionLabel = UILabel()
+    //private let thumbnailImageView = UIImageView()
+    
+    private let thumbnailImageLabel = UILabel()
+    private let contentLabel = UILabel()
+    private let contentView = UIView()
+    private let emojiView = EmojiView()
+    private let bandalartNameLabel = UILabel()
+    
+    private let shareButton = UIButton()
+    
+    init(title: String, emojiText: String?, shareURLString: String? = nil) {
+        self.bandarArtTitle = title
+        self.emojiText = emojiText
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.setNavigationBar()
+        self.setConfigure()
+        self.setConstraints()
+    }
+}
+
+// MARK: - Private func.
+private extension BandalArtCompletedViewController {
+
+    func setConfigure() {
+        view.backgroundColor = .gray50
+
+        descriptionLabel.text = "반다라트의 모든 목표를 달성했어요.\n정말 대단해요!"
+        descriptionLabel.textColor = .gray900
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.font = .boldSystemFont(ofSize: 22)
+        
+        contentLabel.text = "달성 완료 반다라트"
+        contentLabel.textAlignment = .center
+        contentLabel.textColor = .gray400
+        contentLabel.font = .systemFont(ofSize: 14)
+        
+        bandalartNameLabel.text = bandarArtTitle
+        bandalartNameLabel.textColor = .gray900
+        bandalartNameLabel.textAlignment = .center
+        bandalartNameLabel.font = .boldSystemFont(ofSize: 16)
+        
+        contentView.layer.borderWidth = 1
+        contentView.layer.cornerRadius = 12
+        contentView.layer.borderColor = UIColor.gray300.cgColor
+        
+        thumbnailImageLabel.text = "🥳"
+        thumbnailImageLabel.font = .systemFont(ofSize: 100)
+        
+        shareButton.setTitle("공유하기", for: .normal)
+        shareButton.setTitleColor(.systemBackground, for: .normal)
+        shareButton.layer.cornerRadius = 20
+        shareButton.backgroundColor = .gray900
+        shareButton.layer.masksToBounds = true
+        
+        emojiView.setEmoji(with: Character(emojiText ?? ""))
+    }
+
+    func setConstraints() {
+        view.addSubview(descriptionLabel)
+        view.addSubview(thumbnailImageLabel)
+        view.addSubview(contentLabel)
+        view.addSubview(contentView)
+        contentView.addSubview(emojiView)
+        contentView.addSubview(bandalartNameLabel)
+        view.addSubview(shareButton)
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+        thumbnailImageLabel.snp.makeConstraints { make in
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(30)
+            make.centerX.equalToSuperview()
+        }
+        contentLabel.snp.makeConstraints { make in
+            make.top.equalTo(thumbnailImageLabel.snp.bottom).offset(30)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+        contentView.snp.makeConstraints { make in
+            make.top.equalTo(contentLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(140).priority(.low)
+        }
+        emojiView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(22)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(48)
+        }
+        bandalartNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(emojiView.snp.bottom).offset(2)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().offset(22)
+        }
+        shareButton.snp.makeConstraints { make in
+            make.height.equalTo(55)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+        }
+    }
+
+    func setNavigationBar() {
+        navigationItem.title = ""
+    }
+
+    enum UI {
+        static let subContentInsetValue: CGFloat = 3
+        static let itemCountPerCollectionView: Int = 6
+    }
+}
