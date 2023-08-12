@@ -40,6 +40,8 @@ public final class HomeViewModel: ViewModelType {
         let didShareButtonTap: AnyPublisher<Void, Never>
         let didAddBarButtonTap: AnyPublisher<Void, Never>
         let didCategoryBarButtonTap: AnyPublisher<Void, Never>
+        let didCellModifyed: AnyPublisher<Void, Never> // 현재는 이 인풋 오면 싹다 업데이트
+        let didDeleteButtonTap: AnyPublisher<Void, Never>
     }
     
     struct Output {
@@ -47,6 +49,8 @@ public final class HomeViewModel: ViewModelType {
         let bandalArtEmoji: AnyPublisher<Character, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
         let bandalArtCompletedRatio: AnyPublisher<Float, Never>
+        let bandalArtCompleted: AnyPublisher<Bool, Never>
+        let bandalArtDate: AnyPublisher<Date, Never>
         
         let bandalArtLeftTopInfo: AnyPublisher<[BandalArtCellInfo], Never>
         let bandalArtRightTopInfo: AnyPublisher<[BandalArtCellInfo], Never>
@@ -61,6 +65,8 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtTitleSubject = PassthroughSubject<String, Never>()
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
     private let bandalArtThemeColorHexSubject = PassthroughSubject<(String, String), Never>()
+    private let bandalArtCompletedSubject = PassthroughSubject<Bool, Never>()
+    private let bandalArtDateSubject = PassthroughSubject<Date, Never>()
     
     private let bandalArtLeftTopInfoSubject = PassthroughSubject<[BandalArtCellInfo], Never>()
     private let bandalArtRightTopInfoSubject = PassthroughSubject<[BandalArtCellInfo], Never>()
@@ -79,6 +85,19 @@ public final class HomeViewModel: ViewModelType {
                 self?.fetchBandalArt()
             }
             .store(in: &cancellables)
+
+        input.didCellModifyed
+            .sink { [weak self] _ in
+                self?.fetchBandalArt()
+            }
+            .store(in: &cancellables)
+
+        input.didDeleteButtonTap
+            .sink { [weak self] _ in
+                print("삭제 버튼 누름!!")
+                // 삭제 API
+            }
+            .store(in: &cancellables)
         
 //        input.didAddBarButtonTap
 //            .sink { info in
@@ -91,6 +110,8 @@ public final class HomeViewModel: ViewModelType {
             bandalArtEmoji: bandalArtEmojiSubject.eraseToAnyPublisher(),
             bandalArtThemeColorHexString: bandalArtThemeColorHexSubject.eraseToAnyPublisher(),
             bandalArtCompletedRatio: bandalArtCompletedRatioSubject.eraseToAnyPublisher(),
+            bandalArtCompleted: bandalArtCompletedSubject.eraseToAnyPublisher(),
+            bandalArtDate: bandalArtDateSubject.eraseToAnyPublisher(),
             bandalArtLeftTopInfo: bandalArtLeftTopInfoSubject.eraseToAnyPublisher(),
             bandalArtRightTopInfo: bandalArtRightTopInfoSubject.eraseToAnyPublisher(),
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
@@ -106,6 +127,9 @@ public final class HomeViewModel: ViewModelType {
                 self?.bandalArtTitleSubject.send(info.title)
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
                 self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
+                self?.bandalArtCompletedSubject.send(info.isCompleted)
+                self?.bandalArtDateSubject.send(info.dueDate ?? Date())
+
             }
             .store(in: &cancellables)
         

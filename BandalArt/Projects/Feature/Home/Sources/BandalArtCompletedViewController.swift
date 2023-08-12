@@ -18,7 +18,6 @@ final class BandalArtCompletedViewController: UIViewController {
     private let emojiText: String?
     
     private let descriptionLabel = UILabel()
-    //private let thumbnailImageView = UIImageView()
     
     private let thumbnailImageLabel = UILabel()
     private let contentLabel = UILabel()
@@ -61,7 +60,7 @@ private extension BandalArtCompletedViewController {
         contentLabel.text = "달성 완료 반다라트"
         contentLabel.textAlignment = .center
         contentLabel.textColor = .gray400
-        contentLabel.font = .pretendardBold(size: 14)
+        contentLabel.font = .pretendardSemiBold(size: 14)
         
         bandalartNameLabel.text = bandarArtTitle
         bandalartNameLabel.textColor = .gray900

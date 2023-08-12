@@ -17,6 +17,10 @@ protocol EmojiSelectorDelegate: AnyObject {
   func emojiViewTapped(in cell: EmojiTitleCell)
 }
 
+public protocol ManipulateViewControllerDelegate: AnyObject {
+    func didModifyed()
+}
+
 public final class ManipulateViewController: BottomSheetController {
   let mode: Mode
   let bandalArtCellType: BandalArtCellType
@@ -29,6 +33,7 @@ public final class ManipulateViewController: BottomSheetController {
   var subGoalAndTaskCreateDataSource:  UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>!
   var taskUpdateDataSource: UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>!
 
+  weak var delegate: ManipulateViewControllerDelegate?
   
   public init(
     mode: Mode,

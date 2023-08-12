@@ -38,7 +38,10 @@ public final class HomeViewController: UIViewController {
     private let moreButton = UIButton()
 
     private let progressDescriptionLabel = UILabel()
+    private let tinyLineView = UIView()
+    private let dateLabel = UILabel()
     private let progressView = UIProgressView()
+    private let completedButton = UIButton()
 
     // 반다라트 표 컨테이너 뷰
     private let bandalartView = UIView()
@@ -64,24 +67,40 @@ public final class HomeViewController: UIViewController {
     private var leftBottomInfos: [BandalArtCellInfo] = .defaultList
     private var rightBottomInfos: [BandalArtCellInfo] = .defaultList
 
+    private let didLoadPublisher = PassthroughSubject<Void, Never>()
+    private let didCellModifyed = PassthroughSubject<Void, Never>()
+    private let didDeleteButtonTap = PassthroughSubject<Void, Never>()
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
         self.bind()
+    }
 
-        // 임시 세팅
+    @objc func moreButtonTap() {
+        let actionSheet = UIAlertController(title: nil, message: nil,
+                                            preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "삭제하기", style: .destructive) { [weak self] _ in
+            self?.didDeleteButtonTap.send(())
+        }
+        let cancelAdtion = UIAlertAction(title: "취소", style: .cancel)
+
+        actionSheet.addAction(deleteAction)
+        actionSheet.addAction(cancelAdtion)
+        self.present(actionSheet, animated: true, completion: nil)
     }
 
     private func bind() {
-        let didLoadPublisher = PassthroughSubject<Void, Never>()
         let input = HomeViewModel.Input(
             didViewLoad: didLoadPublisher.eraseToAnyPublisher(),
             didMoreButtonTap: moreButton.tapPublisher,
             didShareButtonTap: shareButton.tapPublisher,
             didAddBarButtonTap: addButton.tapPublisher,
-            didCategoryBarButtonTap: addButton.tapPublisher
+            didCategoryBarButtonTap: addButton.tapPublisher,
+            didCellModifyed: didCellModifyed.eraseToAnyPublisher(),
+            didDeleteButtonTap: didDeleteButtonTap.eraseToAnyPublisher()
         )
         let output = viewModel.transform(input: input)
 
@@ -108,9 +127,21 @@ public final class HomeViewController: UIViewController {
 
         output.bandalArtCompletedRatio
             .sink(receiveValue: { [weak self] ratio in
-                let percent = Int(ratio * 100)
-                self?.progressDescriptionLabel.text = "달성률 (\(percent)%)"
-                self?.progressView.progress = ratio
+                self?.updateBandalArtRatio(ratio: ratio)
+            })
+            .store(in: &cancellables)
+
+        output.bandalArtCompleted
+            .removeDuplicates()
+            .sink(receiveValue: { [weak self] isCompleted in
+                self?.completedButton.isHidden = !isCompleted
+            })
+            .store(in: &cancellables)
+
+        output.bandalArtDate
+            .removeDuplicates()
+            .sink(receiveValue: { [weak self] date in
+                self?.dateLabel.text = "~" + date.toString
             })
             .store(in: &cancellables)
 
@@ -146,8 +177,10 @@ public final class HomeViewController: UIViewController {
             .presentBandalArtAddViewController
             .sink(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                let vc = BandalArtCompletedViewController(title: self.bandalartNameLabel.text ?? "",
-                                                          emojiText: self.emojiView.text)
+                let vc = BandalArtCompletedViewController(
+                    title: self.bandalartNameLabel.text ?? "",
+                    emojiText: self.emojiView.text
+                )
                 self.navigationController?.pushViewController(vc, animated: true)
             })
             .store(in: &cancellables)
@@ -175,6 +208,8 @@ public final class HomeViewController: UIViewController {
         progressView.progressTintColor = .themeColor
         centerView.backgroundColor = .themeColor
         centerLabel.textColor = .subThemeColor
+        completedButton.setTitleColor(.subThemeColor, for: .normal)
+        completedButton.backgroundColor = .themeColor
 
         [leftTopCollectionView, leftBottomCollectionView,
          rightTopCollectionView, rightBottomCollectionView].forEach { $0.reloadData() }
@@ -194,6 +229,19 @@ public final class HomeViewController: UIViewController {
             return rightBottomInfos
         }
         return .defaultList
+    }
+
+    private func updateBandalArtRatio(ratio: Float) {
+        let percent = Int(ratio * 100)
+        self.progressDescriptionLabel.text = "달성률 (\(percent)%)"
+        self.progressView.progress = ratio
+    }
+}
+
+extension HomeViewController: ManipulateViewControllerDelegate {
+
+    public func didModifyed() {
+        didCellModifyed.send(())
     }
 }
 
@@ -271,8 +319,12 @@ private extension HomeViewController {
         moreButton.tintColor = .gray500
 
         progressDescriptionLabel.text = "달성률 (0%)"
-        progressDescriptionLabel.textColor = .gray600
-        progressDescriptionLabel.font = .pretendardMedium(size: 12)
+
+        [progressDescriptionLabel, dateLabel].forEach {
+            $0.textColor = .gray600
+            $0.font = .pretendardMedium(size: 12)
+        }
+
         progressView.trackTintColor = .gray100
         progressView.progressTintColor = .themeColor
         progressView.progress = 0.0
@@ -286,6 +338,9 @@ private extension HomeViewController {
         centerLabel.font = .pretendardBold(size: 13)
 
         bandalartView.backgroundColor = .clear
+
+        tinyLineView.layer.cornerRadius = 0.5
+        tinyLineView.backgroundColor = .gray300
 
         [leftTopCollectionView, leftBottomCollectionView, rightTopCollectionView, rightBottomCollectionView].forEach {
             $0.backgroundColor = .gray100
@@ -330,6 +385,24 @@ private extension HomeViewController {
         shareButton.layer.cornerRadius = 12
         shareButton.backgroundColor = .gray100
         shareButton.layer.masksToBounds = true
+
+        config.image = UIImage(named: "check")
+        config.title = "달성 완료!"
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .pretendardSemiBold(size: 11)
+            return outgoing
+        }
+        config.contentInsets = .zero
+        config.imagePadding = 2
+        config.baseForegroundColor = .gray900
+        completedButton.configuration = config
+        completedButton.layer.cornerRadius = 12
+        completedButton.backgroundColor = .themeColor
+        completedButton.layer.masksToBounds = true
+        completedButton.isHidden = true
+
+        moreButton.addTarget(self, action: #selector(moreButtonTap), for: .touchUpInside)
     }
 
     func setConstraints() {
@@ -338,7 +411,10 @@ private extension HomeViewController {
         view.addSubview(bandalartNameLabel)
         view.addSubview(moreButton)
         view.addSubview(progressDescriptionLabel)
+        view.addSubview(tinyLineView)
+        view.addSubview(dateLabel)
         view.addSubview(progressView)
+        view.addSubview(completedButton)
         view.addSubview(bandalartView)
         view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
@@ -385,14 +461,28 @@ private extension HomeViewController {
         progressDescriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(bandalartNameLabel.snp.bottom).offset(26)
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
-
+        }
+        tinyLineView.snp.makeConstraints { make in
+            make.leading.equalTo(progressDescriptionLabel.snp.trailing).offset(6)
+            make.width.equalTo(1)
+            make.height.equalTo(7)
+            make.centerY.equalTo(progressDescriptionLabel)
+        }
+        dateLabel.snp.makeConstraints { make in
+            make.leading.equalTo(tinyLineView.snp.trailing).offset(6)
+            make.centerY.equalTo(progressDescriptionLabel)
         }
         progressView.snp.makeConstraints { make in
             make.top.equalTo(progressDescriptionLabel.snp.bottom).offset(8)
             make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
             make.height.equalTo(8)
+        }
+        completedButton.snp.makeConstraints { make in
+            make.bottom.equalTo(progressView.snp.top).offset(-6)
+            make.trailing.equalToSuperview().offset(-16)
+            make.height.equalTo(24)
+            make.width.equalTo(80)
         }
         bandalartView.snp.makeConstraints { make in
             make.top.equalTo(progressView.snp.bottom).offset(18)

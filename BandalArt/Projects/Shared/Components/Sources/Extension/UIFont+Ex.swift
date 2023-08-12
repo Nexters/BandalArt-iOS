@@ -18,6 +18,10 @@ public extension UIFont {
         return UIFont(name: "Pretendard-Bold", size: size)!
     }
 
+    static func pretendardSemiBold(size: CGFloat) -> UIFont {
+        return UIFont(name: "Pretendard-SemiBold", size: size)!
+    }
+
     static func pretendardMedium(size: CGFloat) -> UIFont {
         return UIFont(name: "Pretendard-Medium", size: size)!
     }

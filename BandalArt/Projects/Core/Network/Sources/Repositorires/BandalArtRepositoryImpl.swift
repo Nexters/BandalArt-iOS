@@ -45,8 +45,11 @@ fileprivate extension AnyPublisher<Response, MoyaError> {
     
     func mapToDomain<D: Decodable>(_ type: D.Type, atKeyPath keyPath: String? = nil,
                            using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, BandalArtNetworkError> {
+        decoder.dateDecodingStrategy = .iso8601
+        
         return self.tryMap { response in
-            return try response.map(type, atKeyPath: keyPath, using: decoder, failsOnEmptyData: failsOnEmptyData)
+            return try response.map(type, atKeyPath: keyPath, using: decoder,
+                                    failsOnEmptyData: failsOnEmptyData)
         }.mapError { error in
             guard let mError = error as? MoyaError else { return BandalArtNetworkError.unknown }
             return BandalArtNetworkError(rawValue: mError.response?.statusCode ?? -1) ?? .unknown
