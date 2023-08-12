@@ -15,14 +15,14 @@ public struct BandalArtInfo {
     public let mainCellKey: String
     public let mainColorHexString: String
     public let subColorHexString: String
-    public let profileEmojiText: String
+    public let profileEmojiText: Character
     public let dueDate: Date?
     public let isCompleted: Bool
     public let shareKey: URL?
     
     public init(title: String, key: String, mainCellKey: String,
                 mainColorHexString: String, subColorHexString: String,
-                profileEmojiText: String, dueDate: Date?,
+                profileEmojiText: Character, dueDate: Date?,
                 isCompleted: Bool, shareKey: URL?) {
         self.title = title
         self.key = key

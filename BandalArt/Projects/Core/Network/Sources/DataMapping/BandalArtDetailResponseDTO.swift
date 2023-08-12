@@ -29,7 +29,7 @@ extension BandalArtDetailResponseDTO {
                      mainCellKey: cellKey,
                      mainColorHexString: mainColor,
                      subColorHexString: subColor,
-                     profileEmojiText: profileEmoji,
+                     profileEmojiText: Character(profileEmoji),
                      dueDate: Date(),
                      isCompleted: isCompleted,
                      shareKey: URL(string: shareKey ?? ""))

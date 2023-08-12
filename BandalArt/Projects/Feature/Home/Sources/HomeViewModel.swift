@@ -44,7 +44,7 @@ public final class HomeViewModel: ViewModelType {
     
     struct Output {
         let bandalArtTitle: AnyPublisher<String, Never>
-        let bandalArtEmoji: AnyPublisher<String, Never>
+        let bandalArtEmoji: AnyPublisher<Character, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
         let bandalArtCompletedRatio: AnyPublisher<Float, Never>
         
@@ -57,7 +57,7 @@ public final class HomeViewModel: ViewModelType {
         let presentActivityViewController: AnyPublisher<Void, Never>
     }
     
-    private let bandalArtEmojiSubject = PassthroughSubject<String, Never>()
+    private let bandalArtEmojiSubject = PassthroughSubject<Character, Never>()
     private let bandalArtTitleSubject = PassthroughSubject<String, Never>()
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
     private let bandalArtThemeColorHexSubject = PassthroughSubject<(String, String), Never>()

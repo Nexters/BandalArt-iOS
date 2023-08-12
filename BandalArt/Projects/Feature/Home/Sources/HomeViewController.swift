@@ -94,8 +94,7 @@ public final class HomeViewController: UIViewController {
             .store(in: &cancellables)
 
         output.bandalArtEmoji
-            .sink(receiveValue: { [weak self] text in
-                let char = text == "" ? nil: Character(text)
+            .sink(receiveValue: { [weak self] char in
                 self?.emojiView.setEmoji(with: char)
                 self?.pencilAeccessaryImageView.isHidden = true
             })
