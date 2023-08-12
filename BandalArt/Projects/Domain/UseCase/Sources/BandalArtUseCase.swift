@@ -45,7 +45,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
                 switch completion {
                 case let .failure(error): // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
                     self?.errorSubject.send(())
-                    print(error)
+                    print("네트워크 에러: ", error.errorDescription)
                     
                 case .finished: return
                 }

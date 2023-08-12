@@ -14,6 +14,7 @@ import Combine
 // MARK: - BandalArt API Error.
 public enum BandalArtNetworkError: Int, Error {
 
+    case inValidBody = 400
     case inValidTokenError = 401
     case inValidURLORKey = 404
     case internalServerError = 500
@@ -23,10 +24,11 @@ public enum BandalArtNetworkError: Int, Error {
     var description: String { self.errorDescription }
 }
 
-extension BandalArtNetworkError {
+public extension BandalArtNetworkError {
 
     var errorDescription: String {
         switch self {
+        case .inValidBody: return "400:CANBE_INVALID_BODY_ERROR"
         case .inValidTokenError: return "401:INVALID_TOKEN_ERROR"
         case .inValidURLORKey: return "404:INVALID_URL_OR_KEY_ERROR"
         case .internalServerError: return "500:INTERNAL_SERVER_ERROR"
