@@ -12,7 +12,7 @@ import Combine
 import Components
 
 struct MemoCellViewModel {
-  let memo: PassthroughSubject<String, Never>
+  let memo: PassthroughSubject<String?, Never>
 }
 
 final class MemoCell: UICollectionViewCell {

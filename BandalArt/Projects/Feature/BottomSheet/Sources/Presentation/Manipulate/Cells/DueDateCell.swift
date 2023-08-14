@@ -12,14 +12,14 @@ import Combine
 import Components
 
 struct DueDateCellViewModel {
-  let date: PassthroughSubject<Date, Never>
+  let date: PassthroughSubject<Date?, Never>
+  let expandButtonTap: PassthroughSubject<Void, Never>
   let resetButtonTap: PassthroughSubject<Void, Never>
 }
 
 final class DueDateCell: UICollectionViewCell {
-  static let identifier = "DueDateCell"
-  weak var delegate: DatePickerCallDelegate?
   private var cancellables = Set<AnyCancellable>()
+  private var viewModel: DueDateCellViewModel?
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
@@ -34,11 +34,11 @@ final class DueDateCell: UICollectionViewCell {
   lazy var datePickerButton: UIButton = {
     let button = UIButton()
     button.setImage(
-      UIImage(named: "chevron.right")?.resize(24.0),
+      UIImage(systemName: "chevron.right"),
       for: .normal
     )
+    button.tintColor = .gray400
     button.imageView?.contentMode = .scaleAspectFit
-    button.addTarget(self, action: #selector(datePickerButtonTapped), for: .touchUpInside)
     return button
   }()
   
@@ -62,7 +62,6 @@ final class DueDateCell: UICollectionViewCell {
     stackView.distribution = .fill
     stackView.spacing = 8.0
     stackView.contentMode = .scaleAspectFit
-
     return stackView
   }()
   
@@ -82,10 +81,18 @@ final class DueDateCell: UICollectionViewCell {
     super.init(frame: frame)
     setupView()
     setupConstraints()
+    bind()
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
+    bind()
   }
   
   func setupView() {
@@ -119,51 +126,64 @@ final class DueDateCell: UICollectionViewCell {
     }
     
     datePicker.snp.makeConstraints {
-//      $0.top.equalTo(underlineTextField.snp.bottom).offset(16.0)
-//      $0.leading.equalToSuperview().offset(4.0)
-//      $0.trailing.equalToSuperview().offset(-4.0)
-//      $0.bottom.equalToSuperview()
       $0.height.lessThanOrEqualTo(150.0)
     }
   }
   
   func setupData(item: DueDateItem) {
+    // TODO: Date 객체가 옳게 안들어 오는 현상 발생
     underlineTextField.text = item.date?.toStringWithKoreanFormat()
-  }
-  
-  @objc func datePickerButtonTapped() {
-    datePicker.isHidden.toggle()
-    resetButton.isHidden.toggle()
-    if datePicker.isHidden {
+    // print(item.date, Date(), item.date?.toStringWithKoreanFormat())
+    let state = item.isOpen
+    datePicker.isHidden = !state
+    resetButton.isHidden = !state
+    if !state {
       datePickerButton.setImage(
-        UIImage(named: "chevron.right")?.resize(24.0),
+        UIImage(systemName: "chevron.right"),
         for: .normal
       )
     } else {
       datePickerButton.setImage(
-        UIImage(named: "chevron.down")?.resize(24.0),
+        UIImage(systemName: "chevron.down"),
         for: .normal
       )
     }
-    delegate?.datePickerButtonTapped(in: self, isOpen: datePicker.isHidden)
   }
   
-  func configure(with viewModel: DueDateCellViewModel) {
+  func bind() {
+    datePickerButton.tapPublisher
+      .sink { [weak self] _ in
+        guard let self = self else { return }
+        viewModel?.expandButtonTap.send(Void())
+      }
+      .store(in: &cancellables)
+    
+    underlineTextField.publisher(for: \.text)
+      .sink { [weak self] text in
+        guard let self = self else { return }
+        let date = underlineTextField.text?.toDate(format: "yyyy년 MM월 dd일")
+        viewModel?.date.send(date)
+      }
+      .store(in: &cancellables)
+    
     datePicker.datePublisher
       .sink { [weak self] date in
-        guard let self = self else { return }
-        viewModel.date.send(date)
-        self.underlineTextField.text = date.toStringWithKoreanFormat()
+        if self?.datePicker.isHidden == false {
+          print(date.toStringWithKoreanFormat())
+          self?.underlineTextField.text = date.toStringWithKoreanFormat()
+        }
       }
       .store(in: &cancellables)
     
     resetButton.tapPublisher
-      .sink { tap in
-        viewModel.resetButtonTap.send(tap)
+      .sink { [weak self] tap in
+        self?.underlineTextField.text = nil
       }
       .store(in: &cancellables)
-    
- 
+  }
+  
+  func configure(with viewModel: DueDateCellViewModel) {
+    self.viewModel = viewModel
   }
 }
 

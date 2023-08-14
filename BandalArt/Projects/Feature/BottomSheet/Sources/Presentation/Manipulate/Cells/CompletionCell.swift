@@ -12,7 +12,7 @@ import Combine
 import Components
 
 struct CompletionCellViewModel {
-  let completion: CurrentValueSubject<Bool, Never>
+  let completion: PassthroughSubject<Bool?, Never>
 }
 
 final class CompletionCell: UICollectionViewCell {
@@ -72,17 +72,19 @@ final class CompletionCell: UICollectionViewCell {
   
   func setupData(item: CompletionItem) {
     customSwitch.isOn = item.isCompleted ?? false
+    titleLabel.text = item.isCompleted! ? "달성" : "미달성"
   }
   
   func configure(with viewModel: CompletionCellViewModel) {
     customSwitch.$isOn
-      .sink { completion in
+      .sink { [weak self] completion in
         viewModel.completion.send(completion)
       }
       .store(in: &cancellables)
     
     viewModel.completion
       .sink { [weak self] completion in
+        guard let completion = completion else { return }
         self?.titleLabel.text = completion ? "달성" : "미달성"
       }
       .store(in: &cancellables)
