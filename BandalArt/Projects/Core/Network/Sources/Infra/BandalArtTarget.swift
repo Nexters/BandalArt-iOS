@@ -26,7 +26,7 @@ enum BandalArtTarget {
 extension BandalArtTarget: TargetType {
     
   var baseURL: URL {
-    guard let url = URL(string: APIConstant.environment.rawValue) else {
+    guard let url = URL(string: APIConstant.environment.urlString) else {
       fatalError("fatal error - invalid api url")
     }
     return url
