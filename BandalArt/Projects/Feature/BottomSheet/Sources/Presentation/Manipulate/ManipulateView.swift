@@ -26,7 +26,8 @@ final class ManipulateView: UIView {
   lazy var closeButton: UIButton = {
     let button = UIButton()
     button.imageView?.contentMode = .scaleAspectFit
-    button.setImage(UIImage(named: "xmark")?.resize(10.0), for: .normal)
+    button.setImage(UIImage(systemName: "xmark"), for: .normal)
+    button.tintColor = .gray900
     return button
   }()
   
@@ -41,7 +42,7 @@ final class ManipulateView: UIView {
   lazy var deleteButton: UIButton = {
     let button = UIButton()
     button.setTitle("삭제", for: .normal)
-    button.setTitleColor(.gray400, for: .normal)
+    button.setTitleColor(.gray900, for: .normal)
     button.backgroundColor = .gray200
     button.layer.cornerRadius = 28
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)

@@ -11,7 +11,7 @@ import Combine
 import CombineCocoa
 
 struct EmojiPopupViewModel {
-  let emojiSelection: PassthroughSubject<Character, Never>
+  let emojiSelection: PassthroughSubject<Character?, Never>
 }
 
 final class EmojiPopupViewController: UIViewController {
