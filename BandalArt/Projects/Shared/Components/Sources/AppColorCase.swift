@@ -17,6 +17,7 @@ enum AppColorCase: String, CaseIterable {
     case mandarin
     case grape
     case sky
+    case pink
     
     // Sub
     case lightGrape

@@ -71,7 +71,7 @@ extension BandalArtTarget: TargetType {
          .getCell:
       return .requestPlain
     case .updateCell(parameters: let parameters, _, _):
-      return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+      return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
 //    case :
 //      return .requestPlain
 //    case :

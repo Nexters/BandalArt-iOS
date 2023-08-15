@@ -322,6 +322,7 @@ private extension HomeViewController {
             bandalArtCellType: type
           )
         )
+        viewController.delegate = self
         viewController.preferredSheetSizing = .fit
         self.present(viewController, animated: true)
     }

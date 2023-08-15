@@ -68,7 +68,6 @@ public protocol BandalArtRepository {
   /// - Returns: `null - statusCode`
     
   /// Task에서 호출하는 경우
-  // TODO: Result로 바꾸는 게 나을까?
     func postTaskUpdateData(
       key: String,
       cellKey: String,

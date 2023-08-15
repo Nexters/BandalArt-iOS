@@ -33,6 +33,9 @@ public extension UIColor {
     static var sky: UIColor {
         return UIColor(named: AppColorCase.sky.rawValue)!
     }
+    static var pink: UIColor {
+      return UIColor(named: AppColorCase.pink.rawValue)!
+    }
     static var darkNavy: UIColor {
         return UIColor(named: AppColorCase.darkNavy.rawValue)!
     }
@@ -75,7 +78,7 @@ public extension UIColor {
 public extension UIColor {
     
     static var themeColorList: [UIColor] {
-        return [.mint, .grass, .lemon, .mandarin, .grape, .sky]
+        return [.mint, .sky, .grass, .lemon, .mandarin, .pink]
     }
     
     static var subThemeColorList: [UIColor] {

@@ -56,11 +56,11 @@ public final class ManipulateViewModel: ViewModelType {
     emojiTitleItem = CurrentValueSubject<[EmojiTitleItem], Never>([EmojiTitleItem(id: UUID(), emoji: mainInfo?.profileEmojiText, title: mainInfo?.title)])
     themeColorItem = CurrentValueSubject<[ThemeColorItem], Never>([
       ThemeColorItem(id: UUID(), color: .mint),
-      ThemeColorItem(id: UUID(), color: .grape),
       ThemeColorItem(id: UUID(), color: .sky),
       ThemeColorItem(id: UUID(), color: .grass),
       ThemeColorItem(id: UUID(), color: .lemon),
-      ThemeColorItem(id: UUID(), color: .mandarin)
+      ThemeColorItem(id: UUID(), color: .mandarin),
+      ThemeColorItem(id: UUID(), color: .pink)
     ])
     themeColorHexSubject.send(mainInfo?.mainColorHexString)
   }
@@ -82,7 +82,8 @@ public final class ManipulateViewModel: ViewModelType {
     let completionButtonEnable: AnyPublisher<Bool, Never>
     let showDeleteAlert: AnyPublisher<Void, Never>
     let showCompleteToast: AnyPublisher<Void, Never>
-    let showEmojiPopup: AnyPublisher<Void,Never>
+    let updateHomeDelegate: AnyPublisher<Void,Never>
+    let selectColor: AnyPublisher<Int, Never>
     let dismissBottomSheet: AnyPublisher<Void,Never>
   }
   
@@ -118,16 +119,42 @@ public final class ManipulateViewModel: ViewModelType {
 
   var changeDueDateHeight = PassthroughSubject<UUID, Never>()
   var isOpenDueDate = CurrentValueSubject<Bool, Never>(false)
+  var selectColor = PassthroughSubject<Int, Never>()
   
   private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
   private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
   private let showDeleteAlertSubject = PassthroughSubject<Void, Never>()
   private let showCompleteToastSubject = PassthroughSubject<Void, Never>()
-  private let showEmojiPopupSubject = PassthroughSubject<Void, Never>()
+  private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
+  
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
   
   func transform(input: Input) -> Output {
     self.bindUseCase()
+    
+    input.viewDidLoad
+      .sink { [weak self] _ in
+        guard let self = self else { return }
+        if self.bandalArtCellType == .mainGoal {
+          switch self.mainGoalInfo?.mainColorHexString {
+          case "#3FFFBA":
+            selectColor.send(0)
+          case "#3FF3FF":
+            selectColor.send(1)
+          case "#93FF3F":
+            selectColor.send(2)
+          case "#FBFF3F":
+            selectColor.send(3)
+          case "#FFB423":
+            selectColor.send(4)
+          case "#FF9DF5":
+            selectColor.send(5)
+          default:
+            selectColor.send(0)
+          }
+        }
+      }
+      .store(in: &cancellables)
     
     emojiTitleCellViewModel.title
       .sink { [weak self] title in
@@ -184,7 +211,7 @@ public final class ManipulateViewModel: ViewModelType {
           case 4:
             themeColorHexSubject.send("#FFB423")
           case 5:
-            themeColorHexSubject.send("#4E3FFF")
+            themeColorHexSubject.send("#FF9DF5")
           default:
             themeColorHexSubject.send("#3FFFBA")
           }
@@ -268,7 +295,13 @@ public final class ManipulateViewModel: ViewModelType {
     input.completionButtonTap
       .sink { [weak self] event in
         guard let self = self else { return }
-        
+        updateGoalAndTask(cellKey: subGoalAndTaskInfo.key)
+      }
+      .store(in: &cancellables)
+    
+    input.deleteButtonTap
+      .sink { [weak self] event in
+        self?.showDeleteAlertSubject.send(Void())
       }
       .store(in: &cancellables)
     
@@ -280,7 +313,8 @@ public final class ManipulateViewModel: ViewModelType {
       completionButtonEnable: completionButtonEnableSubject.eraseToAnyPublisher(),
       showDeleteAlert: showDeleteAlertSubject.eraseToAnyPublisher(),
       showCompleteToast: showCompleteToastSubject.eraseToAnyPublisher(),
-      showEmojiPopup: showEmojiPopupSubject.eraseToAnyPublisher(),
+      updateHomeDelegate: updateHomeDelegateSubject.eraseToAnyPublisher(),
+      selectColor: selectColor.eraseToAnyPublisher(),
       dismissBottomSheet: dismissBottomSheetSubject.eraseToAnyPublisher()
     )
   }
@@ -288,7 +322,8 @@ public final class ManipulateViewModel: ViewModelType {
   private func bindUseCase() {
     self.useCase.cellUpdateCompletionSubject
       .sink { [weak self] completion in
-        
+        self?.updateHomeDelegateSubject.send(Void())
+        self?.dismissBottomSheetSubject.send(Void())
       }
       .store(in: &cancellables)
   }
@@ -301,7 +336,6 @@ private extension ManipulateViewModel {
   ) { //임시
     switch bandalArtCellType {
     case .mainGoal:
-      // index to HEX
       self.useCase.updateBandalArtTask(
         key: key,
         cellKey: cellKey,
