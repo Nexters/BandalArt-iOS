@@ -7,7 +7,7 @@ public extension Project {
     product: Product,
     organizationName: String = "otani",
     packages: [Package] = [],
-    deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "15.0", devices: [.iphone, .ipad]),
+    deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "15.0", devices: [.iphone]),
     dependencies: [TargetDependency] = [],
     sources: SourceFilesList = ["Sources/**"],
     resources: ResourceFileElements? = nil,
