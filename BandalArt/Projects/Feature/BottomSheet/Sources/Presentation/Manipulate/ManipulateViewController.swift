@@ -21,6 +21,10 @@ protocol EmojiSelectorDelegate: AnyObject {
   func emojiViewTapped(in cell: EmojiTitleCell)
 }
 
+public protocol ManipulateViewControllerDelegate: AnyObject {
+    func didModifyed()
+}
+
 public final class ManipulateViewController: BottomSheetController {
   let mode: Mode
   let bandalArtCellType: BandalArtCellType
