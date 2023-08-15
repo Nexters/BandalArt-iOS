@@ -242,7 +242,7 @@ public final class HomeViewController: UIViewController {
     private func updateBandalArtRatio(ratio: Float) {
         let percent = Int(ratio * 100)
         self.progressDescriptionLabel.text = "달성률 (\(percent)%)"
-        self.progressView.progress = ratio
+        self.progressView.setProgress(ratio, animated: true)
     }
 }
 
@@ -254,7 +254,7 @@ extension HomeViewController: ManipulateViewControllerDelegate {
 }
 
 extension HomeViewController: UICollectionViewDelegate,
-                                       UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+                                UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView,
                                numberOfItemsInSection section: Int) -> Int {
