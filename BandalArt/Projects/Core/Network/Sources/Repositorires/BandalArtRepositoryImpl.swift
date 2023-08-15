@@ -20,22 +20,45 @@ public final class BandalArtRepositoryImpl: BandalArtRepository {
 }
 
 public extension BandalArtRepositoryImpl {
-
-  // 반다라트 상세 조회 API
-  func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError> {
-    return self.provider.requestPublisher(.getBandalArtDetail(bandalArtKey: key))
-      .mapToDomain(BandalArtDetailResponseDTO.self)
-      .map { $0.toDomain }
-      .eraseToAnyPublisher()
-  }
-
-  // 메인셀, 하위셀 모두 조회 API
-  func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError> {
-    return self.provider.requestPublisher(.getMainCell(bandalArtKey: key))
-      .mapToDomain(BandalArtCellInfoResponseDTO.self)
-      .map { $0.toDomain }
-      .eraseToAnyPublisher()
-  }
+    
+    // 게스트 생성 API
+    func postGuest() -> AnyPublisher<String, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.postGuest)
+            .mapToDomain(GuestResponseDTO.self)
+            .map { $0.key }
+            .eraseToAnyPublisher()
+    }
+    
+    // 반다라트 생성 API
+    func postBandalArt() -> AnyPublisher<String, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.postBandalArt)
+            .mapToDomain(BandalArtCreateInfoResponseDTO.self)
+            .map { $0.key }
+            .eraseToAnyPublisher()
+    }
+    
+    // 반다라트 상세 조회 API
+    func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.getBandalArtDetail(bandalArtKey: key))
+            .mapToDomain(BandalArtDetailResponseDTO.self)
+            .map { $0.toDomain }
+            .eraseToAnyPublisher()
+    }
+    
+    // 메인셀, 하위셀 모두 조회 API
+    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.getMainCell(bandalArtKey: key))
+            .mapToDomain(BandalArtCellInfoResponseDTO.self)
+            .map { $0.toDomain }
+            .eraseToAnyPublisher()
+    }
+    
+    // 반다라트 삭제 API
+    func deleteBandalArt(key: String) -> AnyPublisher<Void, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.deleteBandalArt(bandalArtKey: key))
+            .mapToVoid()
+            .eraseToAnyPublisher()
+    }
 
   // Task 케이스 & SubGoal 케이스
   func postTaskUpdateData(
