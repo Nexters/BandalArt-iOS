@@ -270,13 +270,14 @@ extension HomeViewController: UICollectionViewDelegate,
 
         let mode: BandalArtCell.Mode = collectionView.tag == indexPath.item ? .subGoal : .task
 
-        guard let info = self.cellInfoList(collectionView: collectionView)[safe: indexPath.row] else {
+        guard let info = self.cellInfoList(collectionView: collectionView)[safe: indexPath.item] else {
             cell.configure(title: nil, mode: mode, status: .empty)
             return cell
         }
         let isTitle = !(info.title == nil || info.title == "")
         var status: BandalArtCell.Status = isTitle ? .created : .empty
         status = info.isCompleted ? .completed : status
+        print(info.title, status)
         cell.configure(title: info.title, mode: mode, status: status)
         return cell
     }

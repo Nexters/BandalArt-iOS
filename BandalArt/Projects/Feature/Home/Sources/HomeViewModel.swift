@@ -107,11 +107,11 @@ public final class HomeViewModel: ViewModelType {
             }
             .store(in: &cancellables)
         
-//        input.didAddBarButtonTap
-//            .sink { info in
-//                <#code#>
-//            }
-//            .store(in: &cancellables)
+        input.didAddBarButtonTap
+            .sink { [weak self] info in
+                self?.fetchBandalArt()
+            }
+            .store(in: &cancellables)
 
         input.didMainCellTap
             .sink { [weak self] _ in
@@ -131,7 +131,7 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightTopInfo: bandalArtRightTopInfoSubject.eraseToAnyPublisher(),
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
-            presentBandalArtAddViewController: input.didAddBarButtonTap,
+            presentBandalArtAddViewController: input.didShareButtonTap,
             presentActivityViewController: input.didShareButtonTap,
             presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher()
         )

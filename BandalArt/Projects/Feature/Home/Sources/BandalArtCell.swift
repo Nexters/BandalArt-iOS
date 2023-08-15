@@ -68,6 +68,10 @@ final class BandalArtCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
     private func setUI() {
         contentView.layer.cornerRadius = 10
         contentView.backgroundColor = .systemBackground
@@ -91,10 +95,12 @@ final class BandalArtCell: UICollectionViewCell {
         
         switch status {
         case .empty:
+            completionView.removeFromSuperview()
             descriptionLabel.removeFromSuperview()
             placeHolderView.configure(mode: mode)
             
         case .created, .completed:
+            completionView.removeFromSuperview()
             placeHolderView.removeFromSuperview()
             contentView.addSubview(descriptionLabel)
             descriptionLabel.snp.makeConstraints { make in
