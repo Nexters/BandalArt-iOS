@@ -33,7 +33,7 @@ public final class ManipulateViewController: BottomSheetController {
   var subGoalAndTaskCreateDataSource:  UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>!
   var taskUpdateDataSource: UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>!
 
-  weak var delegate: ManipulateViewControllerDelegate?
+  // weak var delegate: ManipulateViewControllerDelegate?
 
   public init(
     mode: Mode,
@@ -77,7 +77,7 @@ public final class ManipulateViewController: BottomSheetController {
     let didLoadPublisher = PassthroughSubject<Void, Never>()
 
     let input = ManipulateViewModel.Input(
-      didViewLoad: didLoadPublisher.eraseToAnyPublisher(),
+      viewDidLoad: didLoadPublisher.eraseToAnyPublisher(),
       themeColorSelection: manipulateView.collectionView.didSelectItemPublisher,
       deleteButtonTap: manipulateView.deleteButton.tapPublisher,
       completionButtonTap: manipulateView.completionButton.tapPublisher,
