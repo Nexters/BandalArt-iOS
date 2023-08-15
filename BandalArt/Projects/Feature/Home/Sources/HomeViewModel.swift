@@ -209,6 +209,7 @@ private extension HomeViewModel {
     }
     
     func fetchBandalArt(key: String = UserDefaultsManager.lastUserBandalArtKey ?? "") { //임시
+        print("🌷 반다라트 메인셀 키:", key)
         self.useCase.fetchBandalArt(key: key)
     }
 }
