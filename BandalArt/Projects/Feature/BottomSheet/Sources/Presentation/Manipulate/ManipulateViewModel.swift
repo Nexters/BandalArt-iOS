@@ -80,7 +80,7 @@ public final class ManipulateViewModel: ViewModelType {
     let changeDueDateHeight: AnyPublisher<UUID, Never>
     
     let completionButtonEnable: AnyPublisher<Bool, Never>
-    let showDeleteAlert: AnyPublisher<Void, Never>
+    let showDeleteAlert: AnyPublisher<String, Never>
     let showCompleteToast: AnyPublisher<Void, Never>
     let updateHomeDelegate: AnyPublisher<Void,Never>
     let selectColor: AnyPublisher<Int, Never>
@@ -123,7 +123,7 @@ public final class ManipulateViewModel: ViewModelType {
   
   private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
   private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
-  private let showDeleteAlertSubject = PassthroughSubject<Void, Never>()
+  private let showDeleteAlertSubject = PassthroughSubject<String, Never>()
   private let showCompleteToastSubject = PassthroughSubject<Void, Never>()
   private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
   
@@ -301,7 +301,7 @@ public final class ManipulateViewModel: ViewModelType {
     
     input.deleteButtonTap
       .sink { [weak self] event in
-        self?.showDeleteAlertSubject.send(Void())
+        self?.showDeleteAlertSubject.send(self?.subGoalAndTaskInfo.title ?? "")
       }
       .store(in: &cancellables)
     

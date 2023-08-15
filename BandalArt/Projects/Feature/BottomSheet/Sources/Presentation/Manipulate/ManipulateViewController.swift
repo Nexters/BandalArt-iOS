@@ -155,8 +155,12 @@ public final class ManipulateViewController: BottomSheetController {
     
     output.showDeleteAlert
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] _ in
-        // TODO: 알럿
+      .sink { [weak self] title in
+        guard let self = self else { return }
+        let title = "'\(title)'\n\(self.bandalArtCellType.title)를 삭제하시겠어요?"
+        let message = self.bandalArtCellType.message
+        
+        self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기")
       }
       .store(in: &cancellables)
     
