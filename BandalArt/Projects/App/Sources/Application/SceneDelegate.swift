@@ -21,28 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
 
-        let vc = HomeViewController(viewModel: HomeViewModel())
-
-        let appearance = UINavigationBarAppearance()
-        // set back image
-        appearance.setBackIndicatorImage(UIImage(named: "chevron.left"), transitionMaskImage: UIImage(named: "chevron.left"))
-        appearance.backgroundColor = .systemBackground
-        appearance.shadowColor = .clear
-        appearance.shadowImage = UIImage(named: "shadow")
-
-        // set appearance to one NavigationController
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.standardAppearance = appearance
-        nav.navigationBar.scrollEdgeAppearance = appearance
-        nav.navigationBar.tintColor = .gray900
-        nav.navigationItem.backButtonTitle = ""
-        nav.navigationItem.backBarButtonItem?.title = ""
-
-        // or you can config for all navigation bar
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-
-        window?.rootViewController = nav
+        let vc = SplashViewController()
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }
 
