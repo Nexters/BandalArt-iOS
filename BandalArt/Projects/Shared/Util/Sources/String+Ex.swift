@@ -29,3 +29,12 @@ public extension String {
     return dateFormatter.date(from: self)
   }
 }
+
+
+public extension String? {
+     
+    var toChar: Character? {
+        guard let char = self else { return nil }
+        return Character(char)
+    }
+}

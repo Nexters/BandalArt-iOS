@@ -11,7 +11,7 @@ import SnapKit
 
 public final class EmojiView: UIView {
     
-    private let placeHolderImageView = UIImageView(image: .init(systemName: "person.circle"))
+    private let placeHolderImageView = UIImageView(image: .init(named: "emoji.face.circle"))
     public let emojiLabel = UILabel()
     
     public var text: String? {

@@ -61,7 +61,7 @@ final class EmojiCell: UICollectionViewCell {
   }
   
   public func setupData(item: EmojiItem) {
-    emojiView.setEmoji(with: item.emoji ?? Character(""))
+    emojiView.setEmoji(with: item.emoji)
   }
   
   func updateSelectedState(isSelected: Bool) {

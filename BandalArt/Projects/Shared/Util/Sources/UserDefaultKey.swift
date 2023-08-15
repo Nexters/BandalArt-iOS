@@ -8,8 +8,29 @@
 
 import Foundation
 
-public enum UserDefaultKey {
-  public static let isOnboarding = "isOnboarding"
-  public static let isLoggedIn = "isLoggedIn"
-  public static let guestToken = "guestToken"
+// 유저 디폴트에 대한 케이스 추가시 여기에 추가하고 이용
+public struct UserDefaultsManager {
+    
+    @UserDefaultWrapper(key: "guestToken", defaultValue: nil)
+    public static var guestToken: String?
+    
+    @UserDefaultWrapper(key: "lastUserBandalArtKey", defaultValue: nil)
+    public static var lastUserBandalArtKey: String?
+}
+
+@propertyWrapper
+public struct UserDefaultWrapper<T> {
+    
+    private let key: String
+    private let defaultValue: T
+
+    public init(key: String, defaultValue: T) {
+        self.key = key
+        self.defaultValue = defaultValue
+    }
+
+    public var wrappedValue: T {
+        get { return UserDefaults.standard.object(forKey: key) as? T ?? defaultValue }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
+    }
 }

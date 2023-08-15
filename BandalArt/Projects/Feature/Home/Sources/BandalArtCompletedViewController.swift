@@ -28,7 +28,11 @@ final class BandalArtCompletedViewController: UIViewController {
     private let shareButton = UIButton()
     
     init(title: String, emojiText: String?, shareURLString: String? = nil) {
-        self.bandarArtTitle = title
+        if title == "메인 목표를 입력해주세요" {  //TODO: 진짜 진짜 임시 코드 곧 바꿔야함.
+            self.bandarArtTitle = "제목 없음"
+        } else {
+            self.bandarArtTitle = title
+        }
         self.emojiText = emojiText
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,7 +85,7 @@ private extension BandalArtCompletedViewController {
         shareButton.backgroundColor = .gray900
         shareButton.layer.masksToBounds = true
 
-        emojiView.setEmoji(with: Character(emojiText ?? ""))
+        emojiView.setEmoji(with: emojiText.toChar)
     }
 
     func setConstraints() {

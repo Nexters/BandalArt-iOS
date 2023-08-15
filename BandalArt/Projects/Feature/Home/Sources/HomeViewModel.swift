@@ -26,6 +26,8 @@ public final class HomeViewModel: ViewModelType {
     private let useCase: BandalArtUseCase
     private var cancellables = Set<AnyCancellable>()
     
+    private let guestUseCase: GuestUseCase = GuestUseCaseImpl(repository: BandalArtRepositoryImpl()) // 온보딩 전까지 임시
+    
     public init(
         useCase: BandalArtUseCase = BandalArtUseCaseImpl(
             repository: BandalArtRepositoryImpl()
@@ -46,8 +48,8 @@ public final class HomeViewModel: ViewModelType {
     }
     
     struct Output {
-        let bandalArtTitle: AnyPublisher<String, Never>
-        let bandalArtEmoji: AnyPublisher<Character, Never>
+        let bandalArtTitle: AnyPublisher<String?, Never>
+        let bandalArtEmoji: AnyPublisher<Character?, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
         let bandalArtCompletedRatio: AnyPublisher<Float, Never>
         let bandalArtCompleted: AnyPublisher<Bool, Never>
@@ -63,8 +65,8 @@ public final class HomeViewModel: ViewModelType {
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo?), Never>
     }
     
-    private let bandalArtEmojiSubject = PassthroughSubject<Character, Never>()
-    private let bandalArtTitleSubject = PassthroughSubject<String, Never>()
+    private let bandalArtEmojiSubject = PassthroughSubject<Character?, Never>()
+    private let bandalArtTitleSubject = PassthroughSubject<String?, Never>()
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
     private let bandalArtThemeColorHexSubject = PassthroughSubject<(String, String), Never>()
     private let bandalArtCompletedSubject = PassthroughSubject<Bool, Never>()
@@ -84,13 +86,15 @@ public final class HomeViewModel: ViewModelType {
     // leftTop, rightTop, leftBottom, rightBottom
     var subCellIndex: (Int, Int, Int, Int) { return (4, 2, 3, 1) }
     
+    private let lastUserBandalArtKey = UserDefaultsManager.lastUserBandalArtKey
+    
     func transform(input: Input) -> Output {
         // Use Case Binding 먼저 세팅.
         self.bindUseCase()
         
         input.didViewLoad
             .sink { [weak self] _ in
-                self?.fetchBandalArt()
+                self?.registerGuestIfNeeded()
             }
             .store(in: &cancellables)
 
@@ -102,16 +106,15 @@ public final class HomeViewModel: ViewModelType {
 
         input.didDeleteButtonTap
             .sink { [weak self] _ in
-                print("삭제 버튼 누름!!")
-                // 삭제 API
+                self?.deleteBandalArt()
             }
             .store(in: &cancellables)
         
-//        input.didAddBarButtonTap
-//            .sink { info in
-//                <#code#>
-//            }
-//            .store(in: &cancellables)
+        input.didAddBarButtonTap
+            .sink { [weak self] info in
+                self?.fetchBandalArt()
+            }
+            .store(in: &cancellables)
 
         input.didMainCellTap
             .sink { [weak self] _ in
@@ -131,19 +134,25 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightTopInfo: bandalArtRightTopInfoSubject.eraseToAnyPublisher(),
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
-            presentBandalArtAddViewController: input.didAddBarButtonTap,
+            presentBandalArtAddViewController: input.didShareButtonTap,
             presentActivityViewController: input.didShareButtonTap,
             presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher()
         )
     }
     
     private func bindUseCase() {
+        self.guestUseCase.guestSubject
+            .sink { [weak self] _ in
+                self?.createBandalArt()
+            }
+            .store(in: &cancellables)
+        
         self.useCase.bandalArtInfoSubject
             .sink { [weak self] info in
+                self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
                 self?.bandalArtInfo = info
                 self?.bandalArtTitleSubject.send(info.title)
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
-                self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
                 self?.bandalArtCompletedSubject.send(info.isCompleted)
                 self?.bandalArtDateSubject.send(info.dueDate ?? Date())
 
@@ -187,7 +196,20 @@ public final class HomeViewModel: ViewModelType {
 // MARK: - UseCase Logic.
 private extension HomeViewModel {
     
-    func fetchBandalArt(key: String = "3sF4I") { //임시
+    func registerGuestIfNeeded() {
+        self.guestUseCase.registerGuestIfNeeded()
+    }
+    
+    func deleteBandalArt() {
+        self.useCase.deleteAndFetchBandalArt(key: UserDefaultsManager.lastUserBandalArtKey ?? "")
+    }
+    
+    func createBandalArt() {
+        self.useCase.createAndFetchBandalArt()
+    }
+    
+    func fetchBandalArt(key: String = UserDefaultsManager.lastUserBandalArtKey ?? "") { //임시
+        print("🌷 반다라트 메인셀 키:", key)
         self.useCase.fetchBandalArt(key: key)
     }
 }

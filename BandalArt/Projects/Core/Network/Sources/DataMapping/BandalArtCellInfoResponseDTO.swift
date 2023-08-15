@@ -15,7 +15,7 @@ struct BandalArtCellInfoResponseDTO: Decodable {
     let key: String
     let title: String?
     let description: String?
-    let dueDate: String?
+    let dueDate: Date?
     let isCompleted: Bool
     let completionRatio: Int
     let parentKey: String?
@@ -29,7 +29,7 @@ extension BandalArtCellInfoResponseDTO {
                      parentKey: parentKey,
                      title: title,
                      description: description,
-                     dueDate: Date(),
+                     dueDate: dueDate,
                      isCompleted: isCompleted,
                      completionRatio: Float(completionRatio) / 100,
                      children: children.map { $0.toDomain }
