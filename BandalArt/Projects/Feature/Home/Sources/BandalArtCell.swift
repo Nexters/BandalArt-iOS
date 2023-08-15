@@ -165,6 +165,7 @@ final class BandalartPlaceHolderView: UIView {
     
     private let stackView = UIStackView()
     private let plusImageView = UIImageView(image: .init(named: "plus"))
+    private let label = UILabel()
     
     public init() {
         super.init(frame: .zero)
@@ -182,6 +183,8 @@ final class BandalartPlaceHolderView: UIView {
         stackView.distribution = .equalSpacing
         stackView.spacing = 0
         
+        stackView.insertArrangedSubview(label, at: 0)
+        
         plusImageView.tintColor = .gray500
         plusImageView.contentMode = .center
         
@@ -196,12 +199,20 @@ final class BandalartPlaceHolderView: UIView {
     func configure(mode: BandalArtCell.Mode) {
         self.plusImageView.tintColor = mode.textColor
         
-        guard mode == .subGoal else { return }
-        let label = UILabel()
+        guard mode == .subGoal else {
+            label.removeFromSuperview()
+            return
+        }
+        setPlaceHolder(text: "서브목표", color: mode.textColor)
+        stackView.insertArrangedSubview(label, at: 0)
+    }
+    
+    func setPlaceHolder(text: String, color: UIColor) {
         label.textAlignment = .center
         label.font = .pretendardBold(size: 12)
-        label.text = "서브목표"
-        label.textColor = mode.textColor
+        label.text = text
+        label.textColor = color
+        plusImageView.tintColor = color
         stackView.insertArrangedSubview(label, at: 0)
     }
 }

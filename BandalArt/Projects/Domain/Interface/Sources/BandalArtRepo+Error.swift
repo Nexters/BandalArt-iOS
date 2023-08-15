@@ -17,8 +17,9 @@ public enum BandalArtNetworkError: Int, Error {
     case inValidTokenError = 401
     case inValidURLORKey = 404
     case internalServerError = 500
-    case internalClientError = 501
-    case unknown
+    case internalClientError = 2
+    case decodingError = 200
+    case unknown = -1
 
     var description: String { self.errorDescription }
 }
@@ -32,6 +33,7 @@ public extension BandalArtNetworkError {
         case .inValidURLORKey: return "404:INVALID_URL_OR_KEY_ERROR"
         case .internalServerError: return "500:INTERNAL_SERVER_ERROR"
         case .internalClientError: return "INTERNAL_CLIENT_ERROR"
+        case .decodingError: return "SUCCESS_BUT_DECODING_ERROR"
         default: return "UN_KNOWN_ERROR"
         }
     }

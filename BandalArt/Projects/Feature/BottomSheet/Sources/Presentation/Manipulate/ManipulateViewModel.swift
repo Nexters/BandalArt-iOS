@@ -53,7 +53,7 @@ public final class ManipulateViewModel: ViewModelType {
     memoItem = CurrentValueSubject<[MemoItem], Never>([MemoItem(id: UUID(), memo: cellInfo.description)])
     completionItem = CurrentValueSubject<[CompletionItem], Never>([CompletionItem(id: UUID(), isCompleted: cellInfo.isCompleted)])
     
-    emojiTitleItem = CurrentValueSubject<[EmojiTitleItem], Never>([EmojiTitleItem(id: UUID(), emoji: mainInfo?.profileEmojiText, title: mainInfo?.title)])
+    emojiTitleItem = CurrentValueSubject<[EmojiTitleItem], Never>([EmojiTitleItem(id: UUID(), emoji: mainInfo?.profileEmojiText, title: mainInfo?.title ?? "")])
     themeColorItem = CurrentValueSubject<[ThemeColorItem], Never>([
       ThemeColorItem(id: UUID(), color: .mint),
       ThemeColorItem(id: UUID(), color: .sky),

@@ -128,6 +128,7 @@ public extension BandalArtRepositoryImpl {
 // MoyaError를 사용하지 않고 BandarArt API 서비스 자체의
 // Domain Error를 사용하려고 만든 Extension.
 fileprivate extension AnyPublisher<Response, MoyaError> {
+
   func mapToVoid() -> AnyPublisher<Void, BandalArtNetworkError> {
     return self.tryMap { _ in
       return ()

@@ -48,8 +48,8 @@ public final class HomeViewModel: ViewModelType {
     }
     
     struct Output {
-        let bandalArtTitle: AnyPublisher<String, Never>
-        let bandalArtEmoji: AnyPublisher<Character, Never>
+        let bandalArtTitle: AnyPublisher<String?, Never>
+        let bandalArtEmoji: AnyPublisher<Character?, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
         let bandalArtCompletedRatio: AnyPublisher<Float, Never>
         let bandalArtCompleted: AnyPublisher<Bool, Never>
@@ -65,8 +65,8 @@ public final class HomeViewModel: ViewModelType {
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo?), Never>
     }
     
-    private let bandalArtEmojiSubject = PassthroughSubject<Character, Never>()
-    private let bandalArtTitleSubject = PassthroughSubject<String, Never>()
+    private let bandalArtEmojiSubject = PassthroughSubject<Character?, Never>()
+    private let bandalArtTitleSubject = PassthroughSubject<String?, Never>()
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
     private let bandalArtThemeColorHexSubject = PassthroughSubject<(String, String), Never>()
     private let bandalArtCompletedSubject = PassthroughSubject<Bool, Never>()
@@ -150,10 +150,10 @@ public final class HomeViewModel: ViewModelType {
         
         self.useCase.bandalArtInfoSubject
             .sink { [weak self] info in
+                self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
                 self?.bandalArtInfo = info
                 self?.bandalArtTitleSubject.send(info.title)
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
-                self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
                 self?.bandalArtCompletedSubject.send(info.isCompleted)
                 self?.bandalArtDateSubject.send(info.dueDate ?? Date())
 

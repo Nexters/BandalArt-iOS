@@ -48,6 +48,7 @@ public final class HomeViewController: UIViewController {
 
     // 반다라트 표를 구성하는 뷰들
     private let centerView = UIView()
+    private let centerPlaceHolderView = BandalartPlaceHolderView()
     private let centerLabel = UILabel()
     private let centerButton = UIButton()
 
@@ -108,8 +109,9 @@ public final class HomeViewController: UIViewController {
 
         output.bandalArtTitle
             .sink(receiveValue: { [weak self] text in
-                self?.bandalartNameLabel.text = text
-                self?.bandalartNameLabel.textColor = .gray900
+                self?.updateBandalArtNameLabel(text: text)
+                self?.centerPlaceHolderView.isHidden = text != nil
+                self?.centerPlaceHolderView.setPlaceHolder(text: "메인 목표", color: .subThemeColor)
                 self?.centerLabel.text = text
             })
             .store(in: &cancellables)
@@ -237,6 +239,12 @@ public final class HomeViewController: UIViewController {
             return rightBottomInfos
         }
         return .defaultList
+    }
+    
+    private func updateBandalArtNameLabel(text: String?) {
+        let isText = text != nil
+        bandalartNameLabel.text = isText ? text : "메인 목표를 입력해주세요"
+        bandalartNameLabel.textColor = isText ? .gray900 : .gray300
     }
 
     private func updateBandalArtRatio(ratio: Float) {
@@ -441,6 +449,7 @@ private extension HomeViewController {
         view.addSubview(bandalartView)
         view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
+        centerView.addSubview(centerPlaceHolderView)
         centerView.addSubview(centerButton)
 
         bandalartView.addSubview(centerView)
@@ -541,6 +550,9 @@ private extension HomeViewController {
             make.leading.equalTo(leftBottomCollectionView.snp.trailing).offset(2)
             make.trailing.equalTo(rightTopCollectionView.snp.leading).offset(-2)
             make.bottom.equalTo(rightBottomCollectionView.snp.top).offset(-2)
+        }
+        centerPlaceHolderView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         centerButton.snp.makeConstraints { make in
             make.edges.equalToSuperview()
