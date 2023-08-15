@@ -8,7 +8,7 @@
 
 import Foundation
 import Entity
-
+import Moya
 import Combine
 
 // MARK: - BandalArt API Error.
