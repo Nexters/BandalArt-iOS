@@ -141,7 +141,9 @@ fileprivate extension AnyPublisher<Response, MoyaError> {
 
   func mapToDomain<D: Decodable>(_ type: D.Type, atKeyPath keyPath: String? = nil,
                                  using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, BandalArtNetworkError> {
-    decoder.dateDecodingStrategy = .iso8601
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    decoder.dateDecodingStrategy = .formatted(formatter)
 
     return self.tryMap { response in
       return try response.map(type, atKeyPath: keyPath, using: decoder,
