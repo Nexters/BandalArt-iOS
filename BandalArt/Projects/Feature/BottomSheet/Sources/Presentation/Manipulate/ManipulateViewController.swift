@@ -37,7 +37,7 @@ public final class ManipulateViewController: BottomSheetController {
   var subGoalAndTaskCreateDataSource:  UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>!
   var taskUpdateDataSource: UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>!
 
-  // weak var delegate: ManipulateViewControllerDelegate?
+  public weak var delegate: ManipulateViewControllerDelegate?
 
   public init(
     mode: Mode,
@@ -134,6 +134,33 @@ public final class ManipulateViewController: BottomSheetController {
         }
       }
       .store(in: &cancellables)
+    
+    output.selectColor
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] row in
+        self?.manipulateView.collectionView.selectItem(
+          at: IndexPath(item: row, section: 1),
+          animated: true,
+          scrollPosition: .top
+        )
+      }
+      .store(in: &cancellables)
+    
+    output.updateHomeDelegate
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        self?.delegate?.didModifyed()
+      }
+      .store(in: &cancellables)
+    
+    output.showDeleteAlert
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        // TODO: 알럿
+      }
+      .store(in: &cancellables)
+    
+    didLoadPublisher.send(Void())
   }
 
   public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -447,11 +474,6 @@ public final class ManipulateViewController: BottomSheetController {
     switch bandalArtCellType {
     case .mainGoal:
       manipulateView.collectionView.dataSource = mainDataSource
-      manipulateView.collectionView.selectItem(
-        at: IndexPath(item: 0, section: 1),
-        animated: true,
-        scrollPosition: .top
-      )
     case .subGoal:
       manipulateView.collectionView.dataSource = subGoalAndTaskCreateDataSource
     case .task:

@@ -46,12 +46,15 @@ public extension BandalArtRepositoryImpl {
     dueDate: Date?,
     isCompleted: Bool? = nil
   ) -> AnyPublisher<Void, BandalArtNetworkError> {
-    let parameters: DictionaryType = [
-      "title": title,
+    var parameters: DictionaryType = [
+      "title": title ?? "",
       "description": description ?? NSNull(),
-      "dueDate": dueDate ?? NSNull(),
-      "isCompleted": isCompleted ?? NSNull()
+      "dueDate": dueDate?.toISO8601String ?? NSNull(),
     ]
+    
+    if let isCompleted = isCompleted {
+      parameters["isCompleted"] = isCompleted
+    }
 
     return self.provider.requestPublisher(
       .updateCell(
@@ -75,13 +78,16 @@ public extension BandalArtRepositoryImpl {
     mainColor: String,
     subColor: String
   ) -> AnyPublisher<Void, BandalArtNetworkError> {
+    
+    print(key, cellKey, profileEmoji, title, description, dueDate, mainColor, subColor)
+    
     let parameters: DictionaryType = [
-      "title": title,
+      "title": title ?? "",
       "description": description ?? NSNull(),
-      "dueDate": dueDate ?? NSNull(),
+      "dueDate": dueDate?.toISO8601String ?? NSNull(),
       "mainColor": mainColor,
       "subColor": subColor,
-      "profileEmoji": profileEmoji ?? NSNull()
+      "profileEmoji": profileEmoji?.description ?? NSNull()
     ]
 
     return self.provider.requestPublisher(

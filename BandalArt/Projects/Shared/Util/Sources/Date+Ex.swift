@@ -9,19 +9,19 @@
 import Foundation
 
 public extension Date {
-
-    var toString: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(abbreviation: "KST")
-        formatter.dateFormat = "yy년 MM월 d일"
-        return formatter.string(from: self)
-    }
-
-    func toStringWithKoreanFormat() -> String {
-      let dateFormatter = DateFormatter()
-      dateFormatter.locale = Locale(identifier: "ko_KR")
-      dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-      return dateFormatter.string(from: self)
-    }
+  var toISO8601String: String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(abbreviation: "KST")
+    formatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'"
+    return formatter.string(from: self)
+  }
+  
+  var toString: String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(abbreviation: "KST")
+    formatter.dateFormat = "yyyy년 MM월 d일"
+    return formatter.string(from: self)
+  }
 }
