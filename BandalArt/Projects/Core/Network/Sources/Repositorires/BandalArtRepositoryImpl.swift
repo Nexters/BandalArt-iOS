@@ -45,7 +45,7 @@ public extension BandalArtRepositoryImpl {
     description: String?,
     dueDate: Date?,
     isCompleted: Bool? = nil
-  ) -> AnyPublisher<Response, BandalArtNetworkError> {
+  ) -> AnyPublisher<Void, BandalArtNetworkError> {
     let parameters: DictionaryType = [
       "title": title,
       "description": description ?? NSNull(),
@@ -74,7 +74,7 @@ public extension BandalArtRepositoryImpl {
     dueDate: Date?,
     mainColor: String,
     subColor: String
-  ) -> AnyPublisher<Response, BandalArtNetworkError> {
+  ) -> AnyPublisher<Void, BandalArtNetworkError> {
     let parameters: DictionaryType = [
       "title": title,
       "description": description ?? NSNull(),
@@ -99,9 +99,9 @@ public extension BandalArtRepositoryImpl {
 // MoyaError를 사용하지 않고 BandarArt API 서비스 자체의
 // Domain Error를 사용하려고 만든 Extension.
 fileprivate extension AnyPublisher<Response, MoyaError> {
-  func mapToVoid() -> AnyPublisher<Response, BandalArtNetworkError> {
-    return self.tryMap { response in
-      return response
+  func mapToVoid() -> AnyPublisher<Void, BandalArtNetworkError> {
+    return self.tryMap { _ in
+      return ()
     }.mapError { error in
       guard let mError = error as? MoyaError else { return BandalArtNetworkError.unknown }
       return BandalArtNetworkError(rawValue: mError.response?.statusCode ?? -1) ?? .unknown

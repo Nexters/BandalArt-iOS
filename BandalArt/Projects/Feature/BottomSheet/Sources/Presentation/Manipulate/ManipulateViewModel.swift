@@ -286,9 +286,9 @@ public final class ManipulateViewModel: ViewModelType {
   }
   
   private func bindUseCase() {
-    self.useCase.cellUpdateResponseStatusSubject
-      .sink { [weak self] responseStatus in
-
+    self.useCase.cellUpdateCompletionSubject
+      .sink { [weak self] completion in
+        
       }
       .store(in: &cancellables)
   }

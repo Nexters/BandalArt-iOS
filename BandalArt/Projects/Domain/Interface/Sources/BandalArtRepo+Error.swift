@@ -8,7 +8,6 @@
 
 import Foundation
 import Entity
-import Moya
 import Combine
 
 // MARK: - BandalArt API Error.
@@ -77,7 +76,7 @@ public protocol BandalArtRepository {
       description: String?,
       dueDate: Date?,
       isCompleted: Bool?
-    ) -> AnyPublisher<Response, BandalArtNetworkError>
+    ) -> AnyPublisher<Void, BandalArtNetworkError>
   
     // MainGoal에서 호출하는 경우
     func postTaskUpdateData(
@@ -89,5 +88,5 @@ public protocol BandalArtRepository {
       dueDate: Date?,
       mainColor: String,
       subColor: String
-    ) -> AnyPublisher<Response, BandalArtNetworkError>
+    ) -> AnyPublisher<Void, BandalArtNetworkError>
 }

@@ -15,7 +15,7 @@ import Combine
 public protocol BandalArtUseCase {
   var bandalArtInfoSubject: PassthroughSubject<BandalArtInfo, Never> { get }
   var bandalArtAllCellSubject: PassthroughSubject<BandalArtCellInfo, Never> { get }
-  var cellUpdateResponseStatusSubject: PassthroughSubject<Int, Never> { get }
+  var cellUpdateCompletionSubject: PassthroughSubject<Void, Never> { get }
   var errorSubject: PassthroughSubject<Void, Never> { get }
 
   /// 반다라트 조회 API : 상세 조회 API + 메인 셀 조회 API (순서 상관 없음)
@@ -53,7 +53,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   public let bandalArtInfoSubject = PassthroughSubject<BandalArtInfo, Never>()
   public let bandalArtAllCellSubject = PassthroughSubject<BandalArtCellInfo, Never>()
   public let errorSubject = PassthroughSubject<Void, Never>()
-  public let cellUpdateResponseStatusSubject = PassthroughSubject<Int, Never>()
+  public let cellUpdateCompletionSubject = PassthroughSubject<Void, Never>()
 
   public init(repository: BandalArtRepository) {
     self.repository = repository
@@ -104,8 +104,8 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
         print(error)
       case .finished: return
       }
-    }, receiveValue: { [weak self] response in
-      self?.cellUpdateResponseStatusSubject.send(response.statusCode)
+    }, receiveValue: { [weak self] event in
+      self?.cellUpdateCompletionSubject.send(event)
     })
     .store(in: &cancellables)
   }
@@ -133,8 +133,8 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
         print(error)
       case .finished: return
       }
-    }, receiveValue: { [weak self] response in
-      self?.cellUpdateResponseStatusSubject.send(response.statusCode)
+    }, receiveValue: { [weak self] event in
+      self?.cellUpdateCompletionSubject.send(event)
     })
     .store(in: &cancellables)
   }
