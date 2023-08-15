@@ -106,8 +106,7 @@ public final class HomeViewModel: ViewModelType {
 
         input.didDeleteButtonTap
             .sink { [weak self] _ in
-                print("삭제 버튼 누름!!")
-                // 삭제 API
+                self?.deleteBandalArt()
             }
             .store(in: &cancellables)
         
@@ -199,6 +198,10 @@ private extension HomeViewModel {
     
     func registerGuestIfNeeded() {
         self.guestUseCase.registerGuestIfNeeded()
+    }
+    
+    func deleteBandalArt() {
+        self.useCase.deleteAndFetchBandalArt(key: UserDefaultsManager.lastUserBandalArtKey ?? "")
     }
     
     func createBandalArt() {

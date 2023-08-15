@@ -98,7 +98,7 @@ final class EmojiTitleCell: UICollectionViewCell {
   }
   
   public func setupData(item: EmojiTitleItem) {
-    emojiView.setEmoji(with: item.emoji ?? Character(""))
+    emojiView.setEmoji(with: item.emoji)
     underlineTextField.text = item.title
   }
   
