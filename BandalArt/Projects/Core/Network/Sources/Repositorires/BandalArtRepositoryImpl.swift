@@ -80,7 +80,7 @@ public extension BandalArtRepositoryImpl {
     }
 
     return self.provider.requestPublisher(
-      .updateCell(
+      .patchCell(
         parameters: parameters,
         bandalArtKey: key,
         cellKey: cellKey
@@ -114,7 +114,7 @@ public extension BandalArtRepositoryImpl {
     ]
 
     return self.provider.requestPublisher(
-      .updateCell(
+      .patchCell(
         parameters: parameters,
         bandalArtKey: key,
         cellKey: cellKey
