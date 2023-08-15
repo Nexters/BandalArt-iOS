@@ -26,6 +26,8 @@ public final class HomeViewModel: ViewModelType {
     private let useCase: BandalArtUseCase
     private var cancellables = Set<AnyCancellable>()
     
+    private let guestUseCase: GuestUseCase = GuestUseCaseImpl(repository: BandalArtRepositoryImpl()) // 온보딩 전까지 임시
+    
     public init(
         useCase: BandalArtUseCase = BandalArtUseCaseImpl(
             repository: BandalArtRepositoryImpl()
@@ -84,13 +86,15 @@ public final class HomeViewModel: ViewModelType {
     // leftTop, rightTop, leftBottom, rightBottom
     var subCellIndex: (Int, Int, Int, Int) { return (4, 2, 3, 1) }
     
+    private let lastUserBandalArtKey = UserDefaultsManager.lastUserBandalArtKey
+    
     func transform(input: Input) -> Output {
         // Use Case Binding 먼저 세팅.
         self.bindUseCase()
         
         input.didViewLoad
             .sink { [weak self] _ in
-                self?.fetchBandalArt()
+                self?.registerGuestIfNeeded()
             }
             .store(in: &cancellables)
 
@@ -138,6 +142,12 @@ public final class HomeViewModel: ViewModelType {
     }
     
     private func bindUseCase() {
+        self.guestUseCase.guestSubject
+            .sink { [weak self] _ in
+                self?.createBandalArt()
+            }
+            .store(in: &cancellables)
+        
         self.useCase.bandalArtInfoSubject
             .sink { [weak self] info in
                 self?.bandalArtInfo = info
@@ -187,7 +197,15 @@ public final class HomeViewModel: ViewModelType {
 // MARK: - UseCase Logic.
 private extension HomeViewModel {
     
-    func fetchBandalArt(key: String = "3sF4I") { //임시
+    func registerGuestIfNeeded() {
+        self.guestUseCase.registerGuestIfNeeded()
+    }
+    
+    func createBandalArt() {
+        self.useCase.createAndFetchBandalArt()
+    }
+    
+    func fetchBandalArt(key: String = UserDefaultsManager.lastUserBandalArtKey ?? "") { //임시
         self.useCase.fetchBandalArt(key: key)
     }
 }

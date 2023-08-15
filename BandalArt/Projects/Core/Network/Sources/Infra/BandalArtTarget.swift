@@ -105,13 +105,8 @@ extension BandalArtTarget: TargetType {
   }
 
   var headers: [String: String]? {
-//    guard let token = UserDefaults.standard.string(forKey: UserDefaultKey.guestToken) else {
-//      return ["Content-Type": "application/json"]
-//    }
-//    let token = "3sF4I" //게스트 등록 API 나오기까지 임시.
     return [
-      "Content-Type": "application/json",
-//      "idtoken": token
+      "X-GUEST-KEY": UserDefaultsManager.guestToken ?? ""
     ]
   }
 }

@@ -31,7 +31,7 @@ public extension BandalArtNetworkError {
         case .inValidTokenError: return "401:INVALID_TOKEN_ERROR"
         case .inValidURLORKey: return "404:INVALID_URL_OR_KEY_ERROR"
         case .internalServerError: return "500:INTERNAL_SERVER_ERROR"
-        case .internalClientError: return "501:INTERNAL_CLIENT_ERROR"
+        case .internalClientError: return "INTERNAL_CLIENT_ERROR"
         default: return "UN_KNOWN_ERROR"
         }
     }
@@ -40,19 +40,42 @@ public extension BandalArtNetworkError {
 // MARK: - BandalArt API 레파지토리.
 public protocol BandalArtRepository {
     
-    /// 반다라트 상세 조회 API
-    /// - Parameters:
-    ///   - key: 반다라트의 Unique Key.
-    /// - Returns: `AnyPublisher<BandalArtInfo, BandalArtNetworkError>`
+    /**
+     게스트 생성 API
+    - Returns: 성공시 게스트 Key 리턴. 실패시 반다라트 에러 리턴.
+     */
+    func postGuest() -> AnyPublisher<String, BandalArtNetworkError>
+    
+    /**
+     반다라트 생성 API
+    - Returns: 성공시 반다라트 Key 리턴. 실패시 반다라트 에러 리턴.
+     */
+    func postBandalArt() -> AnyPublisher<String, BandalArtNetworkError>
+    
+    /**
+    반다라트 상세 조회 API
+    - Parameters:
+    - key: 반다라트의 Unique Key.
+    - Returns: `AnyPublisher<BandalArtInfo, BandalArtNetworkError>`
+     */
     func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError>
     
-    /// 메인셀, 하위셀 모두 조회 API
-    /// - Parameters:
-    ///   - key: 반다라트의 Unique Key.
-    /// - Returns: `AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>`
+    /**
+    메인셀, 하위셀 모두 조회 API
+    - Parameters:
+    - key: 반다라트의 Unique Key.
+    - Returns: `AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>`
+     */
     func getBandalArtCellList(
       key: String
     ) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>
+    
+    /**
+     반다라트 삭제 API
+    - Returns: 성공시 반다라트 Void 리턴. 실패시 반다라트 에러 리턴.
+     */
+    func deleteBandalArt(key: String) -> AnyPublisher<Void, BandalArtNetworkError>
+    
   
   /// 반다라트 cell 수정 API
   /// - Parameters:

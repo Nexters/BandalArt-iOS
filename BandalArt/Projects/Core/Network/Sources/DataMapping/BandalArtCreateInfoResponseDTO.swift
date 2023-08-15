@@ -10,9 +10,5 @@ import Foundation
 import Entity
 
 struct BandalArtCreateInfoResponseDTO: Decodable {
-    let id: Int
     let key: String
-    let mainColor: String
-    let subColor: String
-    let profileEmoji: String?
 }

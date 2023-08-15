@@ -277,7 +277,6 @@ extension HomeViewController: UICollectionViewDelegate,
         let isTitle = !(info.title == nil || info.title == "")
         var status: BandalArtCell.Status = isTitle ? .created : .empty
         status = info.isCompleted ? .completed : status
-        print(info.title, status)
         cell.configure(title: info.title, mode: mode, status: status)
         return cell
     }
