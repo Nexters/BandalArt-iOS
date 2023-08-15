@@ -132,7 +132,7 @@ final class DueDateCell: UICollectionViewCell {
   
   func setupData(item: DueDateItem) {
     // TODO: Date 객체가 옳게 안들어 오는 현상 발생
-    underlineTextField.text = item.date?.toStringWithKoreanFormat()
+    underlineTextField.text = item.date?.toString
     // print(item.date, Date(), item.date?.toStringWithKoreanFormat())
     let state = item.isOpen
     datePicker.isHidden = !state
@@ -169,8 +169,8 @@ final class DueDateCell: UICollectionViewCell {
     datePicker.datePublisher
       .sink { [weak self] date in
         if self?.datePicker.isHidden == false {
-          print(date.toStringWithKoreanFormat())
-          self?.underlineTextField.text = date.toStringWithKoreanFormat()
+          print(date.toString)
+          self?.underlineTextField.text = date.toString
         }
       }
       .store(in: &cancellables)
