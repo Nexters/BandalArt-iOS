@@ -70,6 +70,9 @@ final class BandalArtCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        placeHolderView.removeFromSuperview()
+        completionView.removeFromSuperview()
+        descriptionLabel.removeFromSuperview()
     }
     
     private func setUI() {
@@ -95,13 +98,13 @@ final class BandalArtCell: UICollectionViewCell {
         
         switch status {
         case .empty:
-            completionView.removeFromSuperview()
-            descriptionLabel.removeFromSuperview()
+            contentView.addSubview(placeHolderView)
+            placeHolderView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
             placeHolderView.configure(mode: mode)
             
         case .created, .completed:
-            completionView.removeFromSuperview()
-            placeHolderView.removeFromSuperview()
             contentView.addSubview(descriptionLabel)
             descriptionLabel.snp.makeConstraints { make in
                 make.top.equalToSuperview().offset(6)

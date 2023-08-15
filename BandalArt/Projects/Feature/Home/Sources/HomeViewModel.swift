@@ -64,7 +64,7 @@ public final class HomeViewModel: ViewModelType {
         
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
         let presentActivityViewController: AnyPublisher<Void, Never>
-        let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo?), Never>
+        let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
     }
     
     private let showLoadingSubject = PassthroughSubject<CGFloat, Never>()
@@ -82,10 +82,10 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtLeftBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
-    private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo?), Never>()
+    private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
 
     private var mainCellInfo: BandalArtCellInfo?
-    private var bandalArtInfo: BandalArtInfo?
+    private(set) var bandalArtInfo: BandalArtInfo?
     
     // leftTop, rightTop, leftBottom, rightBottom
     var subCellIndex: (Int, Int, Int, Int) { return (4, 2, 3, 1) }
@@ -126,8 +126,8 @@ public final class HomeViewModel: ViewModelType {
 
         input.didMainCellTap
             .sink { [weak self] _ in
-                guard let self, let mainCellInfo else { return }
-                self.presentManipulateViewControllerSubject.send((mainCellInfo, self.bandalArtInfo))
+                guard let self, let mainCellInfo, let bandalArtInfo else { return }
+                self.presentManipulateViewControllerSubject.send((mainCellInfo, bandalArtInfo))
             }
             .store(in: &cancellables)
 

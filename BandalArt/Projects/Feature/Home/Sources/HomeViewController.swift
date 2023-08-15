@@ -321,9 +321,10 @@ extension HomeViewController: UICollectionViewDelegate,
     public func collectionView(_ collectionView: UICollectionView,
                                didSelectItemAt indexPath: IndexPath) {
 
-        guard let cellInfo = self.cellInfoList(collectionView: collectionView)[safe: indexPath.item] else { return }
+        guard let cellInfo = self.cellInfoList(collectionView: collectionView)[safe: indexPath.item],
+        let info = viewModel.bandalArtInfo else { return }
         let type: BandalArtCellType = collectionView.tag == indexPath.item ? .subGoal : .task
-        self.routeManipulateVC(type: type, cellInfo: cellInfo)
+        self.routeManipulateVC(type: type, cellInfo: cellInfo, info: info)
     }
 }
 
@@ -332,7 +333,7 @@ private extension HomeViewController {
 
     func routeManipulateVC(type: BandalArtCellType,
                            cellInfo: BandalArtCellInfo,
-                           info: BandalArtInfo? = nil) {
+                           info: BandalArtInfo) {
         let viewController = ManipulateViewController(
           mode: .update,
           bandalArtCellType: type,
