@@ -15,7 +15,7 @@ import Combine
 public protocol BandalArtUseCase {
   var bandalArtInfoSubject: PassthroughSubject<BandalArtInfo, Never> { get }
   var bandalArtAllCellSubject: PassthroughSubject<BandalArtCellInfo, Never> { get }
-  var cellUpdateResponseStatusSubject: PassthroughSubject<Bool, Never> { get }
+  var cellUpdateResponseStatusSubject: PassthroughSubject<Int, Never> { get }
   var errorSubject: PassthroughSubject<Void, Never> { get }
 
   /// 반다라트 조회 API : 상세 조회 API + 메인 셀 조회 API (순서 상관 없음)
@@ -29,7 +29,7 @@ public protocol BandalArtUseCase {
   func updateBandalArtTask(key: String,
                            cellKey: String,
                            profileEmoji: Character?,
-                           title: String,
+                           title: String?,
                            description: String?,
                            dueDate: Date?,
                            mainColor: String,
@@ -37,16 +37,10 @@ public protocol BandalArtUseCase {
 
   func updateBandalArtTask(key: String,
                            cellKey: String,
-                           title: String,
-                           description: String?,
-                           dueDate: Date?)
-
-  func updateBandalArtTask(key: String,
-                           cellKey: String,
-                           title: String,
+                           title: String?,
                            description: String?,
                            dueDate: Date?,
-                           isCompleted: Bool)
+                           isCompleted: Bool?)
 }
 
 public class BandalArtUseCaseImpl: BandalArtUseCase {
@@ -59,7 +53,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   public let bandalArtInfoSubject = PassthroughSubject<BandalArtInfo, Never>()
   public let bandalArtAllCellSubject = PassthroughSubject<BandalArtCellInfo, Never>()
   public let errorSubject = PassthroughSubject<Void, Never>()
-  public let cellUpdateResponseStatusSubject = PassthroughSubject<Bool, Never>()
+  public let cellUpdateResponseStatusSubject = PassthroughSubject<Int, Never>()
 
   public init(repository: BandalArtRepository) {
     self.repository = repository
@@ -87,7 +81,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
     key: String,
     cellKey: String,
     profileEmoji: Character? = nil,
-    title: String,
+    title: String?,
     description: String? = nil,
     dueDate: Date? = nil,
     mainColor: String,
@@ -110,8 +104,8 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
         print(error)
       case .finished: return
       }
-    }, receiveValue: { [weak self] status in
-      self?.cellUpdateResponseStatusSubject.send(status)
+    }, receiveValue: { [weak self] response in
+      self?.cellUpdateResponseStatusSubject.send(response.statusCode)
     })
     .store(in: &cancellables)
   }
@@ -119,37 +113,10 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   public func updateBandalArtTask(
     key: String,
     cellKey: String,
-    title: String,
-    description: String?,
-    dueDate: Date?
-  ) {
-    self.repository.postTaskUpdateData(
-      key: key,
-      cellKey: cellKey,
-      title: title,
-      description: description,
-      dueDate: dueDate
-    ).sink(receiveCompletion: { [weak self] completion in
-      switch completion {
-      case let .failure(error):
-        // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-        self?.errorSubject.send(())
-        print(error)
-      case .finished: return
-      }
-    }, receiveValue: { [weak self] status in
-      self?.cellUpdateResponseStatusSubject.send(status)
-    })
-    .store(in: &cancellables)
-  }
-
-  public func updateBandalArtTask(
-    key: String,
-    cellKey: String,
-    title: String,
+    title: String?,
     description: String?,
     dueDate: Date?,
-    isCompleted: Bool
+    isCompleted: Bool? = nil
   ) {
     self.repository.postTaskUpdateData(
       key: key,
@@ -166,8 +133,8 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
         print(error)
       case .finished: return
       }
-    }, receiveValue: { [weak self] status in
-      self?.cellUpdateResponseStatusSubject.send(status)
+    }, receiveValue: { [weak self] response in
+      self?.cellUpdateResponseStatusSubject.send(response.statusCode)
     })
     .store(in: &cancellables)
   }

@@ -62,6 +62,7 @@ public final class ManipulateViewModel: ViewModelType {
       ThemeColorItem(id: UUID(), color: .lemon),
       ThemeColorItem(id: UUID(), color: .mandarin)
     ])
+    themeColorHexSubject.send(mainInfo?.mainColorHexString)
   }
   
   struct Input {
@@ -118,6 +119,7 @@ public final class ManipulateViewModel: ViewModelType {
   var changeDueDateHeight = PassthroughSubject<UUID, Never>()
   var isOpenDueDate = CurrentValueSubject<Bool, Never>(false)
   
+  private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
   private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
   private let showDeleteAlertSubject = PassthroughSubject<Void, Never>()
   private let showCompleteToastSubject = PassthroughSubject<Void, Never>()
@@ -170,7 +172,22 @@ public final class ManipulateViewModel: ViewModelType {
       .sink { [weak self] index in
         guard let self = self else { return }
         if bandalArtCellType == .mainGoal && index.section == 1 {
-          print("🕹️", index.row)
+          switch index.row {
+          case 0:
+            themeColorHexSubject.send("#3FFFBA")
+          case 1:
+            themeColorHexSubject.send("#3FF3FF")
+          case 2:
+            themeColorHexSubject.send("#93FF3F")
+          case 3:
+            themeColorHexSubject.send("#FBFF3F")
+          case 4:
+            themeColorHexSubject.send("#FFB423")
+          case 5:
+            themeColorHexSubject.send("#4E3FFF")
+          default:
+            themeColorHexSubject.send("#3FFFBA")
+          }
         }
       }
       .store(in: &cancellables)
@@ -282,47 +299,49 @@ private extension ManipulateViewModel {
     key: String = "3sF4I",
     cellKey: String = "Uvwfk"
   ) { //임시
-//    switch bandalArtCellType {
-//    case .mainGoal:
-//      // index to HEX
-//      self.useCase.updateBandalArtTask(
-//        key: key,
-//        cellKey: cellKey,
-//        profileEmoji: self.bandalArtEmojiSubject.value,
-//        title: self.bandalArtTitleSubject.value,
-//        description: self.bandalArtMemoSubject.value,
-//        dueDate: self.bandalArtDueDateSubject.value,
-//        mainColor: self.bandalArtThemeColorSubject.value,
-//        subColor: self.bandalArtThemeColorSubject.value
-//      )
-//    case .subGoal:
-//      self.useCase.updateBandalArtTask(
-//        key: key,
-//        cellKey: cellKey,
-//        title: self.bandalArtTitleSubject.value,
-//        description: self.bandalArtMemoSubject.value,
-//        dueDate: self.bandalArtDueDateSubject.value
-//      )
-//    case .task:
-//      switch mode {
-//      case .create:
-//        self.useCase.updateBandalArtTask(
-//          key: key,
-//          cellKey: cellKey,
-//          title: self.bandalArtTitleSubject.value,
-//          description: self.bandalArtMemoSubject.value,
-//          dueDate: self.bandalArtDueDateSubject.value
-//        )
-//      case .update:
-//        self.useCase.updateBandalArtTask(
-//          key: key,
-//          cellKey: cellKey,
-//          title: self.bandalArtTitleSubject.value,
-//          description: self.bandalArtMemoSubject.value,
-//          dueDate: self.bandalArtDueDateSubject.value,
-//          isCompleted: self.bandalArtCompletionSubject.value ?? false
-//        )
-//      }
-//    }
+    switch bandalArtCellType {
+    case .mainGoal:
+      // index to HEX
+      self.useCase.updateBandalArtTask(
+        key: key,
+        cellKey: cellKey,
+        profileEmoji: emojiTitleItem.value.first?.emoji,
+        title: emojiTitleItem.value.first?.title,
+        description: memoItem.value.first?.memo,
+        dueDate: dueDateItem.value.first?.date,
+        mainColor: themeColorHexSubject.value ?? "#3FFFBA",
+        subColor: "#111827"
+      )
+    case .subGoal:
+      self.useCase.updateBandalArtTask(
+        key: key,
+        cellKey: cellKey,
+        title: titleItem.value.first?.title,
+        description: memoItem.value.first?.memo,
+        dueDate: dueDateItem.value.first?.date,
+        isCompleted: nil
+      )
+    case .task:
+      switch mode {
+      case .create:
+        self.useCase.updateBandalArtTask(
+          key: key,
+          cellKey: cellKey,
+          title: titleItem.value.first?.title,
+          description: memoItem.value.first?.memo,
+          dueDate: dueDateItem.value.first?.date,
+          isCompleted: nil
+        )
+      case .update:
+        self.useCase.updateBandalArtTask(
+          key: key,
+          cellKey: cellKey,
+          title: titleItem.value.first?.title,
+          description: memoItem.value.first?.memo,
+          dueDate: dueDateItem.value.first?.date,
+          isCompleted: completionItem.value.first?.isCompleted
+        )
+      }
+    }
   }
 }

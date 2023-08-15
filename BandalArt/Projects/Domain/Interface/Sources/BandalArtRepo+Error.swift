@@ -73,30 +73,21 @@ public protocol BandalArtRepository {
     func postTaskUpdateData(
       key: String,
       cellKey: String,
-      title: String,
+      title: String?,
       description: String?,
       dueDate: Date?,
-      isCompleted: Bool
-    ) -> AnyPublisher<Bool, BandalArtNetworkError>
-  
-    // SubGoal에서 호출하는 경우
-    func postTaskUpdateData(
-      key: String,
-      cellKey: String,
-      title: String,
-      description: String?,
-      dueDate: Date?
-    ) -> AnyPublisher<Bool, BandalArtNetworkError>
+      isCompleted: Bool?
+    ) -> AnyPublisher<Response, BandalArtNetworkError>
   
     // MainGoal에서 호출하는 경우
     func postTaskUpdateData(
       key: String,
       cellKey: String,
       profileEmoji: Character?,
-      title: String,
+      title: String?,
       description: String?,
       dueDate: Date?,
       mainColor: String,
       subColor: String
-    ) -> AnyPublisher<Bool, BandalArtNetworkError>
+    ) -> AnyPublisher<Response, BandalArtNetworkError>
 }
