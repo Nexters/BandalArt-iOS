@@ -7,11 +7,22 @@
 //
 
 import UIKit
+import SnapKit
+import Combine
+import CombineCocoa
 import Components
 
+struct EmojiTitleCellViewModel {
+  let title: CurrentValueSubject<String, Never>
+  let emoji: PassthroughSubject<Character, Never>
+}
+
 final class EmojiTitleCell: UICollectionViewCell {
+  
   static let identifier = "EmojiTitleCell"
+
   weak var delegate: EmojiSelectorDelegate?
+  private var cancellables = Set<AnyCancellable>()
   
   lazy var containerView: UIStackView = {
     let stackView = UIStackView()
@@ -89,6 +100,35 @@ final class EmojiTitleCell: UICollectionViewCell {
   public func setupData(item: EmojiTitleItem) {
     emojiView.setEmoji(with: item.emoji ?? Character(""))
     underlineTextField.text = item.title
+  }
+  
+  func configure(with viewModel: EmojiTitleCellViewModel) {
+    underlineTextField.textPublisher
+      .sink { text in
+        guard let text = text else { return }
+        viewModel.title.send(text)
+      }
+      .store(in: &cancellables)
+    
+//    emojiView.emojiLabel
+//      .publisher(for: \.text)
+//      .compactMap { ($0.map{ $0 })?.first }
+//      .sink { emoji in
+//        viewModel.emoji.send(emoji)
+//      }
+//      .store(in: &cancellables)
+    
+    viewModel.emoji
+      .sink { [weak self] emoji in
+        self?.emojiView.setEmoji(with: emoji)
+      }
+      .store(in: &cancellables)
+    
+    viewModel.title
+      .sink { [weak self] text in
+        self?.underlineTextField.text = text
+      }
+      .store(in: &cancellables)
   }
   
   @objc func emojiViewTapped(_ sender: UIView) {

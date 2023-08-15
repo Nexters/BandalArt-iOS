@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import CommonFeature
 
 /// Use `BottomSheetController` as the basis for your bottom sheet. Subclass it or use it as is.
 /// You add subviews and child view controllers as you would with every other view/view controller.
 /// The `BottomSheetController` installs its own `UIViewControllerTransitioningDelegate`
 /// and forces `UIModalPresentationStyle` to `UIModalPresentationStyle.custom`.
 /// Present it as you would present any other `UIViewController`, using `UIViewController.present(_:)`.
-public class BottomSheetController: UIViewController {
+public class BottomSheetController: BaseViewController {
   /// Enum that specify how the sheet should size it self based on its content.
   /// The sheet sizing act as a loose anchor on how big the sheet should be, and the sheet will always respect its content's constraints.
   /// However, the sheet will never extend beyond the top safe area (plus any stretch offset).

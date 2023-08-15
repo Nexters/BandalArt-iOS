@@ -7,7 +7,11 @@
 //
 
 import UIKit
+import Entity
+import Combine
+import CombineCocoa
 import Components
+import CommonFeature
 
 protocol DatePickerCallDelegate: AnyObject {
   func datePickerButtonTapped(in cell: DueDateCell, isOpen: Bool)
@@ -27,14 +31,14 @@ public final class ManipulateViewController: BottomSheetController {
   
   let manipulateView: ManipulateView
   let viewModel: ManipulateViewModel
+ 
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
-  
   var mainDataSource: UICollectionViewDiffableDataSource<MainGoalSection, UUID>!
   var subGoalAndTaskCreateDataSource:  UICollectionViewDiffableDataSource<SubGoalAndTaskCreateSection, UUID>!
   var taskUpdateDataSource: UICollectionViewDiffableDataSource<TaskUpdateSection, UUID>!
 
   weak var delegate: ManipulateViewControllerDelegate?
-  
+
   public init(
     mode: Mode,
     bandalArtCellType: BandalArtCellType,
@@ -48,7 +52,8 @@ public final class ManipulateViewController: BottomSheetController {
     self.mode = mode
     self.bandalArtCellType = bandalArtCellType
     self.viewModel = viewModel
-    super.init(nibName: nil, bundle: nil)
+    
+    super.init()
   }
   
   required init?(coder: NSCoder) {
@@ -64,15 +69,54 @@ public final class ManipulateViewController: BottomSheetController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
     setupCollectionView()
+    setupKeyboard()
   }
 
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     adjustCollectionViewHeight()
   }
+  
+  public override func bind() {
+    let didLoadPublisher = PassthroughSubject<Void, Never>()
+  
+    let input = ManipulateViewModel.Input(
+      didViewLoad: didLoadPublisher.eraseToAnyPublisher(),
+      themeColorSelection: manipulateView.collectionView.didSelectItemPublisher,
+      deleteButtonTap: manipulateView.deleteButton.tapPublisher,
+      completionButtonTap: manipulateView.completionButton.tapPublisher,
+      closeButtonTap: manipulateView.closeButton.tapPublisher
+    )
+    let output = viewModel.transform(input: input)
+    
+    output.completionButtonEnable
+      .sink { [weak self] enable in
+        self?.manipulateView.completionButton.isEnabled = enable
+      }
+      .store(in: &cancellables)
+    
+    output.dismissBottomSheet
+      .sink { [weak self] event in
+        self?.dismiss(animated: true)
+      }
+      .store(in: &cancellables)
+    
+//    output.title
+//      .combineLatest(output.dueDate, output.memo, output.completion)
+//      .sink(receiveValue: { [weak self] (title, dusDate, memo, completion) in
+//        self?.viewModel.titleItem.first?.title = title
+//      })
+//      .store(in: &cancellables)
+    
+    
+    
+  }
+  
+  public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    self.view.endEditing(true)
+  }
 
   func adjustCollectionViewHeight() {
-    // TODO: 방어로직 구성, 사이징 변경 시 재구성 필요 
     guard manipulateView.collectionView.contentSize.height != 0 else { return }
     let contentHeight = manipulateView.collectionView.contentSize.height
     manipulateView.collectionView.snp.updateConstraints {
@@ -82,7 +126,7 @@ public final class ManipulateViewController: BottomSheetController {
   
   func setupCollectionView() {
     switch bandalArtCellType {
-    case .main:
+    case .mainGoal:
       manipulateView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(
         type: .mainGoal
       ).createLayout()
@@ -92,31 +136,56 @@ public final class ManipulateViewController: BottomSheetController {
       ).createLayout()
     }
     setupDataSource()
-    manipulateView.collectionView.delegate = self
     manipulateView.collectionView.allowsMultipleSelection = false
+  }
+  
+  func setupKeyboard() {
+    NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+      .sink { [weak self] notification in
+        guard let self = self else { return }
+        
+        if self.view.window?.frame.origin.y == 0 {
+          if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            self.adjustLayoutForKeyboard(height: keyboardFrame.height)
+          }
+        }
+      }
+      .store(in: &cancellables)
+    
+    NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+      .sink { [weak self] notification in
+        guard let self = self else { return }
+        if self.view.window?.frame.origin.y != 0 {
+          if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            self.resetLayout(height: keyboardFrame.height)
+          }
+        }
+      }
+      .store(in: &cancellables)
+  }
+  
+  private func adjustLayoutForKeyboard(height: CGFloat) {
+    UIView.animate(withDuration: 1) {
+      self.view.window?.frame.origin.y -= height
+    }
+  }
+  
+  private func resetLayout(height: CGFloat) {
+    UIView.animate(withDuration: 1) {
+      self.view.window?.frame.origin.y += height
+    }
   }
 
   func setupDataSource() {
-    let emojiTitleItem = [EmojiTitleItem(id: UUID(), emoji: "😎", title: "")]
-    let themeColorItem = [
-      ThemeColorItem(id: UUID(), color: .mint),
-      ThemeColorItem(id: UUID(), color: .grape),
-      ThemeColorItem(id: UUID(), color: .sky),
-      ThemeColorItem(id: UUID(), color: .grass),
-      ThemeColorItem(id: UUID(), color: .lemon),
-      ThemeColorItem(id: UUID(), color: .mandarin)
-    ]
-    let titleItem = [TitleItem(id: UUID(), title: "")]
-    let dueDateItem = [DueDateItem(id: UUID(), date: Date())]
-    let memoItem = [MemoItem(id: UUID(), memo: "")]
-    let completionItem = [CompletionItem(id: UUID(), isCompleted: false)]
-    
+    // TODO: setupData 까먹지 말기
     let emojiTitleCellRegistration = UICollectionView.CellRegistration<EmojiTitleCell, EmojiTitleItem> { cell, indexPath, item in
       cell.setupData(item: item)
+      cell.configure(with: self.viewModel.emojiTitleCellViewModel)
       cell.delegate = self
     }
     let titleCellRegistration = UICollectionView.CellRegistration<TitleCell, TitleItem> { cell, indexPath, item in
       cell.setupData(item: item)
+      cell.configure(with: self.viewModel.titleCellViewModel)
     }
     let themeColorCellRegistration = UICollectionView.CellRegistration<ThemeColorCell, ThemeColorItem> { cell, indexPath, item in
       cell.setupData(item: item)
@@ -124,37 +193,40 @@ public final class ManipulateViewController: BottomSheetController {
     let dueDateCellRegistration = UICollectionView.CellRegistration<DueDateCell, DueDateItem> { cell, indexPath, item in
       cell.setupData(item: item)
       cell.delegate = self
+      cell.configure(with: self.viewModel.dueDateCellViewModel)
     }
     let memoCellRegistration = UICollectionView.CellRegistration<MemoCell, MemoItem> { cell, indexPath, item in
       cell.setupData(item: item)
+      cell.configure(with: self.viewModel.memoCellViewModel)
     }
     let completionCellRegistration = UICollectionView.CellRegistration<CompletionCell, CompletionItem> { cell, indexPath, item in
       cell.setupData(item: item)
+      cell.configure(with: self.viewModel.completionCellViewModel)
     }
     
     switch bandalArtCellType {
-    case .main:
+    case .mainGoal:
       mainDataSource = UICollectionViewDiffableDataSource<MainGoalSection, UUID>(
             collectionView: manipulateView.collectionView
           ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
             switch indexPath.section {
             case 0:
-              let item = emojiTitleItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.emojiTitleItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: emojiTitleCellRegistration,
                 for: indexPath, item: item)
             case 1:
-              let item = themeColorItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.themeColorItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: themeColorCellRegistration,
                 for: indexPath, item: item)
             case 2:
-              let item = dueDateItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.dueDateItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: dueDateCellRegistration,
                 for: indexPath, item: item)
             case 3:
-              let item = memoItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.memoItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: memoCellRegistration,
                 for: indexPath, item: item)
@@ -166,16 +238,16 @@ public final class ManipulateViewController: BottomSheetController {
       var snapshot = NSDiffableDataSourceSnapshot<MainGoalSection, UUID>()
       
       snapshot.appendSections([.emojiTitle])
-      snapshot.appendItems(emojiTitleItem.map{ $0.id }, toSection: .emojiTitle)
+      snapshot.appendItems(self.viewModel.emojiTitleItem.map{ $0.id }, toSection: .emojiTitle)
 
       snapshot.appendSections([.themeColor])
-      snapshot.appendItems(themeColorItem.map{ $0.id }, toSection: .themeColor)
+      snapshot.appendItems(self.viewModel.themeColorItem.map{ $0.id }, toSection: .themeColor)
 
       snapshot.appendSections([.dueDate])
-      snapshot.appendItems(dueDateItem.map{ $0.id }, toSection: .dueDate)
+      snapshot.appendItems(self.viewModel.dueDateItem.map{ $0.id }, toSection: .dueDate)
       
       snapshot.appendSections([.memo])
-      snapshot.appendItems(memoItem.map{ $0.id }, toSection: .memo)
+      snapshot.appendItems(self.viewModel.memoItem.map{ $0.id }, toSection: .memo)
       
       let headerRegistration = UICollectionView.SupplementaryRegistration
       <BottomSheetSectionHeader>(elementKind: UICollectionView.elementKindSectionHeader) {
@@ -196,17 +268,17 @@ public final class ManipulateViewController: BottomSheetController {
           ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
             switch indexPath.section {
             case 0:
-              let item = titleItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.titleItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: titleCellRegistration,
                 for: indexPath, item: item)
             case 1:
-              let item = dueDateItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.dueDateItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: dueDateCellRegistration,
                 for: indexPath, item: item)
             case 2:
-              let item = memoItem.first(where: { $0.id == identifier })
+              let item = self.viewModel.memoItem.first(where: { $0.id == identifier })
               return collectionView.dequeueConfiguredReusableCell(
                 using: memoCellRegistration,
                 for: indexPath, item: item)
@@ -218,13 +290,13 @@ public final class ManipulateViewController: BottomSheetController {
       var snapshot = NSDiffableDataSourceSnapshot<SubGoalAndTaskCreateSection, UUID>()
       
       snapshot.appendSections([.title])
-      snapshot.appendItems(titleItem.map{ $0.id }, toSection: .title)
+      snapshot.appendItems(self.viewModel.titleItem.map{ $0.id }, toSection: .title)
 
       snapshot.appendSections([.dueDate])
-      snapshot.appendItems(dueDateItem.map{ $0.id }, toSection: .dueDate)
+      snapshot.appendItems(self.viewModel.dueDateItem.map{ $0.id }, toSection: .dueDate)
       
       snapshot.appendSections([.memo])
-      snapshot.appendItems(memoItem.map{ $0.id }, toSection: .memo)
+      snapshot.appendItems(self.viewModel.memoItem.map{ $0.id }, toSection: .memo)
       
       let headerRegistration = UICollectionView.SupplementaryRegistration
       <BottomSheetSectionHeader>(elementKind: UICollectionView.elementKindSectionHeader) {
@@ -247,17 +319,17 @@ public final class ManipulateViewController: BottomSheetController {
             ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
               switch indexPath.section {
               case 0:
-                let item = titleItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.titleItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: titleCellRegistration,
                   for: indexPath, item: item)
               case 1:
-                let item = dueDateItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.dueDateItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: dueDateCellRegistration,
                   for: indexPath, item: item)
               case 2:
-                let item = memoItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.memoItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: memoCellRegistration,
                   for: indexPath, item: item)
@@ -269,13 +341,13 @@ public final class ManipulateViewController: BottomSheetController {
         var snapshot = NSDiffableDataSourceSnapshot<SubGoalAndTaskCreateSection, UUID>()
         
         snapshot.appendSections([.title])
-        snapshot.appendItems(titleItem.map{ $0.id }, toSection: .title)
+        snapshot.appendItems(self.viewModel.titleItem.map{ $0.id }, toSection: .title)
 
         snapshot.appendSections([.dueDate])
-        snapshot.appendItems(dueDateItem.map{ $0.id }, toSection: .dueDate)
+        snapshot.appendItems(self.viewModel.dueDateItem.map{ $0.id }, toSection: .dueDate)
         
         snapshot.appendSections([.memo])
-        snapshot.appendItems(memoItem.map{ $0.id }, toSection: .memo)
+        snapshot.appendItems(self.viewModel.memoItem.map{ $0.id }, toSection: .memo)
         
         let headerRegistration = UICollectionView.SupplementaryRegistration
         <BottomSheetSectionHeader>(elementKind: UICollectionView.elementKindSectionHeader) {
@@ -296,22 +368,22 @@ public final class ManipulateViewController: BottomSheetController {
             ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
               switch indexPath.section {
               case 0:
-                let item = titleItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.titleItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: titleCellRegistration,
                   for: indexPath, item: item)
               case 1:
-                let item = dueDateItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.dueDateItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: dueDateCellRegistration,
                   for: indexPath, item: item)
               case 2:
-                let item = memoItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.memoItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: memoCellRegistration,
                   for: indexPath, item: item)
               case 3:
-                let item = completionItem.first(where: { $0.id == identifier })
+                let item = self.viewModel.completionItem.first(where: { $0.id == identifier })
                 return collectionView.dequeueConfiguredReusableCell(
                   using: completionCellRegistration,
                   for: indexPath, item: item)
@@ -323,16 +395,16 @@ public final class ManipulateViewController: BottomSheetController {
         var snapshot = NSDiffableDataSourceSnapshot<TaskUpdateSection, UUID>()
         
         snapshot.appendSections([.title])
-        snapshot.appendItems(titleItem.map{ $0.id }, toSection: .title)
+        snapshot.appendItems(self.viewModel.titleItem.map{ $0.id }, toSection: .title)
 
         snapshot.appendSections([.dueDate])
-        snapshot.appendItems(dueDateItem.map{ $0.id }, toSection: .dueDate)
+        snapshot.appendItems(self.viewModel.dueDateItem.map{ $0.id }, toSection: .dueDate)
         
         snapshot.appendSections([.memo])
-        snapshot.appendItems(memoItem.map{ $0.id }, toSection: .memo)
+        snapshot.appendItems(self.viewModel.memoItem.map{ $0.id }, toSection: .memo)
         
         snapshot.appendSections([.completion])
-        snapshot.appendItems(completionItem.map{ $0.id }, toSection: .completion)
+        snapshot.appendItems(self.viewModel.completionItem.map{ $0.id }, toSection: .completion)
         
         let headerRegistration = UICollectionView.SupplementaryRegistration
         <BottomSheetSectionHeader>(elementKind: UICollectionView.elementKindSectionHeader) {
@@ -351,7 +423,7 @@ public final class ManipulateViewController: BottomSheetController {
     }
 
     switch bandalArtCellType {
-    case .main:
+    case .mainGoal:
       manipulateView.collectionView.dataSource = mainDataSource
       manipulateView.collectionView.selectItem(
         at: IndexPath(item: 0, section: 1),
@@ -373,12 +445,13 @@ public final class ManipulateViewController: BottomSheetController {
 
 extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDelegate, EmojiSelectorDelegate {
   func datePickerButtonTapped(in cell: DueDateCell, isOpen: Bool) {
+    self.view.endEditing(true)
     switch bandalArtCellType {
-    case .main:
+    case .mainGoal:
       UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
-        var snapshot = self.mainDataSource.snapshot()
-        if isOpen { snapshot.reloadSections([.dueDate]) }
-        self.mainDataSource.apply(snapshot, animatingDifferences: true)
+//        var snapshot = self.mainDataSource.snapshot()
+        self.manipulateView.collectionView.reloadData()
+//        self.mainDataSource.apply(snapshot, animatingDifferences: true)
         let contentHeight = self.manipulateView.collectionView.contentSize.height
         self.manipulateView.collectionView.snp.updateConstraints {
           $0.height.greaterThanOrEqualTo(contentHeight)
@@ -386,9 +459,10 @@ extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDele
       }, completion: nil)
     case .subGoal:
       UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
-        var snapshot = self.subGoalAndTaskCreateDataSource.snapshot()
-        if isOpen { snapshot.reloadSections([.dueDate]) }
-        self.subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: true)
+//        var snapshot = self.subGoalAndTaskCreateDataSource.snapshot()
+//        // if isOpen { snapshot.reloadSections([.dueDate]) }
+        self.manipulateView.collectionView.reloadData()
+//        self.subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: true)
         let contentHeight = self.manipulateView.collectionView.contentSize.height
         self.manipulateView.collectionView.snp.updateConstraints {
           $0.height.greaterThanOrEqualTo(contentHeight)
@@ -399,7 +473,8 @@ extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDele
       case .create:
         UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
           var snapshot = self.subGoalAndTaskCreateDataSource.snapshot()
-          if isOpen { snapshot.reloadSections([.dueDate]) }
+          // if isOpen { snapshot.reloadSections([.dueDate]) }
+          self.manipulateView.collectionView.reloadData()
           self.subGoalAndTaskCreateDataSource.apply(snapshot, animatingDifferences: true)
           let contentHeight = self.manipulateView.collectionView.contentSize.height
           self.manipulateView.collectionView.snp.updateConstraints {
@@ -408,9 +483,10 @@ extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDele
         }, completion: nil)
       case .update:
         UIView.transition(with: manipulateView.collectionView, duration: 0.3, options: .curveEaseInOut, animations: {
-          var snapshot = self.taskUpdateDataSource.snapshot()
-          if isOpen { snapshot.reloadSections([.dueDate]) }
-          self.taskUpdateDataSource.apply(snapshot, animatingDifferences: true)
+//          var snapshot = self.taskUpdateDataSource.snapshot()
+          // if isOpen { snapshot.reloadSections([.dueDate]) }
+          self.manipulateView.collectionView.reloadData()
+//          self.taskUpdateDataSource.apply(snapshot, animatingDifferences: true)
           let contentHeight = self.manipulateView.collectionView.contentSize.height
           self.manipulateView.collectionView.snp.updateConstraints {
             $0.height.greaterThanOrEqualTo(contentHeight)
@@ -421,23 +497,12 @@ extension ManipulateViewController: UICollectionViewDelegate, DatePickerCallDele
   }
   
   func emojiViewTapped(in cell: EmojiTitleCell) {
-    presentPopUp(cell.emojiView, sourceRect: cell.emojiView.bounds)
-  }
-  
-  public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-    switch bandalArtCellType {
-    case .main:
-      switch indexPath.section {
-      case 1:
-        return true
-      default:
-        return false
-      }
-    case .subGoal:
-      return false
-    case .task:
-      return false
-    }
+    self.view.endEditing(true)
+    presentPopUp(
+      EmojiPopupViewController(viewModel: viewModel.emojiPopupViewModel),
+      button: cell.emojiView,
+      sourceRect: cell.emojiView.bounds
+    )
   }
 }
 

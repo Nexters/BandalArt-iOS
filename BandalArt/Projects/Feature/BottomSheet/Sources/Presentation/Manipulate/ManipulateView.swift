@@ -25,7 +25,8 @@ final class ManipulateView: UIView {
 
   lazy var closeButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "xmark")?.resize(withWidthScale: 10.0), for: .normal)
+    button.imageView?.contentMode = .scaleAspectFit
+    button.setImage(UIImage(named: "xmark")?.resize(10.0), for: .normal)
     return button
   }()
   
@@ -89,7 +90,7 @@ final class ManipulateView: UIView {
     [titleLabel, closeButton, collectionView, buttonContainerView].forEach {
       addSubview($0)
       switch bandalArtCellType {
-      case .main:
+      case .mainGoal:
         switch mode {
         case .create:
           titleLabel.text = "메인목표 입력"
@@ -131,7 +132,7 @@ final class ManipulateView: UIView {
     closeButton.snp.makeConstraints {
       $0.centerY.equalTo(titleLabel)
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
-      $0.width.height.equalTo(24.0)
+      $0.width.height.equalTo(44.0)
     }
 
     collectionView.snp.makeConstraints {

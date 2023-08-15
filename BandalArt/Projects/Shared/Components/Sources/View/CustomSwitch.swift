@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Combine
 
-public class CustomSwitch: UIControl {
+public class CustomSwitch: UIControl, ObservableObject {
   
   // MARK: Public properties
   public var animationDelay: Double = 0
@@ -16,7 +17,8 @@ public class CustomSwitch: UIControl {
   public var initialSpringVelocity = CGFloat(0.5)
   public var animationOptions: UIView.AnimationOptions = [UIView.AnimationOptions.curveEaseOut, UIView.AnimationOptions.beginFromCurrentState, UIView.AnimationOptions.allowUserInteraction]
   
-  public var isOn: Bool = true
+  @Published public var isOn: Bool = false
+
   public var animationDuration: Double = 0.5
   public var padding: CGFloat = 1 {
     didSet {

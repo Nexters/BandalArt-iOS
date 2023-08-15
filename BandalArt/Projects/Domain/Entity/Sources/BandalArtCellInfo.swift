@@ -9,7 +9,6 @@
 import Foundation
 
 public struct BandalArtCellInfo {
-    
     public let key: String
     public let parentKey: String?
     public let title: String?

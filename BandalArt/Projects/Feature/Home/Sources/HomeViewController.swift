@@ -49,6 +49,7 @@ public final class HomeViewController: UIViewController {
     // 반다라트 표를 구성하는 뷰들
     private let centerView = UIView()
     private let centerLabel = UILabel()
+    private let centerButton = UIButton()
 
     private let leftTopCollectionView = UICollectionView(frame: .zero,
                                                          collectionViewLayout: UICollectionViewFlowLayout.init())
@@ -100,7 +101,8 @@ public final class HomeViewController: UIViewController {
             didAddBarButtonTap: addButton.tapPublisher,
             didCategoryBarButtonTap: addButton.tapPublisher,
             didCellModifyed: didCellModifyed.eraseToAnyPublisher(),
-            didDeleteButtonTap: didDeleteButtonTap.eraseToAnyPublisher()
+            didDeleteButtonTap: didDeleteButtonTap.eraseToAnyPublisher(),
+            didMainCellTap: centerButton.tapPublisher
         )
         let output = viewModel.transform(input: input)
 
@@ -170,6 +172,12 @@ public final class HomeViewController: UIViewController {
             .sink(receiveValue: { [weak self] infos in
                 self?.rightBottomInfos = infos
                 self?.rightBottomCollectionView.reloadData()
+            })
+            .store(in: &cancellables)
+
+        output.presentManipulateViewController
+            .sink(receiveValue: { [weak self] infos in
+                self?.routeManipulateVC(type: .mainGoal, cellInfo: infos.0, info: infos.1)
             })
             .store(in: &cancellables)
 
@@ -266,7 +274,7 @@ extension HomeViewController: UICollectionViewDelegate,
             cell.configure(title: nil, mode: mode, status: .empty)
             return cell
         }
-        let isTitle = info.title == nil && info.title == ""
+        let isTitle = !(info.title == nil || info.title == "")
         var status: BandalArtCell.Status = isTitle ? .created : .empty
         status = info.isCompleted ? .completed : status
         cell.configure(title: info.title, mode: mode, status: status)
@@ -291,18 +299,32 @@ extension HomeViewController: UICollectionViewDelegate,
 
     public func collectionView(_ collectionView: UICollectionView,
                                didSelectItemAt indexPath: IndexPath) {
-      let viewController = ManipulateViewController(
-        mode: .create,
-        bandalArtCellType: .main(cellKey: ""),
-        viewModel: ManipulateViewModel()
-      )
-      viewController.preferredSheetSizing = .fit
-      self.present(viewController, animated: true)
+
+        guard let cellInfo = self.cellInfoList(collectionView: collectionView)[safe: indexPath.item] else { return }
+        let type: BandalArtCellType = collectionView.tag == indexPath.item ? .subGoal : .task
+        self.routeManipulateVC(type: type, cellInfo: cellInfo)
     }
 }
 
 // MARK: - Private func.
 private extension HomeViewController {
+
+    func routeManipulateVC(type: BandalArtCellType,
+                           cellInfo: BandalArtCellInfo,
+                           info: BandalArtInfo? = nil) {
+        let viewController = ManipulateViewController(
+          mode: .update,
+          bandalArtCellType: type,
+          viewModel: ManipulateViewModel(
+            cellInfo: cellInfo,
+            mainInfo: info,
+            mode: .update,
+            bandalArtCellType: type
+          )
+        )
+        viewController.preferredSheetSizing = .fit
+        self.present(viewController, animated: true)
+    }
 
     func setConfigure() {
         view.backgroundColor = .gray50
@@ -418,6 +440,7 @@ private extension HomeViewController {
         view.addSubview(bandalartView)
         view.addSubview(shareButton)
         centerView.addSubview(centerLabel)
+        centerView.addSubview(centerButton)
 
         bandalartView.addSubview(centerView)
         bandalartView.addSubview(leftTopCollectionView)
@@ -517,6 +540,9 @@ private extension HomeViewController {
             make.leading.equalTo(leftBottomCollectionView.snp.trailing).offset(2)
             make.trailing.equalTo(rightTopCollectionView.snp.leading).offset(-2)
             make.bottom.equalTo(rightBottomCollectionView.snp.top).offset(-2)
+        }
+        centerButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
 

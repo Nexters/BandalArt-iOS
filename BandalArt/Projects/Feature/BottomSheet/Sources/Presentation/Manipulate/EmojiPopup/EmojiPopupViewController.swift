@@ -7,13 +7,53 @@
 //
 
 import UIKit
+import Combine
+import CombineCocoa
+
+struct EmojiPopupViewModel {
+  let emojiSelection: PassthroughSubject<Character, Never>
+}
 
 final class EmojiPopupViewController: UIViewController {
   let emojiPopupView = EmojiPopupView()
+  let viewModel: EmojiPopupViewModel
+  private var cancellables = Set<AnyCancellable>()
+  
+  let emojiItem = [
+    EmojiItem(id: UUID(), emoji: "🔥"),
+    EmojiItem(id: UUID(), emoji: "😀"),
+    EmojiItem(id: UUID(), emoji: "😃"),
+    EmojiItem(id: UUID(), emoji: "😄"),
+    EmojiItem(id: UUID(), emoji: "😆"),
+    EmojiItem(id: UUID(), emoji: "🥹"),
+    
+    EmojiItem(id: UUID(), emoji: "🥰"),
+    EmojiItem(id: UUID(), emoji: "😍"),
+    EmojiItem(id: UUID(), emoji: "😂"),
+    EmojiItem(id: UUID(), emoji: "🥲"),
+    EmojiItem(id: UUID(), emoji: "☺️"),
+    EmojiItem(id: UUID(), emoji: "😎"),
+    
+    EmojiItem(id: UUID(), emoji: "🥳"),
+    EmojiItem(id: UUID(), emoji: "🤩"),
+    EmojiItem(id: UUID(), emoji: "⭐️"),
+    EmojiItem(id: UUID(), emoji: "🌟"),
+    EmojiItem(id: UUID(), emoji: "✨"),
+    EmojiItem(id: UUID(), emoji: "💥"),
+    
+    EmojiItem(id: UUID(), emoji: "❤️"),
+    EmojiItem(id: UUID(), emoji: "🧡"),
+    EmojiItem(id: UUID(), emoji: "💛"),
+    EmojiItem(id: UUID(), emoji: "💚"),
+    EmojiItem(id: UUID(), emoji: "💙"),
+    EmojiItem(id: UUID(), emoji: "❤️‍🔥")
+  ]
+  
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
   var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!
   
-  public init() {
+  public init(viewModel: EmojiPopupViewModel) {
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -30,6 +70,19 @@ final class EmojiPopupViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
     setupCollectionView()
+    bind()
+  }
+  
+  func bind() {
+    emojiPopupView.collectionView
+      .didSelectItemPublisher
+      .compactMap {
+        self.emojiItem[$0.row].emoji
+      }
+      .sink { [weak self] emoji in
+        self?.viewModel.emojiSelection.send(emoji)
+      }
+      .store(in: &cancellables)
   }
   
   func setupCollectionView() {
@@ -39,36 +92,6 @@ final class EmojiPopupViewController: UIViewController {
   }
   
   func setupDataSource() {
-    let emojiItem = [
-      EmojiItem(id: UUID(), emoji: "🔥"),
-      EmojiItem(id: UUID(), emoji: "😀"),
-      EmojiItem(id: UUID(), emoji: "😃"),
-      EmojiItem(id: UUID(), emoji: "😄"),
-      EmojiItem(id: UUID(), emoji: "😆"),
-      EmojiItem(id: UUID(), emoji: "🥹"),
-      
-      EmojiItem(id: UUID(), emoji: "🥰"),
-      EmojiItem(id: UUID(), emoji: "😍"),
-      EmojiItem(id: UUID(), emoji: "😂"),
-      EmojiItem(id: UUID(), emoji: "🥲"),
-      EmojiItem(id: UUID(), emoji: "☺️"),
-      EmojiItem(id: UUID(), emoji: "😎"),
-      
-      EmojiItem(id: UUID(), emoji: "🥳"),
-      EmojiItem(id: UUID(), emoji: "🤩"),
-      EmojiItem(id: UUID(), emoji: "⭐️"),
-      EmojiItem(id: UUID(), emoji: "🌟"),
-      EmojiItem(id: UUID(), emoji: "✨"),
-      EmojiItem(id: UUID(), emoji: "💥"),
-      
-      EmojiItem(id: UUID(), emoji: "❤️"),
-      EmojiItem(id: UUID(), emoji: "🧡"),
-      EmojiItem(id: UUID(), emoji: "💛"),
-      EmojiItem(id: UUID(), emoji: "💚"),
-      EmojiItem(id: UUID(), emoji: "💙"),
-      EmojiItem(id: UUID(), emoji: "❤️‍🔥")
-    ]
-    
     let emojiCellRegistration = UICollectionView.CellRegistration<EmojiCell, EmojiItem> { cell, indexPath, item in
       cell.setupData(item: item)
     }
@@ -76,7 +99,7 @@ final class EmojiPopupViewController: UIViewController {
     dataSource = UICollectionViewDiffableDataSource<EmojiSection, UUID>(
       collectionView: emojiPopupView.collectionView
     ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
-      let item = emojiItem.first(where: { $0.id == identifier })
+      let item = self.emojiItem.first(where: { $0.id == identifier })
       return collectionView.dequeueConfiguredReusableCell(
         using: emojiCellRegistration,
         for: indexPath, item: item
@@ -112,9 +135,9 @@ extension EmojiPopupViewController: UIPopoverPresentationControllerDelegate {
 }
 
 extension UIViewController {
-  func presentPopUp(_ button: UIView, sourceRect: CGRect) {
+  func presentPopUp(_ sourceVC: EmojiPopupViewController, button: UIView, sourceRect: CGRect) {
     // 1
-    let view = EmojiPopupViewController()
+    let view = sourceVC
     // 2
     view.preferredContentSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 250)
     // 3

@@ -26,17 +26,17 @@ struct ThemeColorItem: Identifiable {
 
 struct DueDateItem: Identifiable {
   var id: UUID
-  var date: Date
+  var date: Date?
 }
 
 struct MemoItem: Identifiable {
   var id: UUID
-  var memo: String
+  var memo: String?
 }
 
 struct CompletionItem: Identifiable {
   var id: UUID
-  var isCompleted: Bool
+  var isCompleted: Bool?
 }
 
 

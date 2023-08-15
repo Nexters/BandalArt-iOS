@@ -14,7 +14,7 @@ public enum Mode: Equatable {
 }
 
 public enum BandalArtCellType: Equatable {
-  case main(cellKey: String)
-  case subGoal(cellKey: String)
-  case task(cellKey: String)
+  case mainGoal
+  case subGoal
+  case task
 }

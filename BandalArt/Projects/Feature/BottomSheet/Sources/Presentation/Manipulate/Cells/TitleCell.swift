@@ -8,10 +8,16 @@
 
 import UIKit
 import SnapKit
+import Combine
 import Components
+
+struct TtleCellViewModel {
+  let title: CurrentValueSubject<String, Never>
+}
 
 final class TitleCell: UICollectionViewCell {
   static let identifier = "TitleCell"
+  private var cancellables = Set<AnyCancellable>()
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
@@ -48,5 +54,20 @@ final class TitleCell: UICollectionViewCell {
   
   func setupData(item: TitleItem) {
     underlineTextField.text = item.title
+  }
+  
+  func configure(with viewModel: TtleCellViewModel) {
+    underlineTextField.textPublisher
+      .sink { text in
+        guard let text = text else { return }
+        viewModel.title.send(text)
+      }
+      .store(in: &cancellables)
+    
+    viewModel.title
+      .sink { [weak self] text in
+        self?.underlineTextField.text = text
+      }
+      .store(in: &cancellables)
   }
 }

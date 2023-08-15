@@ -19,20 +19,16 @@ public extension UIImage {
     self.init(cgImage: (image?.cgImage)!)
   }
   
-  func resize(withWidthScale scale: CGFloat) -> UIImage? {
-    let originalWidth = self.size.width
-    let originalHeight = self.size.height
+  func resize(_ width: CGFloat) -> UIImage? {
+    let aspectRatio = size.width / size.height
+    let newSize = CGSize(width: width, height: width / aspectRatio)
     
-    let newWidth = originalWidth * scale
-    let newHeight = originalHeight * scale
+    let renderer = UIGraphicsImageRenderer(size: newSize)
     
-    let newSize = CGSize(width: newWidth, height: newHeight)
+    let resizedImage = renderer.image { _ in
+      self.draw(in: CGRect(origin: .zero, size: newSize))
+    }
     
-    UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-    self.draw(in: CGRect(origin: CGPoint.zero, size: newSize))
-    let newImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    return newImage
+    return resizedImage
   }
 }

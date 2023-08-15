@@ -8,15 +8,22 @@
 
 import UIKit
 import SnapKit
+import Combine
 import Components
+
+struct CompletionCellViewModel {
+  let completion: CurrentValueSubject<Bool, Never>
+}
 
 final class CompletionCell: UICollectionViewCell {
   static let identifier = "CompletionCell"
+  private var cancellables = Set<AnyCancellable>()
   
   private lazy var titleLabel = DefaultLabel(
     title: "미달성",
     font: .systemFont(ofSize: 16, weight: .bold),
-    textColor: .label
+    textColor: .label,
+    textAlignment: .left
   )
   
   lazy var customSwitch: CustomSwitch = {
@@ -30,7 +37,6 @@ final class CompletionCell: UICollectionViewCell {
     customSwitch.thumbCornerRadius = 10
     customSwitch.thumbTintColor = UIColor.white
     customSwitch.animationDuration = 0.25
-    customSwitch.isOn = false
     return customSwitch
   }()
   
@@ -64,5 +70,21 @@ final class CompletionCell: UICollectionViewCell {
     }
   }
   
-  func setupData(item: Any) {}
+  func setupData(item: CompletionItem) {
+    customSwitch.isOn = item.isCompleted ?? false
+  }
+  
+  func configure(with viewModel: CompletionCellViewModel) {
+    customSwitch.$isOn
+      .sink { completion in
+        viewModel.completion.send(completion)
+      }
+      .store(in: &cancellables)
+    
+    viewModel.completion
+      .sink { [weak self] completion in
+        self?.titleLabel.text = completion ? "달성" : "미달성"
+      }
+      .store(in: &cancellables)
+  }
 }

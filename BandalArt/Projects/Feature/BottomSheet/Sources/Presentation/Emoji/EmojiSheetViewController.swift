@@ -19,8 +19,8 @@ public final class EmojiSheetViewController: BottomSheetController {
   
   var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!
   
-  public init() {
-    super.init(nibName: nil, bundle: nil)
+  public override init() {
+    super.init()
   }
   
   required init?(coder: NSCoder) {

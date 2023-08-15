@@ -19,7 +19,7 @@ enum BandalArtTarget {
     // case deleteBandalArt(bandalArtKey: String)
     case getMainCell(bandalArtKey: String) // 반다라트 메인 셀 조회
     case getCell(bandalArtKey: String, cellKey: String) // 반다라트 하위 셀 조회
-    // case updateCell(parameters: DictionaryType, key: String, cellKey: String)
+    case updateCell(parameters: DictionaryType, bandalArtKey: String, cellKey: String)
     // case deleteCell(key: String, cellKey: String)
 }
 
@@ -42,6 +42,8 @@ extension BandalArtTarget: TargetType {
       return "/v1/bandalarts/\(bandalArtKey)/cells"
     case .getCell(let bandalArtKey, let cellKey):
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
+    case .updateCell(_, bandalArtKey: let bandalArtKey, cellKey: let cellKey):
+      return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
     }
   }
     
@@ -52,6 +54,8 @@ extension BandalArtTarget: TargetType {
         .getMainCell,
         .getCell:
       return .get
+    case .updateCell:
+      return .patch
     }
   }
     
@@ -66,6 +70,8 @@ extension BandalArtTarget: TargetType {
          .getMainCell,
          .getCell:
       return .requestPlain
+    case .updateCell(parameters: let parameters, _, _):
+      return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
 //    case :
 //      return .requestPlain
 //    case :

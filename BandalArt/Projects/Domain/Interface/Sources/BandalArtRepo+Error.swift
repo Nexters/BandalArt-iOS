@@ -51,5 +51,52 @@ public protocol BandalArtRepository {
     /// - Parameters:
     ///   - key: 반다라트의 Unique Key.
     /// - Returns: `AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>`
-    func getBandalArtCellList(key: String) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>
+    func getBandalArtCellList(
+      key: String
+    ) -> AnyPublisher<BandalArtCellInfo, BandalArtNetworkError>
+  
+  /// 반다라트 cell 수정 API
+  /// - Parameters:
+  ///   - key: 반다라트의 Unique Key.
+  ///   - cellKey: cell의 식별 Key
+  ///   - title: 제목
+  ///   - description: 메모
+  ///   - dueDate: 달성일
+  ///   - isCompleted: only Task
+  ///   - mainColor: only mainGoal
+  ///   - subColor: only mainGoal
+  ///   - profileEmoji:onyl mainGoal
+  /// - Returns: `null - statusCode`
+    
+  /// Task에서 호출하는 경우
+  // TODO: Result로 바꾸는 게 나을까?
+    func postTaskUpdateData(
+      key: String,
+      cellKey: String,
+      title: String,
+      description: String?,
+      dueDate: Date?,
+      isCompleted: Bool
+    ) -> AnyPublisher<Bool, BandalArtNetworkError>
+  
+    // SubGoal에서 호출하는 경우
+    func postTaskUpdateData(
+      key: String,
+      cellKey: String,
+      title: String,
+      description: String?,
+      dueDate: Date?
+    ) -> AnyPublisher<Bool, BandalArtNetworkError>
+  
+    // MainGoal에서 호출하는 경우
+    func postTaskUpdateData(
+      key: String,
+      cellKey: String,
+      profileEmoji: Character?,
+      title: String,
+      description: String?,
+      dueDate: Date?,
+      mainColor: String,
+      subColor: String
+    ) -> AnyPublisher<Bool, BandalArtNetworkError>
 }

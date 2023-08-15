@@ -8,10 +8,16 @@
 
 import UIKit
 import SnapKit
+import Combine
 import Components
+
+struct MemoCellViewModel {
+  let memo: PassthroughSubject<String, Never>
+}
 
 final class MemoCell: UICollectionViewCell {
   static let identifier = "MemoCell"
+  private var cancellables = Set<AnyCancellable>()
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
@@ -48,5 +54,14 @@ final class MemoCell: UICollectionViewCell {
   
   func setupData(item: MemoItem) {
     underlineTextField.text = item.memo
+  }
+  
+  func configure(with viewModel: MemoCellViewModel) {
+    underlineTextField.textPublisher
+      .sink { text in
+        guard let text = text else { return }
+        viewModel.memo.send(text)
+      }
+      .store(in: &cancellables)
   }
 }

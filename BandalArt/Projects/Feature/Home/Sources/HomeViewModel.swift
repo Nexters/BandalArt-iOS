@@ -42,6 +42,7 @@ public final class HomeViewModel: ViewModelType {
         let didCategoryBarButtonTap: AnyPublisher<Void, Never>
         let didCellModifyed: AnyPublisher<Void, Never> // 현재는 이 인풋 오면 싹다 업데이트
         let didDeleteButtonTap: AnyPublisher<Void, Never>
+        let didMainCellTap: AnyPublisher<Void, Never>
     }
     
     struct Output {
@@ -59,6 +60,7 @@ public final class HomeViewModel: ViewModelType {
         
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
         let presentActivityViewController: AnyPublisher<Void, Never>
+        let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo?), Never>
     }
     
     private let bandalArtEmojiSubject = PassthroughSubject<Character, Never>()
@@ -68,10 +70,16 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtCompletedSubject = PassthroughSubject<Bool, Never>()
     private let bandalArtDateSubject = PassthroughSubject<Date, Never>()
     
-    private let bandalArtLeftTopInfoSubject = PassthroughSubject<[BandalArtCellInfo], Never>()
-    private let bandalArtRightTopInfoSubject = PassthroughSubject<[BandalArtCellInfo], Never>()
-    private let bandalArtLeftBottomInfoSubject = PassthroughSubject<[BandalArtCellInfo], Never>()
-    private let bandalArtRightBottomInfoSubject = PassthroughSubject<[BandalArtCellInfo] , Never>()
+    private let bandalArtLeftTopInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
+    private let bandalArtRightTopInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
+    private let bandalArtLeftBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
+    private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
+
+    private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo?), Never>()
+
+
+    private var mainCellInfo: BandalArtCellInfo?
+    private var bandalArtInfo: BandalArtInfo?
     
     // leftTop, rightTop, leftBottom, rightBottom
     var subCellIndex: (Int, Int, Int, Int) { return (4, 2, 3, 1) }
@@ -105,6 +113,13 @@ public final class HomeViewModel: ViewModelType {
 //            }
 //            .store(in: &cancellables)
 
+        input.didMainCellTap
+            .sink { [weak self] _ in
+                guard let self, let mainCellInfo else { return }
+                self.presentManipulateViewControllerSubject.send((mainCellInfo, self.bandalArtInfo))
+            }
+            .store(in: &cancellables)
+
         return Output(
             bandalArtTitle: bandalArtTitleSubject.eraseToAnyPublisher(),
             bandalArtEmoji: bandalArtEmojiSubject.eraseToAnyPublisher(),
@@ -117,13 +132,15 @@ public final class HomeViewModel: ViewModelType {
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
             presentBandalArtAddViewController: input.didAddBarButtonTap,
-            presentActivityViewController: input.didShareButtonTap
+            presentActivityViewController: input.didShareButtonTap,
+            presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher()
         )
     }
     
     private func bindUseCase() {
         self.useCase.bandalArtInfoSubject
             .sink { [weak self] info in
+                self?.bandalArtInfo = info
                 self?.bandalArtTitleSubject.send(info.title)
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
                 self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
@@ -136,6 +153,7 @@ public final class HomeViewModel: ViewModelType {
         self.useCase.bandalArtAllCellSubject
             .sink { [weak self] mainCell in
                 guard let self else { return }
+                self.mainCellInfo = mainCell
                 self.bandalArtCompletedRatioSubject.send(mainCell.completionRatio)
 
                 if let leftTop = mainCell.children[safe: 0] {
