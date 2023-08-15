@@ -101,9 +101,6 @@ public extension BandalArtRepositoryImpl {
     mainColor: String,
     subColor: String
   ) -> AnyPublisher<Void, BandalArtNetworkError> {
-    
-    print(key, cellKey, profileEmoji, title, description, dueDate, mainColor, subColor)
-    
     let parameters: DictionaryType = [
       "title": title ?? "",
       "description": description ?? NSNull(),
