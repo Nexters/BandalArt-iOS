@@ -14,7 +14,7 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .Project.Shared.Util,
-        .external(name: "Lottie"),
+        .external(name: "Lottie")
     ],
     resources: []
 )
