@@ -11,13 +11,13 @@ import SnapKit
 import Combine
 import Components
 
-struct TtleCellViewModel {
-  let title: CurrentValueSubject<String, Never>
+struct TitleCellViewModel {
+  let title: PassthroughSubject<String?, Never>
 }
 
 final class TitleCell: UICollectionViewCell {
-  static let identifier = "TitleCell"
   private var cancellables = Set<AnyCancellable>()
+  private var viewModel: TitleCellViewModel?
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
@@ -31,10 +31,18 @@ final class TitleCell: UICollectionViewCell {
     super.init(frame: frame)
     setupView()
     setupConstraints()
+    bind()
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
+    bind()
   }
   
   func setupView() {
@@ -56,18 +64,23 @@ final class TitleCell: UICollectionViewCell {
     underlineTextField.text = item.title
   }
   
-  func configure(with viewModel: TtleCellViewModel) {
+  func bind() {
     underlineTextField.textPublisher
-      .sink { text in
-        guard let text = text else { return }
-        viewModel.title.send(text)
+      .sink { [weak self] text in
+        guard let self = self else { return }
+        self.viewModel?.title.send(text)
       }
       .store(in: &cancellables)
     
-    viewModel.title
+    viewModel?.title
       .sink { [weak self] text in
-        self?.underlineTextField.text = text
+        guard let self = self else { return }
+        self.underlineTextField.text = text
       }
       .store(in: &cancellables)
+  }
+  
+  func configure(with viewModel: TitleCellViewModel) {
+    self.viewModel = viewModel
   }
 }

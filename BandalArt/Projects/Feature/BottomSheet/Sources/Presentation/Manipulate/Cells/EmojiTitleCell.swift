@@ -13,8 +13,8 @@ import CombineCocoa
 import Components
 
 struct EmojiTitleCellViewModel {
-  let title: CurrentValueSubject<String, Never>
-  let emoji: PassthroughSubject<Character, Never>
+  let title: PassthroughSubject<String?, Never>
+  let emoji: PassthroughSubject<Character?, Never>
 }
 
 final class EmojiTitleCell: UICollectionViewCell {

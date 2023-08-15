@@ -32,22 +32,6 @@ public final class ManipulateViewModel: ViewModelType {
   var subGoalAndTaskInfo: BandalArtCellInfo
   /// mainGoal - 이모지
   var mainGoalInfo: BandalArtInfo?
-
-  
-  var emojiTitleItem = [EmojiTitleItem(id: UUID(), emoji: Character("."), title: "")]
-  let themeColorItem = [
-    ThemeColorItem(id: UUID(), color: .mint),
-    ThemeColorItem(id: UUID(), color: .grape),
-    ThemeColorItem(id: UUID(), color: .sky),
-    ThemeColorItem(id: UUID(), color: .grass),
-    ThemeColorItem(id: UUID(), color: .lemon),
-    ThemeColorItem(id: UUID(), color: .mandarin)
-  ]
-  
-  var titleItem: [TitleItem]
-  var dueDateItem: [DueDateItem]
-  var memoItem: [MemoItem]
-  var completionItem: [CompletionItem]
   
   public init(
     useCase: BandalArtUseCase = BandalArtUseCaseImpl(
@@ -63,24 +47,26 @@ public final class ManipulateViewModel: ViewModelType {
     self.mainGoalInfo = mainInfo
     self.mode = mode
     self.bandalArtCellType = bandalArtCellType
-    print(cellInfo)
-    titleItem = [TitleItem(id: UUID(), title: subGoalAndTaskInfo.title ?? "")]
-    dueDateItem = [DueDateItem(id: UUID(), date: subGoalAndTaskInfo.dueDate)]
-    memoItem = [MemoItem(id: UUID(), memo: subGoalAndTaskInfo.description)]
-    completionItem = [CompletionItem(id: UUID(), isCompleted: subGoalAndTaskInfo.isCompleted)]
     
-    bandalArtTitleSubject.send(subGoalAndTaskInfo.title!)
-    bandalArtDueDateSubject.send(subGoalAndTaskInfo.dueDate)
-    bandalArtMemoSubject.send(subGoalAndTaskInfo.description)
-    bandalArtCompletionSubject.send(subGoalAndTaskInfo.isCompleted)
+    titleItem = CurrentValueSubject<[TitleItem], Never>([TitleItem(id: UUID(), title: cellInfo.title ?? "")])
+    dueDateItem = CurrentValueSubject<[DueDateItem], Never>([DueDateItem(id: UUID(), date: cellInfo.dueDate, isOpen: false)])
+    memoItem = CurrentValueSubject<[MemoItem], Never>([MemoItem(id: UUID(), memo: cellInfo.description)])
+    completionItem = CurrentValueSubject<[CompletionItem], Never>([CompletionItem(id: UUID(), isCompleted: cellInfo.isCompleted)])
     
-    if let mainInfo = mainInfo {
-      emojiTitleItem = [EmojiTitleItem(id: UUID(), emoji: mainInfo.profileEmojiText, title: mainInfo.title)]
-    }
+    emojiTitleItem = CurrentValueSubject<[EmojiTitleItem], Never>([EmojiTitleItem(id: UUID(), emoji: mainInfo?.profileEmojiText, title: mainInfo?.title)])
+    themeColorItem = CurrentValueSubject<[ThemeColorItem], Never>([
+      ThemeColorItem(id: UUID(), color: .mint),
+      ThemeColorItem(id: UUID(), color: .grape),
+      ThemeColorItem(id: UUID(), color: .sky),
+      ThemeColorItem(id: UUID(), color: .grass),
+      ThemeColorItem(id: UUID(), color: .lemon),
+      ThemeColorItem(id: UUID(), color: .mandarin)
+    ])
+    themeColorHexSubject.send(mainInfo?.mainColorHexString)
   }
   
   struct Input {
-    let didViewLoad: AnyPublisher<Void, Never>
+    let viewDidLoad: AnyPublisher<Void, Never>
     let themeColorSelection: AnyPublisher<IndexPath, Never>
     let deleteButtonTap: AnyPublisher<Void, Never>
     let completionButtonTap: AnyPublisher<Void, Never>
@@ -88,6 +74,11 @@ public final class ManipulateViewModel: ViewModelType {
   }
   
   struct Output {
+    let titleItem: AnyPublisher<[TitleItem], Never>
+    let dueDateItem: AnyPublisher<[DueDateItem], Never>
+    let memoItem: AnyPublisher<[MemoItem], Never>
+    let changeDueDateHeight: AnyPublisher<UUID, Never>
+    
     let completionButtonEnable: AnyPublisher<Bool, Never>
     let showDeleteAlert: AnyPublisher<Void, Never>
     let showCompleteToast: AnyPublisher<Void, Never>
@@ -96,46 +87,53 @@ public final class ManipulateViewModel: ViewModelType {
   }
   
   let emojiTitleCellViewModel = EmojiTitleCellViewModel(
-    title: CurrentValueSubject<String, Never>(""),
-    emoji: PassthroughSubject<Character, Never>()
+    title: PassthroughSubject<String?, Never>(),
+    emoji: PassthroughSubject<Character?, Never>()
   )
-  let titleCellViewModel = TtleCellViewModel(
-    title: CurrentValueSubject<String, Never>("")
+  let titleCellViewModel = TitleCellViewModel(
+    title: PassthroughSubject<String?, Never>()
   )
   let dueDateCellViewModel = DueDateCellViewModel(
-    date: PassthroughSubject<Date, Never>(),
+    date: PassthroughSubject<Date?, Never>(),
+    expandButtonTap: PassthroughSubject<Void, Never>(),
     resetButtonTap: PassthroughSubject<Void, Never>()
   )
   let memoCellViewModel = MemoCellViewModel(
-    memo: PassthroughSubject<String, Never>()
+    memo: PassthroughSubject<String?, Never>()
   )
   let completionCellViewModel = CompletionCellViewModel(
-    completion: CurrentValueSubject<Bool, Never>(false)
+    completion: PassthroughSubject<Bool?, Never>()
   )
   let emojiPopupViewModel = EmojiPopupViewModel(
-    emojiSelection: PassthroughSubject<Character, Never>()
+    emojiSelection: PassthroughSubject<Character?, Never>()
   )
 
+  var emojiTitleItem: CurrentValueSubject<[EmojiTitleItem], Never>
+  var themeColorItem: CurrentValueSubject<[ThemeColorItem], Never>
+  
+  var titleItem: CurrentValueSubject<[TitleItem], Never>
+  var dueDateItem: CurrentValueSubject<[DueDateItem], Never>
+  var memoItem: CurrentValueSubject<[MemoItem], Never>
+  var completionItem: CurrentValueSubject<[CompletionItem], Never>
+
+  var changeDueDateHeight = PassthroughSubject<UUID, Never>()
+  var isOpenDueDate = CurrentValueSubject<Bool, Never>(false)
+  
+  private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
   private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
   private let showDeleteAlertSubject = PassthroughSubject<Void, Never>()
   private let showCompleteToastSubject = PassthroughSubject<Void, Never>()
   private let showEmojiPopupSubject = PassthroughSubject<Void, Never>()
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
   
-  private let bandalArtEmojiSubject = CurrentValueSubject<Character?, Never>(nil)
-  private let bandalArtTitleSubject = CurrentValueSubject<String, Never>("")
-  private let bandalArtThemeColorSubject = CurrentValueSubject<String, Never>("")
-  private let bandalArtDueDateSubject = CurrentValueSubject<Date?, Never>(nil)
-  private let bandalArtMemoSubject = CurrentValueSubject<String?, Never>(nil)
-  private let bandalArtCompletionSubject = CurrentValueSubject<Bool?, Never>(nil)
-  
   func transform(input: Input) -> Output {
     self.bindUseCase()
     
     emojiTitleCellViewModel.title
       .sink { [weak self] title in
-        guard let self = self else { return }
-        self.bandalArtTitleSubject.send(title)
+        guard let self = self,
+              let emojiTitleItem = emojiTitleItem.value.first else { return }
+        self.emojiTitleItem.send([EmojiTitleItem(id: emojiTitleItem.id, emoji: emojiTitleItem.emoji, title: title)])
       }
       .store(in: &cancellables)
     
@@ -148,40 +146,116 @@ public final class ManipulateViewModel: ViewModelType {
     
     emojiTitleCellViewModel.emoji
       .sink { [weak self] emoji in
-        self?.bandalArtEmojiSubject.send(emoji)
+        guard let self = self,
+              let emojiTitleItem = emojiTitleItem.value.first else { return }
+        self.emojiTitleItem.send([EmojiTitleItem(id: emojiTitleItem.id, emoji: emoji, title: emojiTitleItem.title)])
+      }
+      .store(in: &cancellables)
+    
+    emojiTitleItem.removeDuplicates()
+      .sink { [weak self] emojiTitleItem in
+        guard let self = self,
+              let text = emojiTitleItem.first?.title else { return }
+        if text.consistsOfWhitespace() {
+          completionButtonEnableSubject.send(false)
+        } else {
+          if text.count > 0 {
+            completionButtonEnableSubject.send(true)
+          } else {
+            completionButtonEnableSubject.send(false)
+          }
+        }
+      }
+      .store(in: &cancellables)
+    
+    input.themeColorSelection
+      .sink { [weak self] index in
+        guard let self = self else { return }
+        if bandalArtCellType == .mainGoal && index.section == 1 {
+          switch index.row {
+          case 0:
+            themeColorHexSubject.send("#3FFFBA")
+          case 1:
+            themeColorHexSubject.send("#3FF3FF")
+          case 2:
+            themeColorHexSubject.send("#93FF3F")
+          case 3:
+            themeColorHexSubject.send("#FBFF3F")
+          case 4:
+            themeColorHexSubject.send("#FFB423")
+          case 5:
+            themeColorHexSubject.send("#4E3FFF")
+          default:
+            themeColorHexSubject.send("#3FFFBA")
+          }
+        }
       }
       .store(in: &cancellables)
     
     titleCellViewModel.title
       .sink { [weak self] title in
-        self?.bandalArtTitleSubject.send(title)
+        guard let self = self,
+              let titleItem = titleItem.value.first else { return }
+        self.titleItem.send([TitleItem(id: titleItem.id, title: title)])
       }
       .store(in: &cancellables)
-
-    input.themeColorSelection
-      .sink { [weak self] index in
-        guard let self = self else { return }
-        if bandalArtCellType == .mainGoal && index.section == 1 {
-          print("🕹️", index.row)
+    
+    titleItem.removeDuplicates()
+      .sink { [weak self] titleItem in
+        guard let self = self,
+              let text = titleItem.first?.title else { return }
+        if text.consistsOfWhitespace() {
+          completionButtonEnableSubject.send(false)
+        } else {
+          if text.count > 0 {
+            completionButtonEnableSubject.send(true)
+          } else {
+            completionButtonEnableSubject.send(false)
+          }
         }
       }
       .store(in: &cancellables)
     
+    dueDateCellViewModel.expandButtonTap
+      .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
+      .sink { [weak self] event in
+        guard let self = self,
+              let id = dueDateItem.value.first?.id else { return }
+        changeDueDateHeight.send(id)
+      }
+      .store(in: &cancellables)
+    
     dueDateCellViewModel.date
+      .removeDuplicates()
       .sink { [weak self] date in
-        self?.bandalArtDueDateSubject.send(date)
+        guard let self = self,
+              let dueDateItem = dueDateItem.value.first else { return }
+        self.dueDateItem.send([DueDateItem(id: dueDateItem.id, date: date, isOpen: dueDateItem.isOpen)])
+      }
+      .store(in: &cancellables)
+    
+    isOpenDueDate
+      .dropFirst()
+      .sink { [weak self] state in
+        guard let self = self,
+              let dueDateItem = dueDateItem.value.first else { return }
+        self.dueDateItem.send([DueDateItem(id: dueDateItem.id, date: dueDateItem.date, isOpen: !dueDateItem.isOpen)])
       }
       .store(in: &cancellables)
     
     memoCellViewModel.memo
       .sink { [weak self] memo in
-        self?.bandalArtMemoSubject.send(memo)
+        guard let self = self,
+              let memoItem = memoItem.value.first else { return }
+        self.memoItem.send([MemoItem(id: memoItem.id, memo: memo)])
       }
       .store(in: &cancellables)
     
     completionCellViewModel.completion
       .sink { [weak self] completion in
-        self?.bandalArtCompletionSubject.send(completion)
+        guard let self = self,
+              let completionItem = completionItem.value.first else { return }
+        self.completionItem.send([CompletionItem(id: completionItem.id, isCompleted: completion)])
       }
       .store(in: &cancellables)
     
@@ -191,40 +265,18 @@ public final class ManipulateViewModel: ViewModelType {
       }
       .store(in: &cancellables)
     
-    bandalArtTitleSubject
-      .removeDuplicates()
-      .sink { [weak self] text in
-        if text.consistsOfWhitespace() {
-          self?.completionButtonEnableSubject.send(false)
-        } else {
-          if text.count > 0 {
-            self?.completionButtonEnableSubject.send(true)
-          } else {
-            self?.completionButtonEnableSubject.send(false)
-          }
-        }
-        self?.titleCellViewModel.title.send(text)
-      }
-      .store(in: &cancellables)
-    
-    
     input.completionButtonTap
       .sink { [weak self] event in
         guard let self = self else { return }
-        print("이모지", self.bandalArtEmojiSubject.value?.description)
-        print("타이틀", self.bandalArtTitleSubject.value)
-        print("메모", self.bandalArtMemoSubject.value)
-        print("마감", self.bandalArtDueDateSubject.value)
-        print("완료", self.bandalArtCompletionSubject.value)
-        print("컬러", self.bandalArtThemeColorSubject.value)
+        
       }
       .store(in: &cancellables)
     
     return Output(
-//      title: bandalArtTitleSubject.eraseToAnyPublisher(),
-//      dueDate: bandalArtDueDateSubject.eraseToAnyPublisher(),
-//      memo: bandalArtMemoSubject.eraseToAnyPublisher(),
-//      completion: bandalArtCompletionSubject.eraseToAnyPublisher(),
+      titleItem: titleItem.eraseToAnyPublisher(),
+      dueDateItem: dueDateItem.eraseToAnyPublisher(),
+      memoItem: memoItem.eraseToAnyPublisher(),
+      changeDueDateHeight: changeDueDateHeight.eraseToAnyPublisher(),
       completionButtonEnable: completionButtonEnableSubject.eraseToAnyPublisher(),
       showDeleteAlert: showDeleteAlertSubject.eraseToAnyPublisher(),
       showCompleteToast: showCompleteToastSubject.eraseToAnyPublisher(),
@@ -234,9 +286,9 @@ public final class ManipulateViewModel: ViewModelType {
   }
   
   private func bindUseCase() {
-    self.useCase.cellUpdateResponseStatusSubject
-      .sink { [weak self] responseStatus in
-
+    self.useCase.cellUpdateCompletionSubject
+      .sink { [weak self] completion in
+        
       }
       .store(in: &cancellables)
   }
@@ -253,20 +305,21 @@ private extension ManipulateViewModel {
       self.useCase.updateBandalArtTask(
         key: key,
         cellKey: cellKey,
-        profileEmoji: self.bandalArtEmojiSubject.value,
-        title: self.bandalArtTitleSubject.value,
-        description: self.bandalArtMemoSubject.value,
-        dueDate: self.bandalArtDueDateSubject.value,
-        mainColor: self.bandalArtThemeColorSubject.value,
-        subColor: self.bandalArtThemeColorSubject.value
+        profileEmoji: emojiTitleItem.value.first?.emoji,
+        title: emojiTitleItem.value.first?.title,
+        description: memoItem.value.first?.memo,
+        dueDate: dueDateItem.value.first?.date,
+        mainColor: themeColorHexSubject.value ?? "#3FFFBA",
+        subColor: "#111827"
       )
     case .subGoal:
       self.useCase.updateBandalArtTask(
         key: key,
         cellKey: cellKey,
-        title: self.bandalArtTitleSubject.value,
-        description: self.bandalArtMemoSubject.value,
-        dueDate: self.bandalArtDueDateSubject.value
+        title: titleItem.value.first?.title,
+        description: memoItem.value.first?.memo,
+        dueDate: dueDateItem.value.first?.date,
+        isCompleted: nil
       )
     case .task:
       switch mode {
@@ -274,18 +327,19 @@ private extension ManipulateViewModel {
         self.useCase.updateBandalArtTask(
           key: key,
           cellKey: cellKey,
-          title: self.bandalArtTitleSubject.value,
-          description: self.bandalArtMemoSubject.value,
-          dueDate: self.bandalArtDueDateSubject.value
+          title: titleItem.value.first?.title,
+          description: memoItem.value.first?.memo,
+          dueDate: dueDateItem.value.first?.date,
+          isCompleted: nil
         )
       case .update:
         self.useCase.updateBandalArtTask(
           key: key,
           cellKey: cellKey,
-          title: self.bandalArtTitleSubject.value,
-          description: self.bandalArtMemoSubject.value,
-          dueDate: self.bandalArtDueDateSubject.value,
-          isCompleted: self.bandalArtCompletionSubject.value ?? false
+          title: titleItem.value.first?.title,
+          description: memoItem.value.first?.memo,
+          dueDate: dueDateItem.value.first?.date,
+          isCompleted: completionItem.value.first?.isCompleted
         )
       }
     }

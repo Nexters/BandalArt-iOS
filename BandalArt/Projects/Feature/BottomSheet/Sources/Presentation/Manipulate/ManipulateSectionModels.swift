@@ -11,7 +11,6 @@ import Foundation
 
 
 enum MainGoalSection: Int, CaseIterable {
-  
   case emojiTitle
   case themeColor
   case dueDate
