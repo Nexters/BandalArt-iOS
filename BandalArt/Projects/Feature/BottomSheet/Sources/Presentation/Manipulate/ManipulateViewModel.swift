@@ -295,7 +295,7 @@ public final class ManipulateViewModel: ViewModelType {
     input.completionButtonTap
       .sink { [weak self] event in
         guard let self = self else { return }
-        updateGoalAndTask(cellKey: subGoalAndTaskInfo.key)
+        updateGoalAndTask(key: UserDefaultsManager.lastUserBandalArtKey ?? "", cellKey: subGoalAndTaskInfo.key)
       }
       .store(in: &cancellables)
     
@@ -331,8 +331,8 @@ public final class ManipulateViewModel: ViewModelType {
 
 private extension ManipulateViewModel {
   func updateGoalAndTask(
-    key: String = "3sF4I",
-    cellKey: String = "Uvwfk"
+    key: String,
+    cellKey: String
   ) { //임시
     switch bandalArtCellType {
     case .mainGoal:
