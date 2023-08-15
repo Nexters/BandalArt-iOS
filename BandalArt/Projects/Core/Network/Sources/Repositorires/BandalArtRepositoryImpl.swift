@@ -168,4 +168,14 @@ fileprivate extension AnyPublisher<Response, MoyaError> {
         }
         .eraseToAnyPublisher()
     }
+    
+    func mapToVoid() -> AnyPublisher<Void, BandalArtNetworkError> {
+        return self.tryMap { _ in
+            return ()
+        }.mapError { error in
+            guard let mError = error as? MoyaError else { return BandalArtNetworkError.unknown }
+            return BandalArtNetworkError(rawValue: mError.response?.statusCode ?? -1) ?? .unknown
+        }
+        .eraseToAnyPublisher()
+    }
 }
