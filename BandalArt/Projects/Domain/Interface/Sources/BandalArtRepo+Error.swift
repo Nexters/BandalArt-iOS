@@ -121,4 +121,12 @@ public protocol BandalArtRepository {
       mainColor: String,
       subColor: String
     ) -> AnyPublisher<Void, BandalArtNetworkError>
+  
+  /// 반다라트 cell 삭제 API
+  /// - Parameters:
+  ///   - key: 반다라트의 Unique Key.
+  ///   - cellKey: cell의 식별 Key
+  /// - Returns: `null - statusCode`
+  
+  func deleteTaskData(key: String, cellKey: String) -> AnyPublisher<Void, BandalArtNetworkError>
 }

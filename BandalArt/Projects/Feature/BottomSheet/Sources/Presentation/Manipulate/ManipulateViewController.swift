@@ -160,7 +160,9 @@ public final class ManipulateViewController: BottomSheetController {
         let title = "'\(title)'\n\(self.bandalArtCellType.title)를 삭제하시겠어요?"
         let message = self.bandalArtCellType.message
         
-        self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기")
+        self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기", rightActionCompletion:  {
+          self.viewModel.deleteCellSubject.send(Void())
+        })
       }
       .store(in: &cancellables)
     

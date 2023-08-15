@@ -46,8 +46,8 @@ public extension UIViewController {
                          leftActionCompletion: (() -> Void)?,
                          rightActionCompletion: (() -> Void)?) {
     popUpViewController.addActionToButton(title: leftActionTitle,
-                                          titleColor: .systemGray,
-                                          backgroundColor: .secondarySystemBackground) {
+                                          titleColor: .gray900,
+                                          backgroundColor: .gray200) {
       popUpViewController.dismiss(animated: false, completion: leftActionCompletion)
     }
     
