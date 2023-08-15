@@ -48,6 +48,8 @@ public final class HomeViewModel: ViewModelType {
     }
     
     struct Output {
+        let showLoading: AnyPublisher<CGFloat, Never>
+        let dismissLoading: AnyPublisher<Void, Never>
         let bandalArtTitle: AnyPublisher<String?, Never>
         let bandalArtEmoji: AnyPublisher<Character?, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
@@ -65,6 +67,9 @@ public final class HomeViewModel: ViewModelType {
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo?), Never>
     }
     
+    private let showLoadingSubject = PassthroughSubject<CGFloat, Never>()
+    private let dismissLoadingSubject = PassthroughSubject<Void, Never>()
+    
     private let bandalArtEmojiSubject = PassthroughSubject<Character?, Never>()
     private let bandalArtTitleSubject = PassthroughSubject<String?, Never>()
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
@@ -78,7 +83,6 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo?), Never>()
-
 
     private var mainCellInfo: BandalArtCellInfo?
     private var bandalArtInfo: BandalArtInfo?
@@ -94,24 +98,28 @@ public final class HomeViewModel: ViewModelType {
         
         input.didViewLoad
             .sink { [weak self] _ in
+                self?.showLoadingSubject.send(1.0)
                 self?.registerGuestIfNeeded()
             }
             .store(in: &cancellables)
 
         input.didCellModifyed
             .sink { [weak self] _ in
+                self?.showLoadingSubject.send(0.5)
                 self?.fetchBandalArt()
             }
             .store(in: &cancellables)
 
         input.didDeleteButtonTap
             .sink { [weak self] _ in
+                self?.showLoadingSubject.send(0.5)
                 self?.deleteBandalArt()
             }
             .store(in: &cancellables)
         
         input.didAddBarButtonTap
             .sink { [weak self] info in
+                self?.showLoadingSubject.send(0.5)
                 self?.fetchBandalArt()
             }
             .store(in: &cancellables)
@@ -124,6 +132,8 @@ public final class HomeViewModel: ViewModelType {
             .store(in: &cancellables)
 
         return Output(
+            showLoading: showLoadingSubject.eraseToAnyPublisher(),
+            dismissLoading: dismissLoadingSubject.eraseToAnyPublisher(),
             bandalArtTitle: bandalArtTitleSubject.eraseToAnyPublisher(),
             bandalArtEmoji: bandalArtEmojiSubject.eraseToAnyPublisher(),
             bandalArtThemeColorHexString: bandalArtThemeColorHexSubject.eraseToAnyPublisher(),
@@ -141,6 +151,18 @@ public final class HomeViewModel: ViewModelType {
     }
     
     private func bindUseCase() {
+        self.guestUseCase.errorSubject
+            .sink { [weak self] _ in
+                self?.dismissLoadingSubject.send(())
+            }
+            .store(in: &cancellables)
+        
+        self.useCase.errorSubject
+            .sink { [weak self] _ in
+                self?.dismissLoadingSubject.send(())
+            }
+            .store(in: &cancellables)
+        
         self.guestUseCase.guestSubject
             .sink { [weak self] _ in
                 self?.createBandalArt()
@@ -155,6 +177,7 @@ public final class HomeViewModel: ViewModelType {
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
                 self?.bandalArtCompletedSubject.send(info.isCompleted)
                 self?.bandalArtDateSubject.send(info.dueDate ?? Date())
+                self?.dismissLoadingSubject.send(())
 
             }
             .store(in: &cancellables)
@@ -188,6 +211,7 @@ public final class HomeViewModel: ViewModelType {
                     list.insert(rightBottom, at: self.subCellIndex.3)
                     self.bandalArtRightBottomInfoSubject.send(list)
                 }
+                self.dismissLoadingSubject.send(())
             }
             .store(in: &cancellables)
     }

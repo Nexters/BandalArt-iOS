@@ -106,6 +106,19 @@ public final class HomeViewController: UIViewController {
             didMainCellTap: centerButton.tapPublisher
         )
         let output = viewModel.transform(input: input)
+        
+        output.showLoading
+            .removeDuplicates()
+            .sink(receiveValue: { alpha in
+                LoadingView.startAnimatingOnWindow(alpha: alpha)
+            })
+            .store(in: &cancellables)
+        
+        output.dismissLoading
+            .sink(receiveValue: { _ in
+                LoadingView.stopAnimatingOnWindow()
+            })
+            .store(in: &cancellables)
 
         output.bandalArtTitle
             .sink(receiveValue: { [weak self] text in
