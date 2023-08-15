@@ -18,7 +18,8 @@ let project = Project.makeModule(
         .Project.Feature.OnBoardingFeature,
         .Project.Feature.HomeFeature,
         .Project.Shared.Components,
-        .Project.Shared.Util
+        .Project.Shared.Util,
+        .external(name: "Lottie")
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist")
