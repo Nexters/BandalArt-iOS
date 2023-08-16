@@ -9,16 +9,20 @@
 import UIKit
 
 public extension UIViewController {
-  func showPopUp(title: String? = nil,
+  func showPopUp(iconImage: UIImage? = UIImage(named: "trash"),
+                 title: String? = nil,
                  message: String? = nil,
                  attributedMessage: NSAttributedString? = nil,
                  leftActionTitle: String? = "취소",
                  rightActionTitle: String = "확인",
                  leftActionCompletion: (() -> Void)? = nil,
                  rightActionCompletion: (() -> Void)? = nil) {
-    let popUpViewController = PopUpViewController(titleText: title,
-                                                  messageText: message,
-                                                  attributedMessageText: attributedMessage)
+    let popUpViewController = PopUpViewController(
+      iconImage: iconImage,
+      titleText: title,
+      messageText: message,
+      attributedMessageText: attributedMessage
+    )
     showPopUp(popUpViewController: popUpViewController,
               leftActionTitle: leftActionTitle,
               rightActionTitle: rightActionTitle,
