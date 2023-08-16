@@ -107,10 +107,10 @@ final class BandalArtCell: UICollectionViewCell {
         case .created, .completed:
             contentView.addSubview(descriptionLabel)
             descriptionLabel.snp.makeConstraints { make in
-                make.top.equalToSuperview().offset(6)
-                make.bottom.equalToSuperview().offset(-6)
-                make.leading.equalToSuperview().offset(5)
-                make.trailing.equalToSuperview().offset(-5)
+                make.top.equalToSuperview().offset(4)
+                make.bottom.equalToSuperview().offset(-4)
+                make.leading.equalToSuperview().offset(4)
+                make.trailing.equalToSuperview().offset(-4)
             }
             descriptionLabel.text = title
             descriptionLabel.font = mode.font
@@ -190,11 +190,12 @@ final class BandalartPlaceHolderView: UIView {
         
         plusImageView.tintColor = .gray500
         plusImageView.contentMode = .center
+        plusImageView.tintAdjustmentMode = .normal
         
         addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(12)
-            make.bottom.trailing.equalToSuperview().offset(-12)
+            make.top.bottom.equalToSuperview().inset(13)
+            make.trailing.leading.equalToSuperview().inset(4)
         }
         stackView.addArrangedSubview(plusImageView)
     }

@@ -55,7 +55,7 @@ public final class HomeViewModel: ViewModelType {
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
         let bandalArtCompletedRatio: AnyPublisher<Float, Never>
         let bandalArtCompleted: AnyPublisher<Bool, Never>
-        let bandalArtDate: AnyPublisher<Date, Never>
+        let bandalArtDate: AnyPublisher<Date?, Never>
         
         let bandalArtLeftTopInfo: AnyPublisher<[BandalArtCellInfo], Never>
         let bandalArtRightTopInfo: AnyPublisher<[BandalArtCellInfo], Never>
@@ -75,7 +75,7 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtCompletedRatioSubject = PassthroughSubject<Float, Never>()
     private let bandalArtThemeColorHexSubject = PassthroughSubject<(String, String), Never>()
     private let bandalArtCompletedSubject = PassthroughSubject<Bool, Never>()
-    private let bandalArtDateSubject = PassthroughSubject<Date, Never>()
+    private let bandalArtDateSubject = PassthroughSubject<Date?, Never>()
     
     private let bandalArtLeftTopInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
     private let bandalArtRightTopInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
@@ -176,7 +176,7 @@ public final class HomeViewModel: ViewModelType {
                 self?.bandalArtTitleSubject.send(info.title)
                 self?.bandalArtEmojiSubject.send(info.profileEmojiText)
                 self?.bandalArtCompletedSubject.send(info.isCompleted)
-                self?.bandalArtDateSubject.send(info.dueDate ?? Date())
+                self?.bandalArtDateSubject.send(info.dueDate)
                 self?.dismissLoadingSubject.send(())
 
             }

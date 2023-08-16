@@ -158,6 +158,12 @@ public final class HomeViewController: UIViewController {
         output.bandalArtDate
             .removeDuplicates()
             .sink(receiveValue: { [weak self] date in
+                guard let date = date else {
+                    self?.dateLabel.text = ""
+                    self?.tinyLineView.isHidden = true
+                    return
+                }
+                self?.tinyLineView.isHidden = false
                 self?.dateLabel.text = "~" + date.toString
             })
             .store(in: &cancellables)
@@ -361,6 +367,7 @@ private extension HomeViewController {
         bandalartNameLabel.font = .pretendardBold(size: 20)
 
         moreButton.setImage(UIImage(named: "circle.triple.vertical"), for: .normal)
+        moreButton.contentMode = .right
         moreButton.tintColor = .gray500
 
         progressDescriptionLabel.text = "달성률 (0%)"
@@ -485,7 +492,7 @@ private extension HomeViewController {
             make.trailing.equalToSuperview().offset(-5)
         }
         emojiView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(52)
         }
@@ -502,8 +509,7 @@ private extension HomeViewController {
         moreButton.snp.makeConstraints { make in
             make.centerY.equalTo(bandalartNameLabel)
             make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(bandalartNameLabel)
-            make.width.equalTo(moreButton.snp.height)
+            make.height.width.equalTo(30)
         }
         progressDescriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(bandalartNameLabel.snp.bottom).offset(26)
@@ -586,6 +592,7 @@ private extension HomeViewController {
         config.baseForegroundColor = .gray600
         addButton.configuration = config
         navigationItem.rightBarButtonItem = .init(customView: addButton)
+        addButton.isHidden = true
         
         // set Left Navigation Item.
         let logoButton = UIButton()
