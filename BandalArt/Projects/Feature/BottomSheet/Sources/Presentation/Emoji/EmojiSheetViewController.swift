@@ -44,7 +44,10 @@ public final class EmojiSheetViewController: BottomSheetController {
   }
   
   public override func bind() {
+    let didLoadPublisher = PassthroughSubject<Void, Never>()
+    
     let input = EmojiSheetViewModel.Input(
+      viewDidLoad: didLoadPublisher.eraseToAnyPublisher(),
       emojiSelection: emojiSelectionView.collectionView.didDeselectItemPublisher,
       completionButtonTap: emojiSelectionView.completionButton.tapPublisher
     )
@@ -81,6 +84,8 @@ public final class EmojiSheetViewController: BottomSheetController {
         self?.delegate?.didModifyed()
       }
       .store(in: &cancellables)
+    
+    didLoadPublisher.send(Void())
   }
   
   func setupCollectionView() {
@@ -90,35 +95,6 @@ public final class EmojiSheetViewController: BottomSheetController {
   }
   
   func setupDataSource() {
-    let emojiItem = [
-      EmojiItem(id: UUID(), emoji: "🔥"),
-      EmojiItem(id: UUID(), emoji: "😀"),
-      EmojiItem(id: UUID(), emoji: "😃"),
-      EmojiItem(id: UUID(), emoji: "😄"),
-      EmojiItem(id: UUID(), emoji: "😆"),
-      EmojiItem(id: UUID(), emoji: "🥹"),
-      
-      EmojiItem(id: UUID(), emoji: "🥰"),
-      EmojiItem(id: UUID(), emoji: "😍"),
-      EmojiItem(id: UUID(), emoji: "😂"),
-      EmojiItem(id: UUID(), emoji: "🥲"),
-      EmojiItem(id: UUID(), emoji: "☺️"),
-      EmojiItem(id: UUID(), emoji: "😎"),
-      
-      EmojiItem(id: UUID(), emoji: "🥳"),
-      EmojiItem(id: UUID(), emoji: "🤩"),
-      EmojiItem(id: UUID(), emoji: "⭐️"),
-      EmojiItem(id: UUID(), emoji: "🌟"),
-      EmojiItem(id: UUID(), emoji: "✨"),
-      EmojiItem(id: UUID(), emoji: "💥"),
-      
-      EmojiItem(id: UUID(), emoji: "❤️"),
-      EmojiItem(id: UUID(), emoji: "🧡"),
-      EmojiItem(id: UUID(), emoji: "💛"),
-      EmojiItem(id: UUID(), emoji: "💚"),
-      EmojiItem(id: UUID(), emoji: "💙"),
-      EmojiItem(id: UUID(), emoji: "❤️‍🔥")
-    ]
     
     let emojiCellRegistration = UICollectionView.CellRegistration<EmojiCell, EmojiItem> { cell, indexPath, item in
       cell.setupData(item: item)
@@ -127,7 +103,7 @@ public final class EmojiSheetViewController: BottomSheetController {
     dataSource = UICollectionViewDiffableDataSource<EmojiSection, UUID>(
       collectionView: emojiSelectionView.collectionView
     ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
-      let item = emojiItem.first(where: { $0.id == identifier })
+      let item = self.viewModel.emojiItem.first(where: { $0.id == identifier })
       return collectionView.dequeueConfiguredReusableCell(
         using: emojiCellRegistration,
         for: indexPath, item: item
@@ -136,7 +112,7 @@ public final class EmojiSheetViewController: BottomSheetController {
     
     var snapshot = NSDiffableDataSourceSnapshot<EmojiSection, UUID>()
     snapshot.appendSections([.main])
-    snapshot.appendItems(emojiItem.map{ $0.id }, toSection: .main)
+    snapshot.appendItems(viewModel.emojiItem.map{ $0.id }, toSection: .main)
   
     dataSource.supplementaryViewProvider = nil
     
