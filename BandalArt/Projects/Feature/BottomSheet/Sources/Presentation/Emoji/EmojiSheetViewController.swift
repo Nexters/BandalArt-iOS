@@ -40,7 +40,19 @@ public final class EmojiSheetViewController: BottomSheetController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
     setupCollectionView()
-    
+  }
+  
+  public override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    adjustCollectionViewHeight()
+  }
+  
+  func adjustCollectionViewHeight() {
+    guard emojiSelectionView.collectionView.contentSize.height != 0 else { return }
+    let contentHeight = emojiSelectionView.collectionView.contentSize.height
+    emojiSelectionView.collectionView.snp.updateConstraints {
+      $0.height.greaterThanOrEqualTo(contentHeight)
+    }
   }
   
   public override func bind() {
@@ -48,7 +60,7 @@ public final class EmojiSheetViewController: BottomSheetController {
     
     let input = EmojiSheetViewModel.Input(
       viewDidLoad: didLoadPublisher.eraseToAnyPublisher(),
-      emojiSelection: emojiSelectionView.collectionView.didDeselectItemPublisher,
+      emojiSelection: emojiSelectionView.collectionView.didSelectItemPublisher,
       completionButtonTap: emojiSelectionView.completionButton.tapPublisher
     )
     
@@ -58,7 +70,7 @@ public final class EmojiSheetViewController: BottomSheetController {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] row in
         self?.emojiSelectionView.collectionView.selectItem(
-          at: IndexPath(item: row, section: 1),
+          at: IndexPath(item: row, section: 0),
           animated: true,
           scrollPosition: .top
         )

@@ -229,7 +229,15 @@ public final class HomeViewController: UIViewController {
         
         output.presentEmojiViewControllerSubject
             .sink(receiveValue: { [weak self] info in
-                // TODO: 상훈 이미지 뷰컨 띄우기
+                guard let self = self else { return }
+                let viewController = EmojiSheetViewController(
+                  viewModel: EmojiSheetViewModel(
+                    mainInfo: info
+                  )
+                )
+                viewController.delegate = self
+                viewController.preferredSheetSizing = .fit
+                self.present(viewController, animated: true)
             })
             .store(in: &cancellables)
 

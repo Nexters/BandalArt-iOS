@@ -57,6 +57,7 @@ final class EmojiSheetView: UIView {
       $0.leading.equalTo(safeAreaLayoutGuide)
       $0.trailing.equalTo(safeAreaLayoutGuide)
       $0.bottom.equalTo(safeAreaLayoutGuide)
+      $0.height.greaterThanOrEqualTo(280.0)
     }
   }
 }
