@@ -65,6 +65,7 @@ public final class HomeViewModel: ViewModelType {
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
         let presentActivityViewController: AnyPublisher<Void, Never>
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
+        let presentCompletionViewController: AnyPublisher<(Void, BandalArtInfo), Never>
     }
     
     private let showLoadingSubject = PassthroughSubject<CGFloat, Never>()
@@ -83,12 +84,14 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
+    private let presentCompletionViewControllerSubject = PassthroughSubject<(Void, BandalArtInfo), Never>()
 
     private var mainCellInfo: BandalArtCellInfo?
     private(set) var bandalArtInfo: BandalArtInfo?
     
     // leftTop, rightTop, leftBottom, rightBottom
     var subCellIndex: (Int, Int, Int, Int) { return (4, 2, 3, 1) }
+    private var canShowCompletionPage: Bool = false
     
     private let lastUserBandalArtKey = UserDefaultsManager.lastUserBandalArtKey
     
@@ -105,6 +108,7 @@ public final class HomeViewModel: ViewModelType {
 
         input.didCellModifyed
             .sink { [weak self] _ in
+                self?.canShowCompletionPage = true
                 self?.showLoadingSubject.send(0.5)
                 self?.fetchBandalArt()
             }
@@ -144,9 +148,10 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightTopInfo: bandalArtRightTopInfoSubject.eraseToAnyPublisher(),
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
-            presentBandalArtAddViewController: input.didShareButtonTap,
+            presentBandalArtAddViewController: input.didAddBarButtonTap,
             presentActivityViewController: input.didShareButtonTap,
-            presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher()
+            presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher(),
+            presentCompletionViewController: presentCompletionViewControllerSubject.eraseToAnyPublisher()
         )
     }
     
@@ -159,6 +164,7 @@ public final class HomeViewModel: ViewModelType {
         
         self.useCase.errorSubject
             .sink { [weak self] _ in
+                self?.canShowCompletionPage = false
                 self?.dismissLoadingSubject.send(())
             }
             .store(in: &cancellables)
@@ -171,14 +177,18 @@ public final class HomeViewModel: ViewModelType {
         
         self.useCase.bandalArtInfoSubject
             .sink { [weak self] info in
-                self?.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
-                self?.bandalArtInfo = info
-                self?.bandalArtTitleSubject.send(info.title)
-                self?.bandalArtEmojiSubject.send(info.profileEmojiText)
-                self?.bandalArtCompletedSubject.send(info.isCompleted)
-                self?.bandalArtDateSubject.send(info.dueDate)
-                self?.dismissLoadingSubject.send(())
-
+                guard let self else { return }
+                self.bandalArtThemeColorHexSubject.send((info.mainColorHexString, info.subColorHexString))
+                self.bandalArtInfo = info
+                self.bandalArtTitleSubject.send(info.title)
+                self.bandalArtEmojiSubject.send(info.profileEmojiText)
+                self.bandalArtCompletedSubject.send(info.isCompleted)
+                self.bandalArtDateSubject.send(info.dueDate)
+                
+                if info.isCompleted && canShowCompletionPage { //직전에 바텀시트 수정으로 인한 완성이라면 빵빠레
+                    
+                }
+                self.canShowCompletionPage = false
             }
             .store(in: &cancellables)
         

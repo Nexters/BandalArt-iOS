@@ -10,6 +10,7 @@ import UIKit
 import Entity
 import Components
 
+import Lottie
 import SnapKit
 
 final class BandalArtCompletedViewController: UIViewController {
@@ -19,7 +20,7 @@ final class BandalArtCompletedViewController: UIViewController {
     
     private let descriptionLabel = UILabel()
     
-    private let thumbnailImageLabel = UILabel()
+    private let animationView = LottieAnimationView()
     private let contentLabel = UILabel()
     private let contentView = UIView()
     private let emojiView = EmojiView()
@@ -47,6 +48,11 @@ final class BandalArtCompletedViewController: UIViewController {
         self.setConfigure()
         self.setConstraints()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animationView.play()
+    }
 }
 
 // MARK: - Private func.
@@ -54,6 +60,11 @@ private extension BandalArtCompletedViewController {
 
     func setConfigure() {
         view.backgroundColor = .gray50
+        
+        let animation = LottieAnimation.named("finish")
+        animationView.animation = animation
+        animationView.contentMode = .scaleAspectFill
+        animationView.loopMode = .playOnce
 
         descriptionLabel.text = "반다라트의 모든 목표를 달성했어요.\n정말 대단해요!"
         descriptionLabel.numberOfLines = 2
@@ -75,9 +86,6 @@ private extension BandalArtCompletedViewController {
         contentView.layer.cornerRadius = 12
         contentView.layer.borderColor = UIColor.gray300.cgColor
         
-        thumbnailImageLabel.text = "🥳"
-        thumbnailImageLabel.font = .systemFont(ofSize: 100)
-        
         shareButton.setTitle("공유하기", for: .normal)
         shareButton.setTitleColor(.systemBackground, for: .normal)
         shareButton.titleLabel?.font = .pretendardBold(size: 16)
@@ -90,7 +98,7 @@ private extension BandalArtCompletedViewController {
 
     func setConstraints() {
         view.addSubview(descriptionLabel)
-        view.addSubview(thumbnailImageLabel)
+        view.addSubview(animationView)
         view.addSubview(contentLabel)
         view.addSubview(contentView)
         contentView.addSubview(emojiView)
@@ -101,12 +109,11 @@ private extension BandalArtCompletedViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
             make.leading.trailing.equalToSuperview().inset(33)
         }
-        thumbnailImageLabel.snp.makeConstraints { make in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
+        animationView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         contentLabel.snp.makeConstraints { make in
-            make.top.equalTo(thumbnailImageLabel.snp.bottom).offset(30)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(220)
             make.leading.trailing.equalToSuperview().inset(33)
         }
         contentView.snp.makeConstraints { make in

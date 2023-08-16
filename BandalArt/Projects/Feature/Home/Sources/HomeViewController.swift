@@ -213,6 +213,17 @@ public final class HomeViewController: UIViewController {
                 self.navigationController?.pushViewController(vc, animated: true)
             })
             .store(in: &cancellables)
+        
+        output.presentCompletionViewController
+            .sink(receiveValue: { [weak self] _ in
+                guard let self else { return }
+                let vc = BandalArtCompletedViewController(
+                    title: self.bandalartNameLabel.text ?? "",
+                    emojiText: self.emojiView.text
+                )
+                self.navigationController?.pushViewController(vc, animated: true)
+            })
+            .store(in: &cancellables)
 
         output
             .presentActivityViewController
