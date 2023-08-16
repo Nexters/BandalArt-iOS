@@ -8,6 +8,6 @@ let package = Package(
         .package(url: "https://github.com/CombineCommunity/CombineCocoa.git", branch: "main"),
         .package(url: "https://github.com/Moya/Moya.git", exact: "15.0.3"),
         .package(url: "https://github.com/airbnb/lottie-ios.git", exact: "4.2.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.8.1"),
+        .package(url: "https://github.com/scalessec/Toast-Swift", branch: "master"),
     ]
 )

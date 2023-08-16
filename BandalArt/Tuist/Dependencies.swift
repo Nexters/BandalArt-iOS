@@ -30,8 +30,8 @@ let dependencies = Dependencies(
                 requirement: .exact("4.2.0")
             ),
             .remote(
-                url: "https://github.com/onevcat/Kingfisher.git",
-                requirement: .upToNextMajor(from: "7.8.1")
+                url: "https://github.com/scalessec/Toast-Swift",
+                requirement: .branch("master")
             )
         ],
         baseSettings: .settings(

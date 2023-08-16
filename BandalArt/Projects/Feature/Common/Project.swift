@@ -19,7 +19,7 @@ let project = Project.makeModule(
         .Project.Shared.Components,
         .external(name: "CombineCocoa"),
         .external(name: "Lottie"),
-        .external(name: "Kingfisher"),
-        .external(name: "SnapKit")
+        .external(name: "SnapKit"),
+        .external(name: "Toast")
     ]
 )
