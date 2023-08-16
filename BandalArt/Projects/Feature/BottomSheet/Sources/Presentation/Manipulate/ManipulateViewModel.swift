@@ -13,8 +13,6 @@ import Entity
 import Network
 import Util
 
-import Combine
-
 protocol ViewModelType {
     associatedtype Input
     associatedtype Output
@@ -80,8 +78,8 @@ public final class ManipulateViewModel: ViewModelType {
     let changeDueDateHeight: AnyPublisher<UUID, Never>
     
     let completionButtonEnable: AnyPublisher<Bool, Never>
-    let showDeleteAlert: AnyPublisher<Void, Never>
-    let showCompleteToast: AnyPublisher<Void, Never>
+    let showDeleteAlert: AnyPublisher<String, Never>
+    let showCompleteToast: AnyPublisher<String, Never>
     let updateHomeDelegate: AnyPublisher<Void,Never>
     let selectColor: AnyPublisher<Int, Never>
     let dismissBottomSheet: AnyPublisher<Void,Never>
@@ -120,14 +118,14 @@ public final class ManipulateViewModel: ViewModelType {
   var changeDueDateHeight = PassthroughSubject<UUID, Never>()
   var isOpenDueDate = CurrentValueSubject<Bool, Never>(false)
   var selectColor = PassthroughSubject<Int, Never>()
+  var deleteCellSubject = PassthroughSubject<Void, Never>()
   
   private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
   private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
-  private let showDeleteAlertSubject = PassthroughSubject<Void, Never>()
-  private let showCompleteToastSubject = PassthroughSubject<Void, Never>()
+  private let showDeleteAlertSubject = PassthroughSubject<String, Never>()
   private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
-  
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
+  private let showCompleteToastSubject = PassthroughSubject<String, Never>()
   
   func transform(input: Input) -> Output {
     self.bindUseCase()
@@ -301,7 +299,15 @@ public final class ManipulateViewModel: ViewModelType {
     
     input.deleteButtonTap
       .sink { [weak self] event in
-        self?.showDeleteAlertSubject.send(Void())
+        self?.showDeleteAlertSubject.send(self?.subGoalAndTaskInfo.title ?? "")
+      }
+      .store(in: &cancellables)
+    
+    deleteCellSubject
+      .sink { [weak self] _ in
+        guard let self = self else { return }
+        
+        deleteGoalAndTask(key: UserDefaultsManager.lastUserBandalArtKey ?? "", cellKey: subGoalAndTaskInfo.key)
       }
       .store(in: &cancellables)
     
@@ -324,16 +330,22 @@ public final class ManipulateViewModel: ViewModelType {
       .sink { [weak self] completion in
         self?.updateHomeDelegateSubject.send(Void())
         self?.dismissBottomSheetSubject.send(Void())
+        // 업데이트 완료 Toast
+      }
+      .store(in: &cancellables)
+    
+    self.useCase.cellDeleteCompletionSubject
+      .sink { [weak self] completion in
+        self?.updateHomeDelegateSubject.send(Void())
+        self?.dismissBottomSheetSubject.send(Void())
+        // 삭제 완료 Toast
       }
       .store(in: &cancellables)
   }
 }
 
 private extension ManipulateViewModel {
-  func updateGoalAndTask(
-    key: String,
-    cellKey: String
-  ) { //임시
+  func updateGoalAndTask(key: String, cellKey: String) { //임시
     switch bandalArtCellType {
     case .mainGoal:
       self.useCase.updateBandalArtTask(
@@ -377,5 +389,9 @@ private extension ManipulateViewModel {
         )
       }
     }
+  }
+    
+  func deleteGoalAndTask(key: String, cellKey: String) {
+    self.useCase.deleteBandalArtTask(key: key, cellKey: cellKey)
   }
 }

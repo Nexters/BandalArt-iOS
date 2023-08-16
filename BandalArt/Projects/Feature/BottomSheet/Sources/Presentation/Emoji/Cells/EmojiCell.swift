@@ -44,6 +44,11 @@ final class EmojiCell: UICollectionViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    
+  }
+  
   private func setupView() {
     [emojiView, strokeView].forEach {
       contentView.addSubview($0)

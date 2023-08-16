@@ -8,6 +8,8 @@
 
 import UIKit
 import Components
+import Combine
+import CombineCocoa
 
 enum EmojiSection {
   case main
@@ -16,10 +18,12 @@ enum EmojiSection {
 public final class EmojiSheetViewController: BottomSheetController {
   let emojiSelectionView = EmojiSheetView()
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
-  
+  let viewModel: EmojiSheetViewModel
   var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!
+  public weak var delegate: ManipulateViewControllerDelegate?
   
-  public override init() {
+  public init(viewModel: EmojiSheetViewModel) {
+    self.viewModel = viewModel
     super.init()
   }
   
@@ -38,6 +42,64 @@ public final class EmojiSheetViewController: BottomSheetController {
     setupCollectionView()
   }
   
+  public override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    adjustCollectionViewHeight()
+  }
+  
+  func adjustCollectionViewHeight() {
+    guard emojiSelectionView.collectionView.contentSize.height != 0 else { return }
+    let contentHeight = emojiSelectionView.collectionView.contentSize.height
+    emojiSelectionView.collectionView.snp.updateConstraints {
+      $0.height.greaterThanOrEqualTo(contentHeight)
+    }
+  }
+  
+  public override func bind() {
+    let didLoadPublisher = PassthroughSubject<Void, Never>()
+    
+    let input = EmojiSheetViewModel.Input(
+      viewDidLoad: didLoadPublisher.eraseToAnyPublisher(),
+      emojiSelection: emojiSelectionView.collectionView.didSelectItemPublisher,
+      completionButtonTap: emojiSelectionView.completionButton.tapPublisher
+    )
+    
+    let output = viewModel.transform(input: input)
+    
+    output.selectEmoji
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] row in
+        self?.emojiSelectionView.collectionView.selectItem(
+          at: IndexPath(item: row, section: 0),
+          animated: true,
+          scrollPosition: .top
+        )
+      }
+      .store(in: &cancellables)
+    
+    output.dismissBottomSheet
+      .sink { [weak self] event in
+        self?.dismiss(animated: true)
+      }
+      .store(in: &cancellables)
+    
+    output.showCompleteToast
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] msg in
+        print("Toast \(msg)")
+      }
+      .store(in: &cancellables)
+    
+    output.updateHomeDelegate
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        self?.delegate?.didModifyed()
+      }
+      .store(in: &cancellables)
+    
+    didLoadPublisher.send(Void())
+  }
+  
   func setupCollectionView() {
     emojiSelectionView.collectionView.collectionViewLayout = sectionLayoutFactory.createManager(type: .emoji).createLayout()
     setupDataSource()
@@ -45,35 +107,6 @@ public final class EmojiSheetViewController: BottomSheetController {
   }
   
   func setupDataSource() {
-    let emojiItem = [
-      EmojiItem(id: UUID(), emoji: "🔥"),
-      EmojiItem(id: UUID(), emoji: "😀"),
-      EmojiItem(id: UUID(), emoji: "😃"),
-      EmojiItem(id: UUID(), emoji: "😄"),
-      EmojiItem(id: UUID(), emoji: "😆"),
-      EmojiItem(id: UUID(), emoji: "🥹"),
-      
-      EmojiItem(id: UUID(), emoji: "🥰"),
-      EmojiItem(id: UUID(), emoji: "😍"),
-      EmojiItem(id: UUID(), emoji: "😂"),
-      EmojiItem(id: UUID(), emoji: "🥲"),
-      EmojiItem(id: UUID(), emoji: "☺️"),
-      EmojiItem(id: UUID(), emoji: "😎"),
-      
-      EmojiItem(id: UUID(), emoji: "🥳"),
-      EmojiItem(id: UUID(), emoji: "🤩"),
-      EmojiItem(id: UUID(), emoji: "⭐️"),
-      EmojiItem(id: UUID(), emoji: "🌟"),
-      EmojiItem(id: UUID(), emoji: "✨"),
-      EmojiItem(id: UUID(), emoji: "💥"),
-      
-      EmojiItem(id: UUID(), emoji: "❤️"),
-      EmojiItem(id: UUID(), emoji: "🧡"),
-      EmojiItem(id: UUID(), emoji: "💛"),
-      EmojiItem(id: UUID(), emoji: "💚"),
-      EmojiItem(id: UUID(), emoji: "💙"),
-      EmojiItem(id: UUID(), emoji: "❤️‍🔥")
-    ]
     
     let emojiCellRegistration = UICollectionView.CellRegistration<EmojiCell, EmojiItem> { cell, indexPath, item in
       cell.setupData(item: item)
@@ -82,7 +115,7 @@ public final class EmojiSheetViewController: BottomSheetController {
     dataSource = UICollectionViewDiffableDataSource<EmojiSection, UUID>(
       collectionView: emojiSelectionView.collectionView
     ) { (collectionView, indexPath, identifier) -> UICollectionViewCell? in
-      let item = emojiItem.first(where: { $0.id == identifier })
+      let item = self.viewModel.emojiItem.first(where: { $0.id == identifier })
       return collectionView.dequeueConfiguredReusableCell(
         using: emojiCellRegistration,
         for: indexPath, item: item
@@ -91,7 +124,7 @@ public final class EmojiSheetViewController: BottomSheetController {
     
     var snapshot = NSDiffableDataSourceSnapshot<EmojiSection, UUID>()
     snapshot.appendSections([.main])
-    snapshot.appendItems(emojiItem.map{ $0.id }, toSection: .main)
+    snapshot.appendItems(viewModel.emojiItem.map{ $0.id }, toSection: .main)
   
     dataSource.supplementaryViewProvider = nil
     

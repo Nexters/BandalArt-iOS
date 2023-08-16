@@ -24,7 +24,7 @@ enum BandalArtTarget {
     case getCell(bandalArtKey: String, cellKey: String) // 반다라트 하위 셀 조회
     // DELETE
     case deleteBandalArt(bandalArtKey: String) // 반다라트 삭제
-    // case deleteCell(key: String, cellKey: String)
+    case deleteCell(bandalArtKey: String, cellKey: String) // 셀 삭제
     // PATCH
     case patchCell(parameters: DictionaryType, bandalArtKey: String, cellKey: String)
     // case updateBandalArt(parameters: DictionaryType, BandalArtKey: String)
@@ -50,9 +50,9 @@ extension BandalArtTarget: TargetType {
       return "/v1/bandalarts/\(bandalArtKey)"
     case .getMainCell(let bandalArtKey):
       return "/v1/bandalarts/\(bandalArtKey)/cells"
-    case .getCell(let bandalArtKey, let cellKey):
-      return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
-    case .patchCell(_, let bandalArtKey, let cellKey):
+    case .getCell(let bandalArtKey, let cellKey),
+         .patchCell(_, let bandalArtKey, let cellKey),
+         .deleteCell(let bandalArtKey, let cellKey):
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
     case .postWebURL(let bandalArtKey):
       return "/v1/bandalarts/\(bandalArtKey)/shares"
@@ -73,7 +73,8 @@ extension BandalArtTarget: TargetType {
       return .get
     case .patchCell:
       return .patch
-    case .deleteBandalArt:
+    case .deleteBandalArt,
+         .deleteCell:
       return .delete
     }
   }
@@ -92,7 +93,8 @@ extension BandalArtTarget: TargetType {
          .getBandalArtDetail,
          .getMainCell,
          .getCell,
-         .deleteBandalArt:
+         .deleteBandalArt,
+         .deleteCell:
       return .requestPlain
         
     case .patchCell(let parameters, _, _):

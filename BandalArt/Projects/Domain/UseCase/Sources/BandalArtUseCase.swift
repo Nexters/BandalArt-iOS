@@ -20,6 +20,7 @@ public protocol BandalArtUseCase {
   var bandalArtWebURLStringSubject: PassthroughSubject<String, Never> { get }
 
   var cellUpdateCompletionSubject: PassthroughSubject<Void, Never> { get }
+  var cellDeleteCompletionSubject: PassthroughSubject<Void, Never> { get }
   var errorSubject: PassthroughSubject<Void, Never> { get } // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
   
   /// 반다라트 생성후 조회 API (순서대로)
@@ -60,6 +61,9 @@ public protocol BandalArtUseCase {
                            description: String?,
                            dueDate: Date?,
                            isCompleted: Bool?)
+  
+  func deleteBandalArtTask(key: String,
+                           cellKey: String)
 }
 
 public class BandalArtUseCaseImpl: BandalArtUseCase {
@@ -74,6 +78,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   public let bandalArtWebURLStringSubject = PassthroughSubject<String, Never>()
   public let errorSubject = PassthroughSubject<Void, Never>()
   public let cellUpdateCompletionSubject = PassthroughSubject<Void, Never>()
+  public let cellDeleteCompletionSubject = PassthroughSubject<Void, Never>()
 
   public init(repository: BandalArtRepository) {
     self.repository = repository
@@ -157,13 +162,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
       mainColor: mainColor,
       subColor: subColor
     ).sink(receiveCompletion: { [weak self] completion in
-      switch completion {
-      case let .failure(error):
-        // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-        self?.errorSubject.send(())
-        print(error)
-      case .finished: return
-      }
+      self?.errorHandler(completion: completion)
     }, receiveValue: { [weak self] event in
       self?.cellUpdateCompletionSubject.send(event)
     })
@@ -186,17 +185,23 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
       dueDate: dueDate,
       isCompleted: isCompleted
     ).sink(receiveCompletion: { [weak self] completion in
-      switch completion {
-      case let .failure(error):
-        // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-        self?.errorSubject.send(())
-        print(error)
-      case .finished: return
-      }
+      self?.errorHandler(completion: completion)
     }, receiveValue: { [weak self] event in
       self?.cellUpdateCompletionSubject.send(event)
     })
     .store(in: &cancellables)
+  }
+  
+  public func deleteBandalArtTask(key: String, cellKey: String) {
+    
+    self.repository.deleteTaskData(key: key, cellKey: cellKey)
+      .sink(receiveCompletion:{ [weak self] completion in
+        self?.errorHandler(completion: completion)
+      }, receiveValue: { [weak self] event in
+        self?.cellDeleteCompletionSubject.send(event)
+      })
+      .store(in: &cancellables)
+      
   }
 }
 

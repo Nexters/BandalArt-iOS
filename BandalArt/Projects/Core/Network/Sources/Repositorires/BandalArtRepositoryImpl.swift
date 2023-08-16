@@ -68,66 +68,76 @@ public extension BandalArtRepositoryImpl {
             .eraseToAnyPublisher()
     }
 
-  // Task 케이스 & SubGoal 케이스
-  func postTaskUpdateData(
-    key: String,
-    cellKey: String,
-    title: String?,
-    description: String?,
-    dueDate: Date?,
-    isCompleted: Bool? = nil
-  ) -> AnyPublisher<Void, BandalArtNetworkError> {
-    var parameters: DictionaryType = [
-      "title": title ?? "",
-      "description": description ?? NSNull(),
-      "dueDate": dueDate?.toISO8601String ?? NSNull(),
-    ]
-    
-    if let isCompleted = isCompleted {
-      parameters["isCompleted"] = isCompleted
+    // 셀 수정 API: task 케이스 & subGoal 케이스
+    func postTaskUpdateData(
+      key: String,
+      cellKey: String,
+      title: String?,
+      description: String?,
+      dueDate: Date?,
+      isCompleted: Bool? = nil
+    ) -> AnyPublisher<Void, BandalArtNetworkError> {
+      var parameters: DictionaryType = [
+        "title": title ?? "",
+        "description": description ?? NSNull(),
+        "dueDate": dueDate?.toISO8601String ?? NSNull(),
+      ]
+      
+      if let isCompleted = isCompleted {
+        parameters["isCompleted"] = isCompleted
+      }
+
+      return self.provider.requestPublisher(
+        .patchCell(
+          parameters: parameters,
+          bandalArtKey: key,
+          cellKey: cellKey
+        )
+      )
+      .mapToVoid()
+      .eraseToAnyPublisher()
     }
 
-    return self.provider.requestPublisher(
-      .patchCell(
-        parameters: parameters,
-        bandalArtKey: key,
-        cellKey: cellKey
+    // 셀 수정 API: mainGoal 케이스
+    func postTaskUpdateData(
+      key: String,
+      cellKey: String,
+      profileEmoji: Character?,
+      title: String?,
+      description: String?,
+      dueDate: Date?,
+      mainColor: String,
+      subColor: String
+    ) -> AnyPublisher<Void, BandalArtNetworkError> {
+      var parameters: DictionaryType = [
+        "title": title ?? "",
+        "dueDate": dueDate?.toISO8601String ?? NSNull(),
+        "mainColor": mainColor,
+        "subColor": subColor,
+        "profileEmoji": profileEmoji?.description ?? NSNull()
+      ]
+      
+      if description != nil {
+        parameters["description"] = description
+      }
+      
+      return self.provider.requestPublisher(
+        .patchCell(
+          parameters: parameters,
+          bandalArtKey: key,
+          cellKey: cellKey
+        )
       )
-    )
-    .mapToVoid()
-    .eraseToAnyPublisher()
-  }
-
-  // mainGoal 케이스
-  func postTaskUpdateData(
-    key: String,
-    cellKey: String,
-    profileEmoji: Character?,
-    title: String?,
-    description: String?,
-    dueDate: Date?,
-    mainColor: String,
-    subColor: String
-  ) -> AnyPublisher<Void, BandalArtNetworkError> {
-    let parameters: DictionaryType = [
-      "title": title ?? "",
-      "description": description ?? NSNull(),
-      "dueDate": dueDate?.toISO8601String ?? NSNull(),
-      "mainColor": mainColor,
-      "subColor": subColor,
-      "profileEmoji": profileEmoji?.description ?? NSNull()
-    ]
-
-    return self.provider.requestPublisher(
-      .patchCell(
-        parameters: parameters,
-        bandalArtKey: key,
-        cellKey: cellKey
-      )
-    )
-    .mapToVoid()
-    .eraseToAnyPublisher()
-  }
+      .mapToVoid()
+      .eraseToAnyPublisher()
+    }
+  
+    // 셀 삭제 API
+    func deleteTaskData(key: String, cellKey: String) -> AnyPublisher<Void, BandalArtNetworkError> {
+      return self.provider.requestPublisher(.deleteCell(bandalArtKey: key, cellKey: cellKey))
+        .mapToVoid()
+        .eraseToAnyPublisher()
+    }
 }
 
 // MoyaError를 사용하지 않고 BandarArt API 서비스 자체의
