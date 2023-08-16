@@ -235,10 +235,11 @@ public final class HomeViewController: UIViewController {
 
         output
             .presentActivityViewController
-            .sink(receiveValue: { [weak self] _ in
-//                let vc = UIActivityViewController(activityItems: ["링크주데오"],
-//                                                  applicationActivities: nil)
-//                self?.present(vc, animated: true)
+            .sink(receiveValue: { [weak self] url in
+                let vc = UIActivityViewController(activityItems: [url],
+                                                  applicationActivities: nil)
+                vc.excludedActivityTypes = [.addToReadingList, .assignToContact, .saveToCameraRoll, .markupAsPDF]
+                self?.present(vc, animated: true)
             })
             .store(in: &cancellables)
 

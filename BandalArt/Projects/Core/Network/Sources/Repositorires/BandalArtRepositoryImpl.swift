@@ -37,6 +37,14 @@ public extension BandalArtRepositoryImpl {
             .eraseToAnyPublisher()
     }
     
+    // 반다라트 웹 공유 URL 생성 API
+    func postWebURL(key: String) -> AnyPublisher<String, BandalArtNetworkError> {
+        return self.provider.requestPublisher(.postWebURL(bandalArtKey: key))
+            .mapToDomain(BandalArtWebInfoResponseDTO.self)
+            .map { $0.shareUrl }
+            .eraseToAnyPublisher()
+    }
+    
     // 반다라트 상세 조회 API
     func getBandalArtDetail(key: String) -> AnyPublisher<BandalArtInfo, BandalArtNetworkError> {
         return self.provider.requestPublisher(.getBandalArtDetail(bandalArtKey: key))

@@ -14,14 +14,19 @@ import Util
 import Combine
 
 public protocol BandalArtUseCase {
+    
   var bandalArtInfoSubject: PassthroughSubject<BandalArtInfo, Never> { get }
   var bandalArtAllCellSubject: PassthroughSubject<BandalArtCellInfo, Never> { get }
+  var bandalArtWebURLStringSubject: PassthroughSubject<String, Never> { get }
 
   var cellUpdateCompletionSubject: PassthroughSubject<Void, Never> { get }
   var errorSubject: PassthroughSubject<Void, Never> { get } // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
   
   /// 반다라트 생성후 조회 API (순서대로)
   func createAndFetchBandalArt()
+  
+  /// 반다라트 웹 공유 URL 생성 API
+  func createBandalArtWebURLString(key: String)
   
   /// 반다라트 조회 API : 상세 조회 API + 메인 셀 조회 API (순서 상관 없음)
   /// - Parameters:
@@ -66,6 +71,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   // Public (뷰모델에서 바인딩에 사용)
   public let bandalArtInfoSubject = PassthroughSubject<BandalArtInfo, Never>()
   public let bandalArtAllCellSubject = PassthroughSubject<BandalArtCellInfo, Never>()
+  public let bandalArtWebURLStringSubject = PassthroughSubject<String, Never>()
   public let errorSubject = PassthroughSubject<Void, Never>()
   public let cellUpdateCompletionSubject = PassthroughSubject<Void, Never>()
 
@@ -89,6 +95,17 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
             .store(in: &cancellables)
     }
     
+    public func createBandalArtWebURLString(key: String) {
+        self.repository.postWebURL(key: key)
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.errorHandler(completion: completion)
+                
+            }, receiveValue: { [weak self] urlString in
+                self?.bandalArtWebURLStringSubject.send(urlString)
+            })
+            .store(in: &cancellables)
+    }
+    
     public func fetchBandalArt(key: String) {
         self.repository.getBandalArtDetail(key: key)
             .zip(self.repository.getBandalArtCellList(key: key))
@@ -103,7 +120,6 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
     }
     
     public func deleteAndFetchBandalArt(key: String) {
-        
         self.repository.deleteBandalArt(key: key)
             .flatMap { [weak self] _ -> AnyPublisher<String, BandalArtNetworkError> in
                 guard let self else {

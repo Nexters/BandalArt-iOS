@@ -64,7 +64,7 @@ public final class HomeViewModel: ViewModelType {
         let bandalArtRightBottomInfo: AnyPublisher<[BandalArtCellInfo], Never>
         
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
-        let presentActivityViewController: AnyPublisher<Void, Never>
+        let presentActivityViewController: AnyPublisher<URL, Never>
         
         let presentEmojiViewControllerSubject: AnyPublisher<BandalArtInfo, Never>
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
@@ -86,6 +86,7 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtLeftBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
+    private let presentActivityViewControllerSubject = PassthroughSubject<URL, Never>()
     private let presentEmojiViewControllerSubject = PassthroughSubject<BandalArtInfo, Never>()
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
     private let presentCompletionViewControllerSubject = PassthroughSubject<(Void, BandalArtInfo), Never>()
@@ -145,6 +146,13 @@ public final class HomeViewModel: ViewModelType {
                 self.presentEmojiViewControllerSubject.send(bandalArtInfo)
             }
             .store(in: &cancellables)
+        
+        input.didShareButtonTap
+            .sink { [weak self] _ in
+                self?.showLoadingSubject.send(0.5)
+                self?.createBandalArtWebURLString()
+            }
+            .store(in: &cancellables)
 
         return Output(
             showLoading: showLoadingSubject.eraseToAnyPublisher(),
@@ -160,7 +168,7 @@ public final class HomeViewModel: ViewModelType {
             bandalArtLeftBottomInfo: bandalArtLeftBottomInfoSubject.eraseToAnyPublisher(),
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
             presentBandalArtAddViewController: input.didAddBarButtonTap,
-            presentActivityViewController: input.didShareButtonTap,
+            presentActivityViewController: presentActivityViewControllerSubject.eraseToAnyPublisher(),
             presentEmojiViewControllerSubject: presentEmojiViewControllerSubject.eraseToAnyPublisher(),
             presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher(),
             presentCompletionViewController: presentCompletionViewControllerSubject.eraseToAnyPublisher()
@@ -184,6 +192,17 @@ public final class HomeViewModel: ViewModelType {
         self.guestUseCase.guestSubject
             .sink { [weak self] _ in
                 self?.createBandalArt()
+            }
+            .store(in: &cancellables)
+        
+        self.useCase.bandalArtWebURLStringSubject
+            .sink { [weak self] urlString in
+                self?.dismissLoadingSubject.send(())
+                guard let url = URL(string: urlString) else {
+                    assertionFailure("🌷에러: URL이 잘못 들어왔어요!")
+                    return
+                }
+                self?.presentActivityViewControllerSubject.send(url)
             }
             .store(in: &cancellables)
         
@@ -252,6 +271,10 @@ private extension HomeViewModel {
     
     func createBandalArt() {
         self.useCase.createAndFetchBandalArt()
+    }
+    
+    func createBandalArtWebURLString() {
+        self.useCase.createBandalArtWebURLString(key: UserDefaultsManager.lastUserBandalArtKey ?? "")
     }
     
     func fetchBandalArt(key: String = UserDefaultsManager.lastUserBandalArtKey ?? "") { //임시
