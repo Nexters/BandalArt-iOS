@@ -33,6 +33,7 @@ public final class HomeViewController: UIViewController {
     private let addButton = UIButton()
     // 반다라트 헤더
     private let emojiView = EmojiView()
+    private let emojiButton = UIButton()
     private let bandalartNameLabel = UILabel()
     private let pencilAeccessaryImageView = UIImageView(image: .init(named: "pencil.circle.filled"))
     private let moreButton = UIButton()
@@ -103,7 +104,8 @@ public final class HomeViewController: UIViewController {
             didCategoryBarButtonTap: addButton.tapPublisher,
             didCellModifyed: didCellModifyed.eraseToAnyPublisher(),
             didDeleteButtonTap: didDeleteButtonTap.eraseToAnyPublisher(),
-            didMainCellTap: centerButton.tapPublisher
+            didMainCellTap: centerButton.tapPublisher,
+            didEmojiButtonTap: emojiButton.tapPublisher
         )
         let output = viewModel.transform(input: input)
         
@@ -222,6 +224,12 @@ public final class HomeViewController: UIViewController {
                     emojiText: self.emojiView.text
                 )
                 self.navigationController?.pushViewController(vc, animated: true)
+            })
+            .store(in: &cancellables)
+        
+        output.presentEmojiViewControllerSubject
+            .sink(receiveValue: { [weak self] info in
+                // TODO: 상훈 이미지 뷰컨 띄우기
             })
             .store(in: &cancellables)
 
@@ -470,6 +478,7 @@ private extension HomeViewController {
 
     func setConstraints() {
         view.addSubview(emojiView)
+        emojiView.addSubview(emojiButton)
         view.addSubview(pencilAeccessaryImageView)
         view.addSubview(bandalartNameLabel)
         view.addSubview(moreButton)
@@ -506,6 +515,9 @@ private extension HomeViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(52)
+        }
+        emojiButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         pencilAeccessaryImageView.snp.makeConstraints { make in
             make.width.height.equalTo(18)

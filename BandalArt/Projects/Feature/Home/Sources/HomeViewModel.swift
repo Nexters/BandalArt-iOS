@@ -45,6 +45,7 @@ public final class HomeViewModel: ViewModelType {
         let didCellModifyed: AnyPublisher<Void, Never> // 현재는 이 인풋 오면 싹다 업데이트
         let didDeleteButtonTap: AnyPublisher<Void, Never>
         let didMainCellTap: AnyPublisher<Void, Never>
+        let didEmojiButtonTap: AnyPublisher<Void, Never>
     }
     
     struct Output {
@@ -64,6 +65,8 @@ public final class HomeViewModel: ViewModelType {
         
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
         let presentActivityViewController: AnyPublisher<Void, Never>
+        
+        let presentEmojiViewControllerSubject: AnyPublisher<BandalArtInfo, Never>
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
         let presentCompletionViewController: AnyPublisher<(Void, BandalArtInfo), Never>
     }
@@ -83,6 +86,7 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtLeftBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
+    private let presentEmojiViewControllerSubject = PassthroughSubject<BandalArtInfo, Never>()
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
     private let presentCompletionViewControllerSubject = PassthroughSubject<(Void, BandalArtInfo), Never>()
 
@@ -134,6 +138,13 @@ public final class HomeViewModel: ViewModelType {
                 self.presentManipulateViewControllerSubject.send((mainCellInfo, bandalArtInfo))
             }
             .store(in: &cancellables)
+        
+        input.didEmojiButtonTap
+            .sink { [weak self] _ in
+                guard let self, let bandalArtInfo else { return }
+                self.presentEmojiViewControllerSubject.send(bandalArtInfo)
+            }
+            .store(in: &cancellables)
 
         return Output(
             showLoading: showLoadingSubject.eraseToAnyPublisher(),
@@ -150,6 +161,7 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
             presentBandalArtAddViewController: input.didAddBarButtonTap,
             presentActivityViewController: input.didShareButtonTap,
+            presentEmojiViewControllerSubject: presentEmojiViewControllerSubject.eraseToAnyPublisher(),
             presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher(),
             presentCompletionViewController: presentCompletionViewControllerSubject.eraseToAnyPublisher()
         )
@@ -243,7 +255,8 @@ private extension HomeViewModel {
     }
     
     func fetchBandalArt(key: String = UserDefaultsManager.lastUserBandalArtKey ?? "") { //임시
-        print("🌷 반다라트 메인셀 키:", key)
+        print("🌷 반다라트 토큰:", UserDefaultsManager.guestToken ?? "")
+        print("🌷 반다라트 키:", key)
         self.useCase.fetchBandalArt(key: key)
     }
 }
