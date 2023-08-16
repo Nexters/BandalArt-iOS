@@ -103,7 +103,7 @@ public extension UIColor {
 }
 
 // MARK: - Converting HexString <=> UIColor
-fileprivate extension UIColor {
+public extension UIColor {
     
     var hexString: String? {
         guard let components = self.cgColor.components else { return nil }

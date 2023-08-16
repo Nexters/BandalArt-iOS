@@ -12,6 +12,7 @@ import UseCase
 import Entity
 import Network
 import Util
+import UIKit
 
 protocol ViewModelType {
     associatedtype Input
@@ -52,14 +53,11 @@ public final class ManipulateViewModel: ViewModelType {
     completionItem = CurrentValueSubject<[CompletionItem], Never>([CompletionItem(id: UUID(), isCompleted: cellInfo.isCompleted)])
     
     emojiTitleItem = CurrentValueSubject<[EmojiTitleItem], Never>([EmojiTitleItem(id: UUID(), emoji: mainInfo?.profileEmojiText, title: mainInfo?.title ?? "")])
-    themeColorItem = CurrentValueSubject<[ThemeColorItem], Never>([
-      ThemeColorItem(id: UUID(), color: .mint),
-      ThemeColorItem(id: UUID(), color: .sky),
-      ThemeColorItem(id: UUID(), color: .grass),
-      ThemeColorItem(id: UUID(), color: .lemon),
-      ThemeColorItem(id: UUID(), color: .mandarin),
-      ThemeColorItem(id: UUID(), color: .pink)
-    ])
+    themeColorItem = CurrentValueSubject<[ThemeColorItem], Never>(
+      UIColor.themeColorList.map({
+        ThemeColorItem(id: UUID(), color: $0)
+      })
+    )
     themeColorHexSubject.send(mainInfo?.mainColorHexString)
   }
   
@@ -134,22 +132,8 @@ public final class ManipulateViewModel: ViewModelType {
       .sink { [weak self] _ in
         guard let self = self else { return }
         if self.bandalArtCellType == .mainGoal {
-          switch self.mainGoalInfo?.mainColorHexString {
-          case "#3FFFBA":
-            selectColor.send(0)
-          case "#3FF3FF":
-            selectColor.send(1)
-          case "#93FF3F":
-            selectColor.send(2)
-          case "#FBFF3F":
-            selectColor.send(3)
-          case "#FFB423":
-            selectColor.send(4)
-          case "#FF9DF5":
-            selectColor.send(5)
-          default:
-            selectColor.send(0)
-          }
+          guard let filtered = UIColor.themeColorList.enumerated().filter({ $0.element.hexString == self.mainGoalInfo?.mainColorHexString }).first else { return }
+          selectColor.send(filtered.offset)
         }
       }
       .store(in: &cancellables)
@@ -194,25 +178,12 @@ public final class ManipulateViewModel: ViewModelType {
       .store(in: &cancellables)
     
     input.themeColorSelection
+      .removeDuplicates()
       .sink { [weak self] index in
         guard let self = self else { return }
         if bandalArtCellType == .mainGoal && index.section == 1 {
-          switch index.row {
-          case 0:
-            themeColorHexSubject.send("#3FFFBA")
-          case 1:
-            themeColorHexSubject.send("#3FF3FF")
-          case 2:
-            themeColorHexSubject.send("#93FF3F")
-          case 3:
-            themeColorHexSubject.send("#FBFF3F")
-          case 4:
-            themeColorHexSubject.send("#FFB423")
-          case 5:
-            themeColorHexSubject.send("#FF9DF5")
-          default:
-            themeColorHexSubject.send("#3FFFBA")
-          }
+          let colorHex = UIColor.themeColorList[index.row].hexString
+          themeColorHexSubject.send(colorHex)
         }
       }
       .store(in: &cancellables)

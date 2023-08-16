@@ -113,7 +113,6 @@ public extension BandalArtRepositoryImpl {
         "title": title ?? "",
         "dueDate": dueDate?.toISO8601String ?? NSNull(),
         "mainColor": mainColor,
-        "subColor": subColor,
         "profileEmoji": profileEmoji?.description ?? NSNull()
       ]
       

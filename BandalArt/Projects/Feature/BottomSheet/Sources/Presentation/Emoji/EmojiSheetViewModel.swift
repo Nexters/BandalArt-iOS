@@ -106,7 +106,6 @@ public final class EmojiSheetViewModel: ViewModelType {
         guard let selected = emojiItem.enumerated().filter({ (index, item) in
           return index == indexPath.row
         }).first else { return }
-        print(selected.element.emoji)
         self.emojiSubject.send(selected.element.emoji)
       }
       .store(in: &cancellables)

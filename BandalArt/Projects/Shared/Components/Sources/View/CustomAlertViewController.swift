@@ -21,7 +21,6 @@ public final class PopUpViewController: UIViewController {
     view.backgroundColor = .white
     view.layer.cornerRadius = 12.0
     view.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-    
     return view
   }()
   
