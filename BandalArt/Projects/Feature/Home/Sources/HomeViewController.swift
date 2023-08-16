@@ -73,7 +73,8 @@ public final class HomeViewController: UIViewController {
     private let didLoadPublisher = PassthroughSubject<Void, Never>()
     private let didCellModifyed = PassthroughSubject<Void, Never>()
     private let didDeleteButtonTap = PassthroughSubject<Void, Never>()
-
+    private let didEntryRetryButtonTap = PassthroughSubject<Void, Never>()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.setNavigationBar()
@@ -105,7 +106,8 @@ public final class HomeViewController: UIViewController {
             didCellModifyed: didCellModifyed.eraseToAnyPublisher(),
             didDeleteButtonTap: didDeleteButtonTap.eraseToAnyPublisher(),
             didMainCellTap: centerButton.tapPublisher,
-            didEmojiButtonTap: emojiButton.tapPublisher
+            didEmojiButtonTap: emojiButton.tapPublisher,
+            didEntryRetryButtonTap: didEntryRetryButtonTap.eraseToAnyPublisher()
         )
         let output = viewModel.transform(input: input)
         
@@ -227,7 +229,7 @@ public final class HomeViewController: UIViewController {
             })
             .store(in: &cancellables)
         
-        output.presentEmojiViewControllerSubject
+        output.presentEmojiViewController
             .sink(receiveValue: { [weak self] info in
                 guard let self = self else { return }
                 let viewController = EmojiSheetViewController(
@@ -238,6 +240,20 @@ public final class HomeViewController: UIViewController {
                 viewController.delegate = self
                 viewController.preferredSheetSizing = .fit
                 self.present(viewController, animated: true)
+            })
+            .store(in: &cancellables)
+        
+        output.showEntryErrorAlert
+            .sink(receiveValue: { [weak self] _ in
+                guard let self = self else { return }
+                let alert = UIAlertController(title: "네트워크 문제로 표를\n불러오지 못했어요",
+                                                    message: "다시 시도해주시기 바랍니다.",
+                                                    preferredStyle: .alert)
+                let retryAction = UIAlertAction(title: "재시도", style: .destructive) { [weak self] _ in
+                    self?.didEntryRetryButtonTap.send(())
+                }
+                alert.addAction(retryAction)
+                self.present(alert, animated: true, completion: nil)
             })
             .store(in: &cancellables)
 

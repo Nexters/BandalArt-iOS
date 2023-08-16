@@ -21,6 +21,7 @@ public protocol BandalArtUseCase {
 
   var cellUpdateCompletionSubject: PassthroughSubject<Void, Never> { get }
   var cellDeleteCompletionSubject: PassthroughSubject<Void, Never> { get }
+  var errorEntrySubject: PassthroughSubject<Void, Never> { get }
   var errorSubject: PassthroughSubject<Void, Never> { get } // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
   
   /// 반다라트 생성후 조회 API (순서대로)
@@ -76,6 +77,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   public let bandalArtInfoSubject = PassthroughSubject<BandalArtInfo, Never>()
   public let bandalArtAllCellSubject = PassthroughSubject<BandalArtCellInfo, Never>()
   public let bandalArtWebURLStringSubject = PassthroughSubject<String, Never>()
+  public let errorEntrySubject = PassthroughSubject<Void, Never>()
   public let errorSubject = PassthroughSubject<Void, Never>()
   public let cellUpdateCompletionSubject = PassthroughSubject<Void, Never>()
   public let cellDeleteCompletionSubject = PassthroughSubject<Void, Never>()
@@ -86,16 +88,22 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
   
     public func createAndFetchBandalArt() {
         if let key = UserDefaultsManager.lastUserBandalArtKey {
-            self.fetchBandalArt(key: key)
+            self.fetchEntryBandalArt(key: key)
             return
         }
         self.repository.postBandalArt()
             .sink(receiveCompletion: { [weak self] completion in
-                self?.errorHandler(completion: completion)
+                switch completion {
+                case let .failure(error):
+                    self?.errorEntrySubject.send(())
+                  print("🌷 반다라트 네트워크 에러: ", error.errorDescription)
+                  
+                case .finished: return
+                }
                 
             }, receiveValue: { [weak self] key in
                 UserDefaultsManager.lastUserBandalArtKey = key
-                self?.fetchBandalArt(key: key)
+                self?.fetchEntryBandalArt(key: key)
             })
             .store(in: &cancellables)
     }
@@ -206,6 +214,25 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
 }
 
 private extension BandalArtUseCaseImpl {
+    
+    func fetchEntryBandalArt(key: String) {
+        self.repository.getBandalArtDetail(key: key)
+            .zip(self.repository.getBandalArtCellList(key: key))
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case let .failure(error):
+                    self?.errorEntrySubject.send(())
+                  print("🌷 반다라트 네트워크 에러: ", error.errorDescription)
+                  
+                case .finished: return
+                }
+                
+            }, receiveValue: { [weak self] info, cell in
+                self?.bandalArtInfoSubject.send(info)
+                self?.bandalArtAllCellSubject.send(cell)
+            })
+            .store(in: &cancellables)
+    }
     
     /// 공통적인 에러 핸들링 함수. (현재는 Print이외에 유저에게 보여지는 에러처리는 하지 않고 있음. 추후 개선 해야함..!)
     func errorHandler(completion: Subscribers.Completion<BandalArtNetworkError>) {

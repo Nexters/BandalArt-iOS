@@ -46,6 +46,7 @@ public final class HomeViewModel: ViewModelType {
         let didDeleteButtonTap: AnyPublisher<Void, Never>
         let didMainCellTap: AnyPublisher<Void, Never>
         let didEmojiButtonTap: AnyPublisher<Void, Never>
+        let didEntryRetryButtonTap: AnyPublisher<Void, Never>
     }
     
     struct Output {
@@ -66,7 +67,8 @@ public final class HomeViewModel: ViewModelType {
         let presentBandalArtAddViewController: AnyPublisher<Void, Never>
         let presentActivityViewController: AnyPublisher<URL, Never>
         
-        let presentEmojiViewControllerSubject: AnyPublisher<BandalArtInfo, Never>
+        let showEntryErrorAlert: AnyPublisher<Void, Never>
+        let presentEmojiViewController: AnyPublisher<BandalArtInfo, Never>
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
         let presentCompletionViewController: AnyPublisher<(Void, BandalArtInfo), Never>
     }
@@ -86,6 +88,7 @@ public final class HomeViewModel: ViewModelType {
     private let bandalArtLeftBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo], Never>([])
     private let bandalArtRightBottomInfoSubject = CurrentValueSubject<[BandalArtCellInfo] , Never>([])
 
+    private let showEntryErrorAlertSubject = PassthroughSubject<Void, Never>()
     private let presentActivityViewControllerSubject = PassthroughSubject<URL, Never>()
     private let presentEmojiViewControllerSubject = PassthroughSubject<BandalArtInfo, Never>()
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
@@ -105,6 +108,13 @@ public final class HomeViewModel: ViewModelType {
         self.bindUseCase()
         
         input.didViewLoad
+            .sink { [weak self] _ in
+                self?.showLoadingSubject.send(1.0)
+                self?.registerGuestIfNeeded()
+            }
+            .store(in: &cancellables)
+        
+        input.didEntryRetryButtonTap
             .sink { [weak self] _ in
                 self?.showLoadingSubject.send(1.0)
                 self?.registerGuestIfNeeded()
@@ -169,7 +179,8 @@ public final class HomeViewModel: ViewModelType {
             bandalArtRightBottomInfo: bandalArtRightBottomInfoSubject.eraseToAnyPublisher(),
             presentBandalArtAddViewController: input.didAddBarButtonTap,
             presentActivityViewController: presentActivityViewControllerSubject.eraseToAnyPublisher(),
-            presentEmojiViewControllerSubject: presentEmojiViewControllerSubject.eraseToAnyPublisher(),
+            showEntryErrorAlert: showEntryErrorAlertSubject.eraseToAnyPublisher(),
+            presentEmojiViewController: presentEmojiViewControllerSubject.eraseToAnyPublisher(),
             presentManipulateViewController: presentManipulateViewControllerSubject.eraseToAnyPublisher(),
             presentCompletionViewController: presentCompletionViewControllerSubject.eraseToAnyPublisher()
         )
@@ -186,6 +197,12 @@ public final class HomeViewModel: ViewModelType {
             .sink { [weak self] _ in
                 self?.canShowCompletionPage = false
                 self?.dismissLoadingSubject.send(())
+            }
+            .store(in: &cancellables)
+        
+        self.useCase.errorEntrySubject
+            .sink { [weak self] _ in
+                self?.showEntryErrorAlertSubject.send(())
             }
             .store(in: &cancellables)
         
