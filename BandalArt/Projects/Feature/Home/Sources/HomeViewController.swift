@@ -256,8 +256,7 @@ public final class HomeViewController: UIViewController {
 
     private func updateTheme(main hex1: String, sub hex2: String) {
         // 방어로직: 이전과 테마가 같으면 업데이트 안침.
-        guard UIColor.themeColor != .theme(hex: hex1),
-              UIColor.subThemeColor != .subTheme(hex: hex2) else {
+        guard UIColor.themeColor != .theme(hex: hex1) || UIColor.subThemeColor != .subTheme(hex: hex2) else {
             return
         }
         UIColor.themeColor = .theme(hex: hex1)
