@@ -15,6 +15,7 @@ enum BandalArtTarget {
     // POST
     case postBandalArt // 반다라트 생성
     case postGuest // 게스트 생성
+    case postWebURL(bandalArtKey: String) // 웹 공유 URL 생성
     // GET
     case getBandalArtList // 반다라트 목록 조회
     case getBandalArtDetail(bandalArtKey: String) // 반다라트 상세 조회
@@ -53,13 +54,16 @@ extension BandalArtTarget: TargetType {
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
     case .patchCell(_, let bandalArtKey, let cellKey):
       return "/v1/bandalarts/\(bandalArtKey)/cells/\(cellKey)"
+    case .postWebURL(let bandalArtKey):
+      return "/v1/bandalarts/\(bandalArtKey)/shares"
     }
   }
     
   var method: Moya.Method {
     switch self {
     case .postBandalArt,
-         .postGuest:
+         .postGuest,
+         .postWebURL:
       return .post
     case .getBandalArtList,
         .getBandalArtDetail,
@@ -82,6 +86,7 @@ extension BandalArtTarget: TargetType {
     switch self {
     case .postGuest,
          .postBandalArt,
+         .postWebURL,
          .getBandalArtList,
          .getGuest,
          .getBandalArtDetail,
@@ -92,12 +97,6 @@ extension BandalArtTarget: TargetType {
         
     case .patchCell(let parameters, _, _):
       return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
-//    case :
-//      return .requestPlain
-//    case :
-//      return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
-//    case :
-//      return .requestParameters(parameters: parameters, encoding: URLEncoding(arrayEncoding: .noBrackets))
     }
   }
   var validationType: ValidationType {

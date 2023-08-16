@@ -78,6 +78,14 @@ public protocol BandalArtRepository {
      */
     func deleteBandalArt(key: String) -> AnyPublisher<Void, BandalArtNetworkError>
     
+    /**
+     반다라트 웹 공유 URL 생성 API
+    - Parameters:
+    - key: 반다라트의 Unique Key.
+    - Returns: 성공시 웹 URL String 리턴
+     */
+    func postWebURL(key: String) -> AnyPublisher<String, BandalArtNetworkError>
+    
   
   /// 반다라트 cell 수정 API
   /// - Parameters:
