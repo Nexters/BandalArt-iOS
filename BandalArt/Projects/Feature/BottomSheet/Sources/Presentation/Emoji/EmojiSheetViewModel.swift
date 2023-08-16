@@ -13,7 +13,7 @@ import Entity
 import Network
 import Util
 
-final class EmojiSheetViewModel: ViewModelType {
+public final class EmojiSheetViewModel: ViewModelType {
   private var cancellables = Set<AnyCancellable>()
   var mainGoalInfo: BandalArtInfo
   

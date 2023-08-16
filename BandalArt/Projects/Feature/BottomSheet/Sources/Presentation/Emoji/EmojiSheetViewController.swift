@@ -8,6 +8,8 @@
 
 import UIKit
 import Components
+import Combine
+import CombineCocoa
 
 enum EmojiSection {
   case main
@@ -16,10 +18,12 @@ enum EmojiSection {
 public final class EmojiSheetViewController: BottomSheetController {
   let emojiSelectionView = EmojiSheetView()
   let sectionLayoutFactory = SectionLayoutManagerFactory.shared
-  
+  let viewModel: EmojiSheetViewModel
   var dataSource: UICollectionViewDiffableDataSource<EmojiSection, UUID>!
+  public weak var delegate: ManipulateViewControllerDelegate?
   
-  public override init() {
+  public init(viewModel: EmojiSheetViewModel) {
+    self.viewModel = viewModel
     super.init()
   }
   
@@ -36,6 +40,47 @@ public final class EmojiSheetViewController: BottomSheetController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
     setupCollectionView()
+    
+  }
+  
+  public override func bind() {
+    let input = EmojiSheetViewModel.Input(
+      emojiSelection: emojiSelectionView.collectionView.didDeselectItemPublisher,
+      completionButtonTap: emojiSelectionView.completionButton.tapPublisher
+    )
+    
+    let output = viewModel.transform(input: input)
+    
+    output.selectEmoji
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] row in
+        self?.emojiSelectionView.collectionView.selectItem(
+          at: IndexPath(item: row, section: 1),
+          animated: true,
+          scrollPosition: .top
+        )
+      }
+      .store(in: &cancellables)
+    
+    output.dismissBottomSheet
+      .sink { [weak self] event in
+        self?.dismiss(animated: true)
+      }
+      .store(in: &cancellables)
+    
+    output.showCompleteToast
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] msg in
+        print("Toast \(msg)")
+      }
+      .store(in: &cancellables)
+    
+    output.updateHomeDelegate
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        self?.delegate?.didModifyed()
+      }
+      .store(in: &cancellables)
   }
   
   func setupCollectionView() {
