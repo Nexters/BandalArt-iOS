@@ -162,13 +162,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
       mainColor: mainColor,
       subColor: subColor
     ).sink(receiveCompletion: { [weak self] completion in
-      switch completion {
-      case let .failure(error):
-        // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-        self?.errorSubject.send(())
-        print(error)
-      case .finished: return
-      }
+      self?.errorHandler(completion: completion)
     }, receiveValue: { [weak self] event in
       self?.cellUpdateCompletionSubject.send(event)
     })
@@ -191,13 +185,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
       dueDate: dueDate,
       isCompleted: isCompleted
     ).sink(receiveCompletion: { [weak self] completion in
-      switch completion {
-      case let .failure(error):
-        // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-        self?.errorSubject.send(())
-        print(error)
-      case .finished: return
-      }
+      self?.errorHandler(completion: completion)
     }, receiveValue: { [weak self] event in
       self?.cellUpdateCompletionSubject.send(event)
     })
@@ -208,13 +196,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
     
     self.repository.deleteTaskData(key: key, cellKey: cellKey)
       .sink(receiveCompletion:{ [weak self] completion in
-        switch completion {
-        case let .failure(error):
-          // 추후 반다라트 에러에 대한 Case가 정해진다면, Void 방출이 아닌 Error 방출.
-          self?.errorSubject.send(())
-          print(error)
-        case .finished: return
-        }
+        self?.errorHandler(completion: completion)
       }, receiveValue: { [weak self] event in
         self?.cellDeleteCompletionSubject.send(event)
       })
