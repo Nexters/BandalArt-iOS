@@ -13,8 +13,6 @@ import Entity
 import Network
 import Util
 
-import Combine
-
 protocol ViewModelType {
     associatedtype Input
     associatedtype Output
