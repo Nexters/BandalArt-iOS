@@ -239,7 +239,7 @@ public final class ManipulateViewController: BottomSheetController {
       cell.configure(with: self.viewModel.emojiTitleCellViewModel)
       cell.setupData(item: item)
       cell.delegate = self
-      if self.bandalArtCellType == .mainGoal {
+      if self.bandalArtCellType == .mainGoal && item.title?.count == 0 {
         cell.underlineTextField.becomeFirstResponder()
       }
     }
@@ -247,7 +247,7 @@ public final class ManipulateViewController: BottomSheetController {
       guard let self = self else { return }
       cell.configure(with: self.viewModel.titleCellViewModel)
       cell.setupData(item: item)
-      if self.bandalArtCellType != .mainGoal {
+      if self.bandalArtCellType != .mainGoal && item.title?.count == 0 {
         cell.underlineTextField.becomeFirstResponder()
       }
     }
