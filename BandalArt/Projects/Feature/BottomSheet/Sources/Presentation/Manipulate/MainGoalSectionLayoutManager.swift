@@ -29,9 +29,9 @@ struct MainGoalSectionLayoutManager: SectionLayoutManager {
             )
           ),
           sectionInset: .init(
-            top: 4.0, leading: 0.0, bottom: 4.0, trailing: 0.0
+            top: 4.0, leading: 0.0, bottom: 25.0, trailing: 0.0
           ),
-          interGroupSpacing: 4.0,
+          // interGroupSpacing: 3.0,
           orthogonal: .continuous
         )
       default:
@@ -49,7 +49,7 @@ struct MainGoalSectionLayoutManager: SectionLayoutManager {
             )
           ),
           sectionInset: .init(
-            top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0
+            top: 4.0, leading: 4.0, bottom: 25.0, trailing: 4.0
           )
         )
       }
@@ -80,7 +80,7 @@ struct MainGoalSectionLayoutManager: SectionLayoutManager {
     section.interGroupSpacing = interGroupSpacing
     
     if containHeader {
-      let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(16.0))
+      let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(12.0))
 
       let header = NSCollectionLayoutBoundarySupplementaryItem(
         layoutSize: headerFooterSize,

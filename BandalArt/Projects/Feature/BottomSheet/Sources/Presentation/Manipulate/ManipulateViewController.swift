@@ -160,8 +160,8 @@ public final class ManipulateViewController: BottomSheetController {
         let title = "'\(title)'\n\(self.bandalArtCellType.title)를 삭제하시겠어요?"
         let message = self.bandalArtCellType.message
         
-        self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기", rightActionCompletion:  {
-          self.viewModel.deleteCellSubject.send(Void())
+        self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기", rightActionCompletion: { [weak self] in
+          self?.viewModel.deleteCellSubject.send(Void())
         })
       }
       .store(in: &cancellables)
@@ -234,29 +234,40 @@ public final class ManipulateViewController: BottomSheetController {
   }
 
   func setupDataSource() {
-    let emojiTitleCellRegistration = UICollectionView.CellRegistration<EmojiTitleCell, EmojiTitleItem> { cell, indexPath, item in
-      cell.setupData(item: item)
+    let emojiTitleCellRegistration = UICollectionView.CellRegistration<EmojiTitleCell, EmojiTitleItem> { [weak self] cell, indexPath, item in
+      guard let self = self else { return }
       cell.configure(with: self.viewModel.emojiTitleCellViewModel)
-      cell.delegate = self
-    }
-    let titleCellRegistration = UICollectionView.CellRegistration<TitleCell, TitleItem> { cell, indexPath, item in
       cell.setupData(item: item)
+      cell.delegate = self
+      if self.bandalArtCellType == .mainGoal {
+        cell.underlineTextField.becomeFirstResponder()
+      }
+    }
+    let titleCellRegistration = UICollectionView.CellRegistration<TitleCell, TitleItem> { [weak self] cell, indexPath, item in
+      guard let self = self else { return }
       cell.configure(with: self.viewModel.titleCellViewModel)
+      cell.setupData(item: item)
+      if self.bandalArtCellType != .mainGoal {
+        cell.underlineTextField.becomeFirstResponder()
+      }
     }
     let themeColorCellRegistration = UICollectionView.CellRegistration<ThemeColorCell, ThemeColorItem> { cell, indexPath, item in
       cell.setupData(item: item)
     }
-    let dueDateCellRegistration = UICollectionView.CellRegistration<DueDateCell, DueDateItem> { cell, indexPath, item in
-      cell.setupData(item: item)
+    let dueDateCellRegistration = UICollectionView.CellRegistration<DueDateCell, DueDateItem> { [weak self] cell, indexPath, item in
+      guard let self = self else { return }
       cell.configure(with: self.viewModel.dueDateCellViewModel)
-    }
-    let memoCellRegistration = UICollectionView.CellRegistration<MemoCell, MemoItem> { cell, indexPath, item in
       cell.setupData(item: item)
+    }
+    let memoCellRegistration = UICollectionView.CellRegistration<MemoCell, MemoItem> { [weak self] cell, indexPath, item in
+      guard let self = self else { return }
       cell.configure(with: self.viewModel.memoCellViewModel)
-    }
-    let completionCellRegistration = UICollectionView.CellRegistration<CompletionCell, CompletionItem> { cell, indexPath, item in
       cell.setupData(item: item)
+    }
+    let completionCellRegistration = UICollectionView.CellRegistration<CompletionCell, CompletionItem> { [weak self] cell, indexPath, item in
+      guard let self = self else { return }
       cell.configure(with: self.viewModel.completionCellViewModel)
+      cell.setupData(item: item)
     }
 
     switch bandalArtCellType {

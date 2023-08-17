@@ -395,6 +395,7 @@ private extension HomeViewController {
         )
         viewController.delegate = self
         viewController.preferredSheetSizing = .fit
+        viewController.tapToDismissEnabled = false
         self.present(viewController, animated: true)
     }
 

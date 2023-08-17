@@ -21,8 +21,8 @@ final class CompletionCell: UICollectionViewCell {
   
   private lazy var titleLabel = DefaultLabel(
     title: "미달성",
-    font: .systemFont(ofSize: 16, weight: .bold),
-    textColor: .label,
+    font: .pretendardSemiBold(size: 16.0),
+    textColor: .gray900,
     textAlignment: .left
   )
   
@@ -60,6 +60,7 @@ final class CompletionCell: UICollectionViewCell {
     titleLabel.snp.makeConstraints {
       $0.centerY.equalToSuperview()
       $0.leading.equalToSuperview().offset(4.0)
+      $0.width.greaterThanOrEqualTo(80.0)
     }
     
     customSwitch.snp.makeConstraints {

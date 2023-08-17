@@ -100,7 +100,7 @@ public class BottomSheetController: BaseViewController {
   
   /// Boolean to specify if it should be possible to dismiss the sheet by tapping the backdrop.
   /// Defaults to true.
-  var tapToDismissEnabled: Bool = true {
+  public var tapToDismissEnabled: Bool = true {
     didSet {
       bottomSheetTransitioningDelegate.tapToDismissEnabled = tapToDismissEnabled
     }

@@ -16,14 +16,13 @@ struct MemoCellViewModel {
 }
 
 final class MemoCell: UICollectionViewCell {
-  static let identifier = "MemoCell"
   private var cancellables = Set<AnyCancellable>()
   
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
     underlineTextField.tintColor = .gray400
-    underlineTextField.placeholder = "메모를 입력해주세요"
-    underlineTextField.placeholderString = "메모를 입력해주세요"
+    underlineTextField.font = .pretendardSemiBold(size: 16.0)
+    underlineTextField.setPlaceholder(placeholder: "메모를 입력해주세요", color: .gray400)
     return underlineTextField
   }()
   
@@ -31,6 +30,7 @@ final class MemoCell: UICollectionViewCell {
     super.init(frame: frame)
     setupView()
     setupConstraints()
+    underlineTextField.delegate = self
   }
   
   required init?(coder: NSCoder) {
@@ -63,5 +63,16 @@ final class MemoCell: UICollectionViewCell {
         viewModel.memo.send(text)
       }
       .store(in: &cancellables)
+  }
+}
+
+extension MemoCell: UITextFieldDelegate {
+  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    if let currentText = textField.text,
+       let textRange = Range(range, in: currentText) {
+      let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+      return updatedText.count <= 15
+    }
+    return true
   }
 }

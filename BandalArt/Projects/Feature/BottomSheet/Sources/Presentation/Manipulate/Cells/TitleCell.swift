@@ -24,6 +24,7 @@ final class TitleCell: UICollectionViewCell {
     underlineTextField.tintColor = .gray400
     underlineTextField.placeholder = "15자 이내로 입력해주세요"
     underlineTextField.placeholderString = "15자 이내로 입력해주세요"
+    underlineTextField.font = .pretendardSemiBold(size: 16.0)
     return underlineTextField
   }()
   
@@ -31,6 +32,7 @@ final class TitleCell: UICollectionViewCell {
     super.init(frame: frame)
     setupView()
     setupConstraints()
+    underlineTextField.delegate = self
     bind()
   }
   
@@ -82,5 +84,16 @@ final class TitleCell: UICollectionViewCell {
   
   func configure(with viewModel: TitleCellViewModel) {
     self.viewModel = viewModel
+  }
+}
+
+extension TitleCell: UITextFieldDelegate {
+  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    if let currentText = textField.text,
+       let textRange = Range(range, in: currentText) {
+      let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+      return updatedText.count <= 15
+    }
+    return true
   }
 }

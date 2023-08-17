@@ -20,7 +20,7 @@ final class ThemeColorCell: UICollectionViewCell {
   }
 
   lazy var circleStrokeView: CircleView = {
-    let view = CircleView(frame: CGRect(x: 0, y: 0, width: 100.0, height: 100.0), strokeColor: .mint)
+    let view = CircleView(frame: CGRect(x: 0, y: 0, width: 100.0, height: 100.0), strokeColor: .gray900)
     view.backgroundColor = .clear
     view.isHidden = true
     return view
@@ -69,7 +69,7 @@ final class ThemeColorCell: UICollectionViewCell {
   }
 
   func setupData(item: ThemeColorItem) {
-    circleStrokeView.setStrokeColor(color: item.color)
+    circleStrokeView.setStrokeColor(color: .gray900)
     circleView.setFillColor(color: item.color)
   }
 

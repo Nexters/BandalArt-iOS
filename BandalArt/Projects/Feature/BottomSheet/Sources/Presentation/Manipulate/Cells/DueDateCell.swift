@@ -24,11 +24,16 @@ final class DueDateCell: UICollectionViewCell {
   lazy var underlineTextField: UnderlineTextField = {
     let underlineTextField = UnderlineTextField()
     underlineTextField.tintColor = .gray400
-    underlineTextField.placeholder = "마감일을 선택해주세요"
-    underlineTextField.placeholderString = "마감일을 선택해주세요"
-    underlineTextField.isUserInteractionEnabled = false
+    underlineTextField.font = .pretendardSemiBold(size: 16.0)
+    underlineTextField.setPlaceholder(placeholder: "마감일을 선택해주세요", color: .gray400)
     underlineTextField.setContentHuggingPriority(.defaultHigh, for: .vertical)
     return underlineTextField
+  }()
+  
+  lazy var textFieldCoverButton: UIButton = {
+    let button = UIButton()
+    button.backgroundColor = .clear
+    return button
   }()
   
   lazy var datePickerButton: UIButton = {
@@ -48,6 +53,10 @@ final class DueDateCell: UICollectionViewCell {
     datePicker.preferredDatePickerStyle = .wheels
     datePicker.locale = Locale(identifier: "ko-KR")
     datePicker.timeZone = .autoupdatingCurrent
+    let calendar = Calendar.current
+    let minDateComponents = DateComponents(year: 2000, month: 1, day: 1)
+    let minDate = calendar.date(from: minDateComponents)
+    datePicker.minimumDate = minDate
     datePicker.isHidden = true
     datePicker.setContentHuggingPriority(.defaultLow, for: .vertical)
     return datePicker
@@ -96,7 +105,7 @@ final class DueDateCell: UICollectionViewCell {
   }
   
   func setupView() {
-    [containerView, datePickerButton, resetButton].forEach {
+    [containerView, textFieldCoverButton, datePickerButton, resetButton].forEach {
       contentView.addSubview($0)
     }
   }
@@ -107,6 +116,11 @@ final class DueDateCell: UICollectionViewCell {
       $0.leading.equalToSuperview().offset(4.0)
       $0.trailing.equalToSuperview().offset(-4.0)
       $0.bottom.lessThanOrEqualToSuperview()
+    }
+    
+    textFieldCoverButton.snp.makeConstraints {
+      $0.top.leading.bottom.equalTo(underlineTextField)
+      $0.trailing.equalTo(datePickerButton.snp.leading)
     }
     
     underlineTextField.snp.makeConstraints {
@@ -132,7 +146,6 @@ final class DueDateCell: UICollectionViewCell {
   
   func setupData(item: DueDateItem) {
     underlineTextField.text = item.date?.toString
-    // print(item.date, Date(), item.date?.toStringWithKoreanFormat())
     let state = item.isOpen
     datePicker.isHidden = !state
     resetButton.isHidden = !state
@@ -151,6 +164,7 @@ final class DueDateCell: UICollectionViewCell {
   
   func bind() {
     datePickerButton.tapPublisher
+      .merge(with: textFieldCoverButton.tapPublisher)
       .sink { [weak self] _ in
         guard let self = self else { return }
         viewModel?.expandButtonTap.send(Void())

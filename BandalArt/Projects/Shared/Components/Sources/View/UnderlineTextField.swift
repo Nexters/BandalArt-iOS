@@ -31,15 +31,17 @@ public final class UnderlineTextField: UITextField {
 
     self.addTarget(self, action: #selector(editingDidBegin), for: .editingDidBegin)
     self.addTarget(self, action: #selector(editingDidEnd), for: .editingDidEnd)
-
+    self.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+    
     self.placeholder = placeholderString
+    
   }
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
-  func setPlaceholder(placeholder: String, color: UIColor) {
+  public func setPlaceholder(placeholder: String, color: UIColor) {
     placeholderString = placeholder
     placeholderColor =  color
 
@@ -62,7 +64,8 @@ public final class UnderlineTextField: UITextField {
     self.attributedPlaceholder = NSAttributedString(
       string: placeholderString,
       attributes: [
-        NSAttributedString.Key.foregroundColor: placeholderColor
+        NSAttributedString.Key.foregroundColor: placeholderColor,
+        NSAttributedString.Key.font: UIFont.pretendardRegular(size: 16.0)
       ]
     )
   }
@@ -91,6 +94,13 @@ extension UnderlineTextField {
     underlineView.backgroundColor = placeholderColor
     underlineView.snp.updateConstraints {
       $0.height.equalTo(1.0)
+    }
+  }
+  
+  @objc func textFieldDidChange(_ textField: UITextField) {
+    if let text = textField.text, text.count > 15 {
+      let index = text.index(text.startIndex, offsetBy: 15)
+      textField.text = String(text[..<index])
     }
   }
 }

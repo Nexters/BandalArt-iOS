@@ -18,7 +18,7 @@ final class ManipulateView: UIView {
     let label = UILabel()
     label.text = "메인목표 입력"
     label.textAlignment = .center
-    label.font = .systemFont(ofSize: 16.0, weight: .bold)
+    label.font = .pretendardBold(size: 16.0)
     label.textColor = .label
     return label
   }()
@@ -42,23 +42,23 @@ final class ManipulateView: UIView {
   lazy var deleteButton: UIButton = {
     let button = UIButton()
     button.setTitle("삭제", for: .normal)
+    button.titleLabel?.font = .pretendardBold(size: 16.0)
     button.setTitleColor(.gray900, for: .normal)
     button.backgroundColor = .gray200
     button.layer.cornerRadius = 28
-    button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
     return button
   }()
   
   lazy var completionButton: UIButton = {
     let button = UIButton()
     button.setTitle("완료", for: .normal)
+    button.titleLabel?.font = .pretendardBold(size: 16.0)
     button.setTitleColor(.gray400, for: .disabled)
     button.setBackgroundImage(UIImage(color: .gray200), for: .disabled)
     button.setTitleColor(.white, for: .normal)
     button.setBackgroundImage(UIImage(color: .gray900), for: .normal)
     button.layer.cornerRadius = 28
     button.clipsToBounds = true
-    button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
     button.isEnabled = false
     return button
   }()
@@ -127,7 +127,7 @@ final class ManipulateView: UIView {
       $0.top.equalTo(safeAreaLayoutGuide)
       $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
-      $0.bottom.equalTo(collectionView.snp.top).offset(-16.0)
+      $0.bottom.equalTo(collectionView.snp.top).offset(-36.0)
     }
     
     closeButton.snp.makeConstraints {
@@ -139,7 +139,7 @@ final class ManipulateView: UIView {
     collectionView.snp.makeConstraints {
       $0.leading.equalTo(safeAreaLayoutGuide).offset(16.0)
       $0.trailing.equalTo(safeAreaLayoutGuide).offset(-16.0)
-      $0.bottom.equalTo(completionButton.snp.top).offset(-16.0)
+      $0.bottom.equalTo(buttonContainerView.snp.top)
       $0.height.greaterThanOrEqualTo(364.0)
     }
 

@@ -119,7 +119,7 @@ public final class ManipulateViewModel: ViewModelType {
   var deleteCellSubject = PassthroughSubject<Void, Never>()
   
   private let themeColorHexSubject = CurrentValueSubject<String?, Never>(nil)
-  private let completionButtonEnableSubject = PassthroughSubject<Bool, Never>()
+  private let completionButtonEnableSubject = CurrentValueSubject<Bool, Never>(false)
   private let showDeleteAlertSubject = PassthroughSubject<String, Never>()
   private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
@@ -161,7 +161,8 @@ public final class ManipulateViewModel: ViewModelType {
       }
       .store(in: &cancellables)
     
-    emojiTitleItem.removeDuplicates()
+    emojiTitleItem
+      .removeDuplicates()
       .sink { [weak self] emojiTitleItem in
         guard let self = self,
               let text = emojiTitleItem.first?.title else { return }
@@ -196,7 +197,8 @@ public final class ManipulateViewModel: ViewModelType {
       }
       .store(in: &cancellables)
     
-    titleItem.removeDuplicates()
+    titleItem
+      .removeDuplicates()
       .sink { [weak self] titleItem in
         guard let self = self,
               let text = titleItem.first?.title else { return }

@@ -51,13 +51,13 @@ public extension UIViewController {
                          rightActionCompletion: (() -> Void)?) {
     popUpViewController.addActionToButton(title: leftActionTitle,
                                           titleColor: .gray900,
-                                          backgroundColor: .gray200) {
+                                          backgroundColor: .gray200) { [weak self] in
       popUpViewController.dismiss(animated: false, completion: leftActionCompletion)
     }
     
     popUpViewController.addActionToButton(title: rightActionTitle,
                                           titleColor: .white,
-                                          backgroundColor: .gray900) {
+                                          backgroundColor: .gray900) { [weak self] in
       popUpViewController.dismiss(animated: false, completion: rightActionCompletion)
     }
     present(popUpViewController, animated: false, completion: nil)

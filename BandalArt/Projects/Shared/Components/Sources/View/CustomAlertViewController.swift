@@ -10,11 +10,11 @@ import UIKit
 import SnapKit
 
 public final class PopUpViewController: UIViewController {
-  private var iconImage: UIImage?
+  private weak var iconImage: UIImage?
   private var titleText: String?
   private var messageText: String?
-  private var attributedMessageText: NSAttributedString?
-  private var contentView: UIView?
+  private weak var attributedMessageText: NSAttributedString?
+  private weak var contentView: UIView?
   
   private lazy var containerView: UIView = {
     let view = UIView()
@@ -119,7 +119,6 @@ public final class PopUpViewController: UIViewController {
   
   public override func viewDidLoad() {
     super.viewDidLoad()
-    
     setupView()
     setupConstraints()
   }
@@ -144,12 +143,16 @@ public final class PopUpViewController: UIViewController {
     }
   }
   
+  deinit {
+    print("디이닛 오케잉?")
+  }
+  
   public func addActionToButton(title: String? = nil,
                                 titleColor: UIColor = .white,
                                 backgroundColor: UIColor = .gray900,
-                                completion: (() -> Void)? = nil) {
+                                completion: @escaping () -> Void) {
     guard let title = title else { return }
-    
+
     let button = UIButton()
     button.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .bold)
     
@@ -167,7 +170,7 @@ public final class PopUpViewController: UIViewController {
     button.layer.masksToBounds = true
     
     button.addAction(for: .touchUpInside) { _ in
-      completion?()
+      completion()
     }
     
     buttonStackView.addArrangedSubview(button)

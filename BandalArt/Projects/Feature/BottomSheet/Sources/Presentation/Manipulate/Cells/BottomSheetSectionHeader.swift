@@ -13,7 +13,7 @@ import Components
 final class BottomSheetSectionHeader: UICollectionReusableView {
   static let identifier = "BottomSheetSectionHeader"
   
-  private lazy var titleLabel = DefaultLabel(font: .systemFont(ofSize: 12, weight: .bold), textColor: .label)
+  private lazy var titleLabel = DefaultLabel(font: .pretendardBold(size: 12.0), textColor: .gray600)
   
   override init(frame: CGRect) {
     super.init(frame: frame)

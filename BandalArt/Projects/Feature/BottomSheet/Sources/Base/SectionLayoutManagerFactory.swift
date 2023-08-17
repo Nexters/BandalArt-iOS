@@ -45,7 +45,7 @@ public enum GroupFlow {
 
 public enum GroupType {
   case whole(ratio: CGFloat)
-  case specific(size :NSCollectionLayoutSize)
+  case specific(size :NSCollectionLayoutSize, inset: NSDirectionalEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0))
   
   public var groupSize: NSCollectionLayoutSize {
     switch self {
@@ -54,7 +54,9 @@ public enum GroupType {
         widthDimension: .fractionalWidth(1),
         heightDimension: .estimated(Size.screenH * ratio)
       )
-    case .specific(let size):
+    case .specific(let size, let groupInset):
+      let group = NSCollectionLayoutItem(layoutSize: size)
+      group.contentInsets = groupInset
       return size
     }
   }
