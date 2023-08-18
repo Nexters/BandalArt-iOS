@@ -149,15 +149,10 @@ public final class ManipulateViewModel: ViewModelType {
     
     emojiPopupViewModel.emojiSelection
       .sink { [weak self] emoji in
-        self?.emojiTitleCellViewModel.emoji
-          .send(emoji)
-      }
-      .store(in: &cancellables)
-    
-    emojiTitleCellViewModel.emoji
-      .sink { [weak self] emoji in
         guard let self = self,
               let emojiTitleItem = emojiTitleItem.value.first else { return }
+        self.emojiTitleCellViewModel.emoji
+          .send(emoji)
         self.emojiTitleItem.send([EmojiTitleItem(id: emojiTitleItem.id, emoji: emoji, title: emojiTitleItem.title)])
       }
       .store(in: &cancellables)

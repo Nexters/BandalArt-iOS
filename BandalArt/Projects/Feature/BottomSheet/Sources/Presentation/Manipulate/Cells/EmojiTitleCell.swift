@@ -128,30 +128,22 @@ final class EmojiTitleCell: UICollectionViewCell {
         self?.viewModel?.title.send(text)
       }
       .store(in: &cancellables)
+  }
+  
+  func configure(with viewModel: EmojiTitleCellViewModel) {
+    self.viewModel = viewModel
     
-//    emojiView.emojiLabel
-//      .publisher(for: \.text)
-//      .compactMap { ($0.map{ $0 })?.first }
-//      .sink { emoji in
-//        viewModel.emoji.send(emoji)
-//      }
-//      .store(in: &cancellables)
-    
-    viewModel?.emoji
+    viewModel.emoji
       .sink { [weak self] emoji in
         self?.emojiView.setEmoji(with: emoji)
       }
       .store(in: &cancellables)
     
-    viewModel?.title
+    viewModel.title
       .sink { [weak self] text in
         self?.underlineTextField.text = text
       }
       .store(in: &cancellables)
-  }
-  
-  func configure(with viewModel: EmojiTitleCellViewModel) {
-    self.viewModel = viewModel
   }
   
   @objc func emojiViewTapped(_ sender: UIView) {
