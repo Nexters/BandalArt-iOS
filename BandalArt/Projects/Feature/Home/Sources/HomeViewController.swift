@@ -169,7 +169,7 @@ public final class HomeViewController: UIViewController {
                     return
                 }
                 self?.tinyLineView.isHidden = false
-                self?.dateLabel.text = "~" + date.toString
+                self?.dateLabel.text = "~" + date.toShortString
             })
             .store(in: &cancellables)
 

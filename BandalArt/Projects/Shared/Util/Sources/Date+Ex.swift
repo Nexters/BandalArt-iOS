@@ -24,4 +24,12 @@ public extension Date {
     formatter.dateFormat = "yyyy년 MM월 d일"
     return formatter.string(from: self)
   }
+    
+    var toShortString: String {
+      let formatter = DateFormatter()
+      formatter.locale = Locale(identifier: "ko_KR")
+      formatter.timeZone = TimeZone(abbreviation: "KST")
+      formatter.dateFormat = "yy년 MM월 d일"
+      return formatter.string(from: self)
+    }
 }
