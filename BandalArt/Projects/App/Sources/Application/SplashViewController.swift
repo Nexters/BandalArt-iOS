@@ -47,8 +47,6 @@ final class SplashViewController: UIViewController {
         // set back image
         appearance.setBackIndicatorImage(UIImage(named: "chevron.left"), transitionMaskImage: UIImage(named: "chevron.left"))
         appearance.backgroundColor = .systemBackground
-        appearance.shadowColor = .clear
-        appearance.shadowImage = UIImage(named: "shadow")
 
         // set appearance to one NavigationController
         let nav = UINavigationController(rootViewController: vc)

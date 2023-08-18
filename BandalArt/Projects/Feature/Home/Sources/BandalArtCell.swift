@@ -44,6 +44,13 @@ final class BandalArtCell: UICollectionViewCell {
             case .subGoal: return .themeColor
             }
         }
+        
+        var plusColor: UIColor {
+            switch self {
+            case .task: return .gray500
+            case .subGoal: return .themeColor
+            }
+        }
     }
 
     static let identifier: String = "BasicCell"
@@ -113,6 +120,8 @@ final class BandalArtCell: UICollectionViewCell {
                 make.trailing.equalToSuperview().offset(-4)
             }
             descriptionLabel.text = title
+            descriptionLabel.setLineSpacing(spacing: 1.17)
+            descriptionLabel.textAlignment = .center
             descriptionLabel.font = mode.font
             descriptionLabel.textColor = mode.textColor
         }
@@ -184,7 +193,7 @@ final class BandalartPlaceHolderView: UIView {
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        stackView.spacing = 0
+        stackView.spacing = 3
         
         stackView.insertArrangedSubview(label, at: 0)
         
@@ -194,14 +203,14 @@ final class BandalartPlaceHolderView: UIView {
         
         addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(13)
+            make.centerY.equalToSuperview()
             make.trailing.leading.equalToSuperview().inset(4)
         }
         stackView.addArrangedSubview(plusImageView)
     }
     
     func configure(mode: BandalArtCell.Mode) {
-        self.plusImageView.tintColor = mode.textColor
+        self.plusImageView.tintColor = mode.plusColor
         
         guard mode == .subGoal else {
             label.removeFromSuperview()

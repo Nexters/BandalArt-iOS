@@ -36,6 +36,7 @@ public final class EmojiView: UIView {
     
     private func setConfigure() {
         placeHolderImageView.tintColor = .gray300
+        placeHolderImageView.contentMode = .center
         emojiLabel.textAlignment = .center
         backgroundColor = .gray100
     }
@@ -43,7 +44,7 @@ public final class EmojiView: UIView {
     private func setConstraints() {
         addSubview(placeHolderImageView)
         placeHolderImageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalToSuperview().inset(14)
         }
     }
     
@@ -62,9 +63,10 @@ public final class EmojiView: UIView {
         // nil이 들어올 경우 PlaceHolder 세팅 및 리턴
         guard let char = with else {
             emojiLabel.removeFromSuperview()
+            placeHolderImageView.removeFromSuperview()
             addSubview(placeHolderImageView)
             placeHolderImageView.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
+                make.edges.equalToSuperview().inset(14)
             }
             return
         }

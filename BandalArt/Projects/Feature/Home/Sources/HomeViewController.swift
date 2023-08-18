@@ -129,7 +129,7 @@ public final class HomeViewController: UIViewController {
             .sink(receiveValue: { [weak self] text in
                 self?.updateBandalArtNameLabel(text: text)
                 self?.centerPlaceHolderView.isHidden = text != nil
-                self?.centerPlaceHolderView.setPlaceHolder(text: "메인 목표", color: .subThemeColor)
+                self?.centerPlaceHolderView.setPlaceHolder(text: "메인목표", color: .subThemeColor)
                 self?.centerLabel.text = text
             })
             .store(in: &cancellables)
@@ -137,7 +137,8 @@ public final class HomeViewController: UIViewController {
         output.bandalArtEmoji
             .sink(receiveValue: { [weak self] char in
                 self?.emojiView.setEmoji(with: char)
-                self?.pencilAeccessaryImageView.isHidden = true
+                let isCharNil = char == nil
+                self?.pencilAeccessaryImageView.isHidden = !isCharNil
             })
             .store(in: &cancellables)
 
@@ -308,7 +309,7 @@ public final class HomeViewController: UIViewController {
     
     private func updateBandalArtNameLabel(text: String?) {
         let isText = text != nil
-        bandalartNameLabel.text = isText ? text : "메인 목표를 입력해주세요"
+        bandalartNameLabel.text = isText ? text : "메인목표를 입력해주세요"
         bandalartNameLabel.textColor = isText ? .gray900 : .gray300
     }
 
@@ -494,13 +495,16 @@ private extension HomeViewController {
         config.title = "달성 완료!"
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = .pretendardSemiBold(size: 11)
+            outgoing.font = .pretendardSemiBold(size: 10)
             return outgoing
         }
         config.contentInsets = .zero
         config.imagePadding = 2
         config.baseForegroundColor = .gray900
+        config.contentInsets = .init(top: 4, leading: 4,
+                                     bottom: 4, trailing: 4)
         completedButton.configuration = config
+        completedButton.contentMode = .scaleAspectFit
         completedButton.layer.cornerRadius = 12
         completedButton.backgroundColor = .themeColor
         completedButton.layer.masksToBounds = true
@@ -545,7 +549,7 @@ private extension HomeViewController {
             make.trailing.equalToSuperview().offset(-5)
         }
         emojiView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(52)
         }
@@ -591,7 +595,7 @@ private extension HomeViewController {
             make.bottom.equalTo(progressView.snp.top).offset(-6)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(24)
-            make.width.equalTo(80)
+            make.width.equalTo(72)
         }
         bandalartView.snp.makeConstraints { make in
             make.top.equalTo(progressView.snp.bottom).offset(18)

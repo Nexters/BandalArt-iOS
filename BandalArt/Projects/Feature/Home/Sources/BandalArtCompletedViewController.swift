@@ -86,10 +86,10 @@ private extension BandalArtCompletedViewController {
         contentView.layer.cornerRadius = 12
         contentView.layer.borderColor = UIColor.gray300.cgColor
         
-        shareButton.setTitle("공유하기", for: .normal)
+        shareButton.setTitle("링크 공유하기", for: .normal)
         shareButton.setTitleColor(.systemBackground, for: .normal)
         shareButton.titleLabel?.font = .pretendardBold(size: 16)
-        shareButton.layer.cornerRadius = 20
+        shareButton.layer.cornerRadius = 27.5
         shareButton.backgroundColor = .gray900
         shareButton.layer.masksToBounds = true
 
