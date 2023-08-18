@@ -144,12 +144,18 @@ public final class OnBoardingViewController: BaseViewController {
     UINavigationBar.appearance().standardAppearance = appearance
     UINavigationBar.appearance().scrollEdgeAppearance = appearance
     
-    // TODO: App 쪽을 모르는데 어떻게 바꾸지..
-    let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-    guard let delegate = sceneDelegate else {
-      return
+    // TODO: App 쪽을 모르는데 
+    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+      if let window = windowScene.windows.first {
+        window.rootViewController = nav
+      
+        UIView.transition(with: window,
+                          duration: 0.5,
+                          options: .transitionCrossDissolve,
+                          animations: nil,
+                          completion: nil)
+      }
     }
-    delegate.window?.rootViewController = vc
   }
 }
 
