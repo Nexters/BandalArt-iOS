@@ -14,6 +14,7 @@ import Util
 import CombineCocoa
 import Combine
 import SnapKit
+import Toast
 
 public final class HomeViewController: UIViewController {
 
@@ -202,7 +203,9 @@ public final class HomeViewController: UIViewController {
 
         output.presentManipulateViewController
             .sink(receiveValue: { [weak self] infos in
-                self?.routeManipulateVC(type: .mainGoal, cellInfo: infos.0, info: infos.1)
+                let isTitle = !(infos.1.title == nil || infos.1.title == "")
+                let mode: Mode = isTitle ? .update : .create
+                self?.routeManipulateVC(type: .mainGoal, cellInfo: infos.0, info: infos.1, mode: mode)
             })
             .store(in: &cancellables)
 
@@ -317,9 +320,18 @@ public final class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: ManipulateViewControllerDelegate {
+    
+    public func didCreated() {
+        self.view.makeToast("생성되었습니다.", duration: 2.0, position: .bottom)
+    }
+    
+    public func didDeleted() {
+        self.view.makeToast("삭제되었습니다.", duration: 2.0, position: .bottom)
+    }
 
     public func didModifyed() {
         didCellModifyed.send(())
+        self.view.makeToast("수정되었습니다.", duration: 2.0, position: .bottom)
     }
 }
 
@@ -373,7 +385,10 @@ extension HomeViewController: UICollectionViewDelegate,
         guard let cellInfo = self.cellInfoList(collectionView: collectionView)[safe: indexPath.item],
         let info = viewModel.bandalArtInfo else { return }
         let type: BandalArtCellType = collectionView.tag == indexPath.item ? .subGoal : .task
-        self.routeManipulateVC(type: type, cellInfo: cellInfo, info: info)
+        
+        let isTitle = !(info.title == nil || info.title == "")
+        let mode: Mode = isTitle ? .update : .create
+        self.routeManipulateVC(type: type, cellInfo: cellInfo, info: info, mode: mode)
     }
 }
 
@@ -382,14 +397,15 @@ private extension HomeViewController {
 
     func routeManipulateVC(type: BandalArtCellType,
                            cellInfo: BandalArtCellInfo,
-                           info: BandalArtInfo) {
+                           info: BandalArtInfo,
+                           mode: Mode) {
         let viewController = ManipulateViewController(
-          mode: .update,
+          mode: mode,
           bandalArtCellType: type,
           viewModel: ManipulateViewModel(
             cellInfo: cellInfo,
             mainInfo: info,
-            mode: .update,
+            mode: mode,
             bandalArtCellType: type
           )
         )
@@ -525,7 +541,7 @@ private extension HomeViewController {
         bandalartView.addSubview(rightBottomCollectionView)
 
         shareButton.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-32)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.centerX.equalToSuperview()
             make.width.equalTo(110)
             make.height.equalTo(36)
