@@ -126,7 +126,6 @@ public final class OnBoardingViewController: BaseViewController {
   }
   
   @objc private func startButtonTap() {
-    // TODO: HomeView로 가도록 구현
     let vc = HomeViewController(viewModel: HomeViewModel())
     let appearance = UINavigationBarAppearance()
 
@@ -144,7 +143,6 @@ public final class OnBoardingViewController: BaseViewController {
     UINavigationBar.appearance().standardAppearance = appearance
     UINavigationBar.appearance().scrollEdgeAppearance = appearance
     
-    // TODO: App 쪽을 모르는데 
     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
       if let window = windowScene.windows.first {
         window.rootViewController = nav
