@@ -23,8 +23,6 @@ protocol EmojiSelectorDelegate: AnyObject {
 }
 
 public protocol ManipulateViewControllerDelegate: AnyObject {
-    func didCreated()
-    func didDeleted()
     func didModifyed()
 }
 

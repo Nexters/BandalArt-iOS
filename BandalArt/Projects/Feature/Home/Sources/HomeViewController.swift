@@ -320,20 +320,10 @@ public final class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: ManipulateViewControllerDelegate {
-    
-    public func didCreated() {
-        didCellModifyed.send(())
-        self.view.makeToast("생성되었습니다.", duration: 2.0, position: .bottom)
-    }
-    
-    public func didDeleted() {
-        didCellModifyed.send(())
-        self.view.makeToast("삭제되었습니다.", duration: 2.0, position: .bottom)
-    }
 
     public func didModifyed() {
         didCellModifyed.send(())
-        self.view.makeToast("수정되었습니다.", duration: 2.0, position: .bottom)
+        self.view.makeToast("완료되었습니다.", duration: 2.0, position: .bottom)
     }
 }
 

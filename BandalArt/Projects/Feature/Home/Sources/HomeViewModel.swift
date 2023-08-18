@@ -52,6 +52,8 @@ public final class HomeViewModel: ViewModelType {
     struct Output {
         let showLoading: AnyPublisher<CGFloat, Never>
         let dismissLoading: AnyPublisher<Void, Never>
+        let showToast: AnyPublisher<String, Never>
+        
         let bandalArtTitle: AnyPublisher<String?, Never>
         let bandalArtEmoji: AnyPublisher<Character?, Never>
         let bandalArtThemeColorHexString: AnyPublisher<(String, String), Never>
@@ -75,6 +77,7 @@ public final class HomeViewModel: ViewModelType {
     
     private let showLoadingSubject = PassthroughSubject<CGFloat, Never>()
     private let dismissLoadingSubject = PassthroughSubject<Void, Never>()
+    private let showToastSubject = PassthroughSubject<String, Never>()
     
     private let bandalArtEmojiSubject = PassthroughSubject<Character?, Never>()
     private let bandalArtTitleSubject = PassthroughSubject<String?, Never>()
@@ -167,6 +170,7 @@ public final class HomeViewModel: ViewModelType {
         return Output(
             showLoading: showLoadingSubject.eraseToAnyPublisher(),
             dismissLoading: dismissLoadingSubject.eraseToAnyPublisher(),
+            showToast: showToastSubject.eraseToAnyPublisher(),
             bandalArtTitle: bandalArtTitleSubject.eraseToAnyPublisher(),
             bandalArtEmoji: bandalArtEmojiSubject.eraseToAnyPublisher(),
             bandalArtThemeColorHexString: bandalArtThemeColorHexSubject.eraseToAnyPublisher(),
@@ -197,6 +201,7 @@ public final class HomeViewModel: ViewModelType {
             .sink { [weak self] _ in
                 self?.canShowCompletionPage = false
                 self?.dismissLoadingSubject.send(())
+                self?.showToastSubject.send("네트워크 오류입니다.")
             }
             .store(in: &cancellables)
         
