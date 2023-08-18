@@ -39,7 +39,7 @@ public final class EmojiSheetViewModel: ViewModelType {
     let selectEmoji: AnyPublisher<Int, Never>
     let updateHomeDelegate: AnyPublisher<Void,Never>
     let dismissBottomSheet: AnyPublisher<Void,Never>
-    let showCompleteToast: AnyPublisher<String, Never>
+    let showToast: AnyPublisher<String, Never>
   }
   
   let emojiItem = [
@@ -75,7 +75,7 @@ public final class EmojiSheetViewModel: ViewModelType {
   var selectEmoji = PassthroughSubject<Int, Never>()
   private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
-  private let showCompleteToastSubject = PassthroughSubject<String, Never>()
+  private let showToastSubject = PassthroughSubject<String, Never>()
   private let emojiSubject = CurrentValueSubject<Character?, Never>(nil)
   
   func transform(input: Input) -> Output {
@@ -114,16 +114,21 @@ public final class EmojiSheetViewModel: ViewModelType {
       selectEmoji: selectEmoji.eraseToAnyPublisher(),
       updateHomeDelegate: updateHomeDelegateSubject.eraseToAnyPublisher(),
       dismissBottomSheet: dismissBottomSheetSubject.eraseToAnyPublisher(),
-      showCompleteToast: showCompleteToastSubject.eraseToAnyPublisher()
+      showToast: showToastSubject.eraseToAnyPublisher()
     )
   }
   
   private func bindUseCase() {
+    self.useCase.errorSubject
+      .sink { [weak self] error in
+        self?.showToastSubject.send("네트워크 문제로 저장에 실패하였어요.")
+      }
+      .store(in: &cancellables)
+    
     self.useCase.cellUpdateCompletionSubject
       .sink { [weak self] completion in
         self?.updateHomeDelegateSubject.send(Void())
         self?.dismissBottomSheetSubject.send(Void())
-        // 업데이트 완료 Toast
       }
       .store(in: &cancellables)
   }

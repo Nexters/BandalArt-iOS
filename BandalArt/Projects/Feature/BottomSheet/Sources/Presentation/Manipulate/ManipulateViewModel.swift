@@ -13,6 +13,7 @@ import Entity
 import Network
 import Util
 import UIKit
+import Toast
 
 protocol ViewModelType {
     associatedtype Input
@@ -77,7 +78,7 @@ public final class ManipulateViewModel: ViewModelType {
     
     let completionButtonEnable: AnyPublisher<Bool, Never>
     let showDeleteAlert: AnyPublisher<String, Never>
-    let showCompleteToast: AnyPublisher<String, Never>
+    let showToast: AnyPublisher<String, Never>
     let updateHomeDelegate: AnyPublisher<Void,Never>
     let selectColor: AnyPublisher<Int, Never>
     let dismissBottomSheet: AnyPublisher<Void,Never>
@@ -123,7 +124,7 @@ public final class ManipulateViewModel: ViewModelType {
   private let showDeleteAlertSubject = PassthroughSubject<String, Never>()
   private let updateHomeDelegateSubject = PassthroughSubject<Void, Never>()
   private let dismissBottomSheetSubject = PassthroughSubject<Void, Never>()
-  private let showCompleteToastSubject = PassthroughSubject<String, Never>()
+  private let showToastSubject = PassthroughSubject<String, Never>()
   
   func transform(input: Input) -> Output {
     self.bindUseCase()
@@ -291,7 +292,7 @@ public final class ManipulateViewModel: ViewModelType {
       changeDueDateHeight: changeDueDateHeight.eraseToAnyPublisher(),
       completionButtonEnable: completionButtonEnableSubject.eraseToAnyPublisher(),
       showDeleteAlert: showDeleteAlertSubject.eraseToAnyPublisher(),
-      showCompleteToast: showCompleteToastSubject.eraseToAnyPublisher(),
+      showToast: showToastSubject.eraseToAnyPublisher(),
       updateHomeDelegate: updateHomeDelegateSubject.eraseToAnyPublisher(),
       selectColor: selectColor.eraseToAnyPublisher(),
       dismissBottomSheet: dismissBottomSheetSubject.eraseToAnyPublisher()
@@ -299,11 +300,16 @@ public final class ManipulateViewModel: ViewModelType {
   }
   
   private func bindUseCase() {
+    self.useCase.errorSubject
+      .sink { [weak self] error in
+        self?.showToastSubject.send("네트워크 문제로 저장에 실패하였어요.")
+      }
+      .store(in: &cancellables)
+    
     self.useCase.cellUpdateCompletionSubject
       .sink { [weak self] completion in
         self?.updateHomeDelegateSubject.send(Void())
         self?.dismissBottomSheetSubject.send(Void())
-        // 업데이트 완료 Toast
       }
       .store(in: &cancellables)
     
@@ -311,7 +317,6 @@ public final class ManipulateViewModel: ViewModelType {
       .sink { [weak self] completion in
         self?.updateHomeDelegateSubject.send(Void())
         self?.dismissBottomSheetSubject.send(Void())
-        // 삭제 완료 Toast
       }
       .store(in: &cancellables)
   }

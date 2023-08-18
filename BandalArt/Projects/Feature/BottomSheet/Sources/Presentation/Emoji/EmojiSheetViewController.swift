@@ -10,6 +10,7 @@ import UIKit
 import Components
 import Combine
 import CombineCocoa
+import Toast
 
 enum EmojiSection {
   case main
@@ -83,10 +84,10 @@ public final class EmojiSheetViewController: BottomSheetController {
       }
       .store(in: &cancellables)
     
-    output.showCompleteToast
+    output.showToast
       .receive(on: DispatchQueue.main)
       .sink { [weak self] msg in
-        print("Toast \(msg)")
+        self?.view.makeToast(msg)
       }
       .store(in: &cancellables)
     

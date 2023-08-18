@@ -12,6 +12,7 @@ import Combine
 import CombineCocoa
 import Components
 import CommonFeature
+import Toast
 
 protocol DatePickerCallDelegate: AnyObject {
   func datePickerButtonTapped(in cell: DueDateCell, isOpen: Bool)
@@ -163,6 +164,13 @@ public final class ManipulateViewController: BottomSheetController {
         self.showPopUp(title: title, message: message, leftActionTitle: "취소", rightActionTitle: "삭제하기", rightActionCompletion: { [weak self] in
           self?.viewModel.deleteCellSubject.send(Void())
         })
+      }
+      .store(in: &cancellables)
+    
+    output.showToast
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] msg in
+        self?.view.makeToast(msg)
       }
       .store(in: &cancellables)
     
