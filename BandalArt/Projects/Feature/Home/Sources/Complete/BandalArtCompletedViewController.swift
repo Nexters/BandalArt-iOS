@@ -10,13 +10,14 @@ import UIKit
 import Entity
 import Components
 
+import Combine
 import Lottie
 import SnapKit
 
 final class BandalArtCompletedViewController: UIViewController {
     
     private let bandarArtTitle: String
-    private let emojiText: String?
+    private let emojiText: Character?
     
     private let descriptionLabel = UILabel()
     
@@ -28,13 +29,18 @@ final class BandalArtCompletedViewController: UIViewController {
     
     private let shareButton = UIButton()
     
-    init(title: String, emojiText: String?, shareURLString: String? = nil) {
-        if title == "메인 목표를 입력해주세요" {  //TODO: 진짜 진짜 임시 코드 곧 바꿔야함.
-            self.bandarArtTitle = "제목 없음"
-        } else {
+    private var cancellables = Set<AnyCancellable>()
+    
+    private let viewModel: BandalArtCompletedViewModel
+    
+    init(info: BandalArtInfo, viewModel: BandalArtCompletedViewModel = BandalArtCompletedViewModel()) {
+        if let title = info.title {
             self.bandarArtTitle = title
+        } else {
+            self.bandarArtTitle = "제목 없음"
         }
-        self.emojiText = emojiText
+        self.emojiText = info.profileEmojiText
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -47,11 +53,42 @@ final class BandalArtCompletedViewController: UIViewController {
         self.setNavigationBar()
         self.setConfigure()
         self.setConstraints()
+        self.bind()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animationView.play()
+    }
+    
+    private func bind() {
+        let input = BandalArtCompletedViewModel.Input(
+            didShareButtonTap: shareButton.tapPublisher
+        )
+        let output = viewModel.transform(input: input)
+        
+        output.showLoading
+            .removeDuplicates()
+            .sink(receiveValue: { alpha in
+                LoadingView.startAnimatingOnWindow(alpha: alpha)
+            })
+            .store(in: &cancellables)
+        
+        output.dismissLoading
+            .sink(receiveValue: { _ in
+                LoadingView.stopAnimatingOnWindow()
+            })
+            .store(in: &cancellables)
+        
+        output
+            .presentActivityViewController
+            .sink(receiveValue: { [weak self] url in
+                let vc = UIActivityViewController(activityItems: [url],
+                                                  applicationActivities: nil)
+                vc.excludedActivityTypes = [.addToReadingList, .assignToContact, .saveToCameraRoll, .markupAsPDF]
+                self?.present(vc, animated: true)
+            })
+            .store(in: &cancellables)
     }
 }
 
@@ -93,7 +130,7 @@ private extension BandalArtCompletedViewController {
         shareButton.backgroundColor = .gray900
         shareButton.layer.masksToBounds = true
 
-        emojiView.setEmoji(with: emojiText.toChar)
+        emojiView.setEmoji(with: emojiText)
     }
 
     func setConstraints() {

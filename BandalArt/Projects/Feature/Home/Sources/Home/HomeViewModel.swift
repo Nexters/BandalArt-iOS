@@ -72,7 +72,7 @@ public final class HomeViewModel: ViewModelType {
         let showEntryErrorAlert: AnyPublisher<Void, Never>
         let presentEmojiViewController: AnyPublisher<BandalArtInfo, Never>
         let presentManipulateViewController: AnyPublisher<(BandalArtCellInfo, BandalArtInfo), Never>
-        let presentCompletionViewController: AnyPublisher<(Void, BandalArtInfo), Never>
+        let presentCompletionViewController: AnyPublisher<BandalArtInfo, Never>
     }
     
     private let showLoadingSubject = PassthroughSubject<CGFloat, Never>()
@@ -95,7 +95,7 @@ public final class HomeViewModel: ViewModelType {
     private let presentActivityViewControllerSubject = PassthroughSubject<URL, Never>()
     private let presentEmojiViewControllerSubject = PassthroughSubject<BandalArtInfo, Never>()
     private let presentManipulateViewControllerSubject = PassthroughSubject<(BandalArtCellInfo, BandalArtInfo), Never>()
-    private let presentCompletionViewControllerSubject = PassthroughSubject<(Void, BandalArtInfo), Never>()
+    private let presentCompletionViewControllerSubject = PassthroughSubject<BandalArtInfo, Never>()
 
     private var mainCellInfo: BandalArtCellInfo?
     private(set) var bandalArtInfo: BandalArtInfo?
@@ -239,7 +239,7 @@ public final class HomeViewModel: ViewModelType {
                 self.bandalArtDateSubject.send(info.dueDate)
                 
                 if info.isCompleted && canShowCompletionPage { //직전에 바텀시트 수정으로 인한 완성이라면 빵빠레
-                    
+                    self.presentCompletionViewControllerSubject.send(info)
                 }
                 self.canShowCompletionPage = false
             }

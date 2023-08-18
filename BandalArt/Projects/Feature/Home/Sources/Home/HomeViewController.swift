@@ -214,21 +214,15 @@ public final class HomeViewController: UIViewController {
             .presentBandalArtAddViewController
             .sink(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                let vc = BandalArtCompletedViewController(
-                    title: self.bandalartNameLabel.text ?? "",
-                    emojiText: self.emojiView.text
-                )
+                let vc = BandalArtCompletedViewController(info: self.viewModel.bandalArtInfo!)
                 self.navigationController?.pushViewController(vc, animated: true)
             })
             .store(in: &cancellables)
         
         output.presentCompletionViewController
-            .sink(receiveValue: { [weak self] _ in
+            .sink(receiveValue: { [weak self] info in
                 guard let self else { return }
-                let vc = BandalArtCompletedViewController(
-                    title: self.bandalartNameLabel.text ?? "",
-                    emojiText: self.emojiView.text
-                )
+                let vc = BandalArtCompletedViewController(info: info)
                 self.navigationController?.pushViewController(vc, animated: true)
             })
             .store(in: &cancellables)
