@@ -15,7 +15,7 @@ final class EmojiSheetView: UIView {
   lazy var completionButton: UIButton = {
     let button = UIButton()
     button.setTitleColor(.gray900, for: .normal)
-    button.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .bold)
+    button.titleLabel?.font = .pretendardBold(size: 16.0)
     button.setTitle("완료", for: .normal)
     return button
   }()
