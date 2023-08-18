@@ -297,7 +297,7 @@ public final class ManipulateViewModel: ViewModelType {
   private func bindUseCase() {
     self.useCase.errorSubject
       .sink { [weak self] error in
-        self?.showToastSubject.send("네트워크 문제로 저장에 실패하였어요.")
+        self?.showToastSubject.send("네트워크 오류입니다")
       }
       .store(in: &cancellables)
     

@@ -170,7 +170,7 @@ public final class ManipulateViewController: BottomSheetController {
     output.showToast
       .receive(on: DispatchQueue.main)
       .sink { [weak self] msg in
-        self?.view.makeToast(msg)
+        self?.view.makeToast(msg, duration: 2.0, position: .bottom)
       }
       .store(in: &cancellables)
     
