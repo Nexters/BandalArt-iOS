@@ -124,6 +124,12 @@ public final class HomeViewController: UIViewController {
                 LoadingView.stopAnimatingOnWindow()
             })
             .store(in: &cancellables)
+        
+        output.showToast
+            .sink(receiveValue: { [weak self] text in
+                self?.view.makeToast(text, duration: 2.0, position: .bottom)
+            })
+            .store(in: &cancellables)
 
         output.bandalArtTitle
             .sink(receiveValue: { [weak self] text in

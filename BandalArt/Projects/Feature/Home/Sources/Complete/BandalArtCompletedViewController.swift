@@ -80,6 +80,12 @@ final class BandalArtCompletedViewController: UIViewController {
             })
             .store(in: &cancellables)
         
+        output.showToast
+            .sink(receiveValue: { [weak self] text in
+                self?.view.makeToast(text, duration: 2.0, position: .bottom)
+            })
+            .store(in: &cancellables)
+        
         output
             .presentActivityViewController
             .sink(receiveValue: { [weak self] url in
