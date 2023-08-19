@@ -8,7 +8,9 @@
 
 import UIKit
 import HomeFeature
+import OnBoardingFeature
 import Lottie
+import Util
 
 final class SplashViewController: UIViewController {
     
@@ -40,7 +42,7 @@ final class SplashViewController: UIViewController {
     }
     
     func navigateToMainScreen() {
-        
+      if let isFirstVisit = UserDefaultsManager.lastUserBandalArtKey {
         let vc = HomeViewController(viewModel: HomeViewModel())
 
         let appearance = UINavigationBarAppearance()
@@ -60,12 +62,19 @@ final class SplashViewController: UIViewController {
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         
-        
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
         guard let delegate = sceneDelegate else {
             return
         }
         delegate.window?.rootViewController = nav
+      } else {
+        let vc = OnBoardingViewController(viewModel: OnBoardingViewModel())
+        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+        guard let delegate = sceneDelegate else {
+            return
+        }
+        delegate.window?.rootViewController = vc
+      }
     }
 }
 
