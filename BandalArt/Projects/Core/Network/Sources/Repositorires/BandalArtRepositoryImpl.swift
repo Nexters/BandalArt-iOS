@@ -106,15 +106,21 @@ public extension BandalArtRepositoryImpl {
       title: String?,
       description: String?,
       dueDate: Date?,
-      mainColor: String,
+      mainColor: String?,
       subColor: String
     ) -> AnyPublisher<Void, BandalArtNetworkError> {
       var parameters: DictionaryType = [
-        "title": title ?? "",
-        "dueDate": dueDate?.toISO8601String ?? NSNull(),
-        "mainColor": mainColor,
         "profileEmoji": profileEmoji?.description ?? NSNull()
       ]
+      if let title {
+          parameters["title"] = title
+      }
+      if let dueDate {
+          parameters["title"] = dueDate.toISO8601String
+      }
+      if let mainColor {
+          parameters["title"] = mainColor
+      }
       
       if description != nil {
         parameters["description"] = description

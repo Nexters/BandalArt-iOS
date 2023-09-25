@@ -140,11 +140,11 @@ private extension EmojiSheetViewModel {
       key: key,
       cellKey: cellKey,
       profileEmoji: emojiSubject.value,
-      title: mainGoalInfo.title,
+      title: nil,
       description: nil,
-      dueDate: mainGoalInfo.dueDate,
-      mainColor: mainGoalInfo.mainColorHexString,
-      subColor: "#111827"
+      dueDate: nil,
+      mainColor: nil,
+      subColor: mainGoalInfo.subColorHexString
     )
   }
 }

@@ -53,7 +53,7 @@ public protocol BandalArtUseCase {
                            title: String?,
                            description: String?,
                            dueDate: Date?,
-                           mainColor: String,
+                           mainColor: String?,
                            subColor: String)
 
   func updateBandalArtTask(key: String,
@@ -157,7 +157,7 @@ public class BandalArtUseCaseImpl: BandalArtUseCase {
     title: String?,
     description: String? = nil,
     dueDate: Date? = nil,
-    mainColor: String,
+    mainColor: String? = nil,
     subColor: String
   ) {
     self.repository.postTaskUpdateData(

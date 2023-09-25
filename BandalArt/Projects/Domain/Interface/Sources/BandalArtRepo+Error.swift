@@ -118,7 +118,7 @@ public protocol BandalArtRepository {
       title: String?,
       description: String?,
       dueDate: Date?,
-      mainColor: String,
+      mainColor: String?,
       subColor: String
     ) -> AnyPublisher<Void, BandalArtNetworkError>
   
