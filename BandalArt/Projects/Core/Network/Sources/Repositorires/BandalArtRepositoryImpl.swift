@@ -116,10 +116,10 @@ public extension BandalArtRepositoryImpl {
           parameters["title"] = title
       }
       if let dueDate {
-          parameters["title"] = dueDate.toISO8601String
+          parameters["dueDate"] = dueDate.toISO8601String
       }
       if let mainColor {
-          parameters["title"] = mainColor
+          parameters["mainColor"] = mainColor
       }
       
       if description != nil {
