@@ -6,74 +6,74 @@
   Copyright © 2023 otani. All rights reserved.
 */
 
-"Bandalart" = "반다라트";
-"Add" = "추가";
-"List" = "목록";
+"bandalartText" = "Bandalart";
+"addText" = "Add";
+"listText" = "List";
 
-"mainGoalPlaceHolder" = "메인목표를 입력해주세요";
-"completeTitle" = "달성률 %f";
-"mainGoalTitle" = "~%s년 %s월 %s일";
-"completeDescription" = "달성 완료!";
+"mainGoalPlaceHolder" = "Please enter your main goal";
+"completeTitle" = "Completion Rate %f";
+"mainGoalTitle" = "Until %s-%s-%s";
+"completeDescription" = "All Goals Completed!";
 
-"mainGoalText" = "메인목표";
-"subGoalText" = "서브목표";
-"shareText" = "공유하기";
+"mainGoalText" = "Main Goal";
+"subGoalText" = "Sub Goal";
+"shareText" = "Share";
 
-"mainGoalCreateTitle" = "메인목표 입력";
-"mainGoalEditTitle" = "메인목표 수정";
-"subGoalCreateTitle" = "서브목표 입력";
-"subGoalEditTitle" = "서브목표 수정";
+"mainGoalCreateTitle" = "Enter Main Goal";
+"mainGoalEditTitle" = "Edit Main Goal";
+"subGoalCreateTitle" = "Enter Sub Goal";
+"subGoalEditTitle" = "Edit Sub Goal";
 
-"taskCreateTitle" = "태스크 입력";
-"taskEditTitle" = "태스크 수정";
+"taskCreateTitle" = "Enter Task";
+"taskEditTitle" = "Edit Task";
 
-"completeText" = "달성";
-"isCompletedText" = "달성 여부";
-"unCompleteText" = "미달성";
+"completeText" = "Achieved";
+"isCompletedText" = "Achievement Status";
+"unCompleteText" = "Not Achieved";
 
-"deleteText" = "삭제";
-"doneText" = "완료";
+"deleteText" = "Delete";
+"doneText" = "Done";
 
-"goalNameText" = "목표 이름 (필수)";
-"goalPlaceHolder" = "15자 이내로 입력해주세요";
-"themeColorText" = "색상 테마";
-"dDatePickerText" = "마감일 (선택)";
-"dDatePickerPlaceHolder" = "마감일을 선택해주세요";
+"goalNameText" = "Goal Name (Required)";
+"goalPlaceHolder" = "Enter within 15 characters";
+"themeColorText" = "Color Theme";
+"dDatePickerText" = "Due Date (Optional)";
+"dDatePickerPlaceHolder" = "Please select a due date";
 
-"memoText" = "메모 (선택)";
-"memoHolder" = "메모를 입력해주세요";
+"memoText" = "Notes (Optional)";
+"memoHolder" = "Please enter notes";
 
-"imageShareText" = "이미지 내보내기";
-"deleteText" = "삭제하기";
+"imageShareText" = "Export Image";
+"deleteText" = "Delete";
 
-"deleteAlertTitle" = "%s\n반다라트를 삭제하시겠어요?";
-"deleteAlertMessage" = "삭제한 반다라트는 다시 복구할 수 없어요";
+"deleteAlertTitle" = "Do you want to delete the %s Bandalart?";
+"deleteAlertMessage" = "Deleted Bandalart cannot be restored";
 
-"cancelText" = "취소";
+"cancelText" = "Cancel";
 
-"networkErrorAlertTitle" = "네트워크 문제로 표를\n불러오지 못했어요";
-"networkErrorAlertMessage" = "다시 시도해주시기 바랍니다.";
-"retryText" = "다시 시도";
+"networkErrorAlertTitle" = "Failed to load Bandalart due to network issues.";
+"networkErrorAlertMessage" = "Please try again.";
+"retryText" = "Retry";
 
-"networkErrorToastMessage" = "네트워크 문제로 저장에 실패하였어요.";
-"imageSuccessToastMessage" = "이미지를 내보냈어요.";
-"linkCopySuccessToastMessage" = "링크가 복사되었어요.";
-"deletedToastMessage" = "반다라트가 삭제되었어요.";
+"networkErrorToastMessage" = "Failed to save due to network issues.";
+"imageSuccessToastMessage" = "Image exported.";
+"linkCopySuccessToastMessage" = "Link copied.";
+"deletedToastMessage" = "Bandalart deleted.";
 
-"onboardingMessage1" = "복잡하고 막막한\n만다라트 계획표는 이제 안녕!";
-"onboardingMessage2" = "이제 반다라트와 함께\n부담 없이 계획을 세워봐요";
+"onboardingMessage1" = "Say goodbye to complex and overwhelming Mandalart!";
+"onboardingMessage2" = "Now, plan effortlessly with Bandalart!";
 
-"startText" = "시작하기";
+"startText" = "Get Started";
 
-"completedBandalartSectionTitle" = "달성 완료 반다라트";
-"completedBandalartMessage" = "반다라트의 모든 목표를 달성했어요.\n정말 대단해요!";
-"linkShareText" = "링크 공유하기";
+"completedBandalartSectionTitle" = "Completed Bandalart";
+"completedBandalartMessage" = "You've achieved all the goals in Bandalart. Truly amazing!";
+"linkShareText" = "Share Link";
 
-"mainGoalDeleteAlertTitle" = "%s\n메인목표를 삭제하시겠어요?";
-"mainGoalDeleteAlertMessage" = "서브목표와 태스크들이 모두 삭제돼요";
+"mainGoalDeleteAlertTitle" = "Do you want to delete the main goal %s?";
+"mainGoalDeleteAlertMessage" = "Sub goals and tasks will all be deleted";
 
-"subGoalDeleteAlertTitle" = "%s\n서브목표를 삭제하시겠어요?";
-"subGoalDeleteAlertMessage" = "속해있는 하위 태스크들이 모두 삭제돼요";
+"subGoalDeleteAlertTitle" = "Do you want to delete the sub goal %s?";
+"subGoalDeleteAlertMessage" = "All associated tasks will be deleted.";
 
 "shareDescription" = "제가 만든 반다라트를 구경하러 오세요!";
 

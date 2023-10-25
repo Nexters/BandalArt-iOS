@@ -8,9 +8,9 @@
 
 
 // HOME
-"Bandalart" = "반다라트";
-"Add" = "추가";
-"List" = "목록";
+"bandalartText" = "반다라트";
+"addText" = "추가";
+"listText" = "목록";
 
 "mainGoalPlaceHolder" = "메인목표를 입력해주세요";
 "completeTitle" = "달성률 %f";
